@@ -2,3 +2,6 @@ build/*
 firmware/include/selector.h
 analysis-reports/*
 build-analysis/*
+.DS_Store
+*.lck
+hardware1551/1551-rePico-backups/*
