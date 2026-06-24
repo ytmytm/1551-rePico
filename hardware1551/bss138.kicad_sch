@@ -432,7 +432,7 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "power:+3.3V"
+		(symbol "power:+3V3"
 			(power)
 			(pin_numbers
 				(hide yes)
@@ -453,7 +453,7 @@
 					(hide yes)
 				)
 			)
-			(property "Value" "+3.3V"
+			(property "Value" "+3V3"
 				(at 0 3.556 0)
 				(effects
 					(font
@@ -479,7 +479,7 @@
 					(hide yes)
 				)
 			)
-			(property "Description" "Power symbol creates a global label with name \"+3.3V\""
+			(property "Description" "Power symbol creates a global label with name \"+3V3\""
 				(at 0 0 0)
 				(effects
 					(font
@@ -497,7 +497,7 @@
 					(hide yes)
 				)
 			)
-			(symbol "+3.3V_0_1"
+			(symbol "+3V3_0_1"
 				(polyline
 					(pts
 						(xy -0.762 1.27) (xy 0 2.54)
@@ -535,7 +535,7 @@
 					)
 				)
 			)
-			(symbol "+3.3V_1_1"
+			(symbol "+3V3_1_1"
 				(pin power_in line
 					(at 0 0 90)
 					(length 0)
@@ -559,8 +559,12 @@
 		)
 		(symbol "power:+5V"
 			(power)
+			(pin_numbers
+				(hide yes)
+			)
 			(pin_names
 				(offset 0)
+				(hide yes)
 			)
 			(exclude_from_sim no)
 			(in_bom yes)
@@ -660,8 +664,7 @@
 				(pin power_in line
 					(at 0 0 90)
 					(length 0)
-					(hide yes)
-					(name "+5V"
+					(name "~"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -684,19 +687,29 @@
 		(at 156.21 88.9)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "199bd765-37f2-407c-9f45-d6f72725d38f")
+		(uuid "c9fe514a-6145-41b7-b767-e0e7912abcea")
 	)
 	(junction
 		(at 135.89 88.9)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "59ae1649-7113-4413-8fb7-a9c3680abf63")
+		(uuid "d9f99c39-d153-47dd-8e84-26acb85b3a4a")
 	)
 	(junction
 		(at 135.89 78.74)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "e0a59bb9-32d5-40b3-9a61-1457d482cc32")
+	)
+	(wire
+		(pts
+			(xy 135.89 88.9) (xy 140.97 88.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "29b31b70-8828-457b-b1ec-5255e544ae59")
 	)
 	(wire
 		(pts
@@ -717,16 +730,6 @@
 			(type default)
 		)
 		(uuid "3077d068-4cfd-4e05-a57a-5a1f09466050")
-	)
-	(wire
-		(pts
-			(xy 156.21 88.9) (xy 165.1 88.9)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "38d5d2cb-3bc1-4535-a0da-769bbe173f3f")
 	)
 	(wire
 		(pts
@@ -760,6 +763,16 @@
 	)
 	(wire
 		(pts
+			(xy 156.21 88.9) (xy 165.1 88.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7cf56c67-cd67-4464-ad2c-693fd3f593a8")
+	)
+	(wire
+		(pts
 			(xy 127 88.9) (xy 135.89 88.9)
 		)
 		(stroke
@@ -767,16 +780,6 @@
 			(type default)
 		)
 		(uuid "7dbcca62-866a-4172-b4b1-23302539e7ec")
-	)
-	(wire
-		(pts
-			(xy 135.89 88.9) (xy 140.97 88.9)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "81d7dab7-0d56-4252-a988-6f212463a6da")
 	)
 	(wire
 		(pts
@@ -809,158 +812,6 @@
 			(justify left)
 		)
 		(uuid "c8b08f17-867c-4873-b6db-425c1fe8c157")
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 156.21 85.09 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "03d63d9f-17c3-4daf-8518-340e3c0a9b06")
-		(property "Reference" "R4"
-			(at 158.75 83.8199 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "10k"
-			(at 158.75 86.3599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 154.432 85.09 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 156.21 85.09 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Resistor"
-			(at 156.21 85.09 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "7ba70499-06be-409a-a845-bb074371bcaf")
-		)
-		(pin "1"
-			(uuid "d9d7e1a1-523e-4d97-b761-7e776662a212")
-		)
-		(instances
-			(project "1551-rePico"
-				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d/4b15f676-6e25-4324-bd76-08f38eb68581"
-					(reference "R8")
-					(unit 1)
-				)
-				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d/67f2276f-cc75-48ac-899c-fedc722307b3"
-					(reference "R4")
-					(unit 1)
-				)
-				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d/75d2c140-5eb5-44c3-a43e-847105354624"
-					(reference "R6")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:+3.3V")
-		(at 135.89 76.2 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "26ab7d16-a925-424d-ae6b-d030e97e6a71")
-		(property "Reference" "#PWR06"
-			(at 135.89 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "+3.3V"
-			(at 132.842 72.136 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" ""
-			(at 135.89 76.2 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 135.89 76.2 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"+3.3V\""
-			(at 135.89 76.2 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "0ac384ec-2eda-4ed2-8c5f-d67707fc1fc5")
-		)
-		(instances
-			(project "1551-rePico"
-				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d/4b15f676-6e25-4324-bd76-08f38eb68581"
-					(reference "#PWR011")
-					(unit 1)
-				)
-				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d/67f2276f-cc75-48ac-899c-fedc722307b3"
-					(reference "#PWR06")
-					(unit 1)
-				)
-				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d/75d2c140-5eb5-44c3-a43e-847105354624"
-					(reference "#PWR09")
-					(unit 1)
-				)
-			)
-		)
 	)
 	(symbol
 		(lib_id "Transistor_FET:BSS138")
@@ -1028,6 +879,12 @@
 			(uuid "20b4d909-e0d0-4ee8-8000-50b4eed1d567")
 		)
 		(instances
+			(project "bss138"
+				(path "/62e1f9c8-4c41-46b6-90c4-f35600fb2ae9"
+					(reference "Q?")
+					(unit 1)
+				)
+			)
 			(project "1551-rePico"
 				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d/4b15f676-6e25-4324-bd76-08f38eb68581"
 					(reference "Q3")
@@ -1039,84 +896,6 @@
 				)
 				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d/75d2c140-5eb5-44c3-a43e-847105354624"
 					(reference "Q2")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 135.89 85.09 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "449d5df4-b0c0-4fdc-8ee8-d755c5f94493")
-		(property "Reference" "R3"
-			(at 138.43 83.8199 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "10k"
-			(at 138.43 86.3599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 134.112 85.09 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 135.89 85.09 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Resistor"
-			(at 135.89 85.09 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "e337544a-f8fa-4edf-8503-05806882ccf6")
-		)
-		(pin "1"
-			(uuid "f106e0a7-fc81-4a2c-a205-99c06b8b2b81")
-		)
-		(instances
-			(project "1551-rePico"
-				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d/4b15f676-6e25-4324-bd76-08f38eb68581"
-					(reference "R7")
-					(unit 1)
-				)
-				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d/67f2276f-cc75-48ac-899c-fedc722307b3"
-					(reference "R3")
-					(unit 1)
-				)
-				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d/75d2c140-5eb5-44c3-a43e-847105354624"
-					(reference "R5")
 					(unit 1)
 				)
 			)
@@ -1164,18 +943,25 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "Power symbol creates a global label with name \"+5V\""
 			(at 156.21 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(pin "1"
 			(uuid "e7c8ddbc-5d74-4a80-ab14-067e480aa572")
 		)
 		(instances
+			(project "bss138"
+				(path "/62e1f9c8-4c41-46b6-90c4-f35600fb2ae9"
+					(reference "#PWR?")
+					(unit 1)
+				)
+			)
 			(project "1551-rePico"
 				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d/4b15f676-6e25-4324-bd76-08f38eb68581"
 					(reference "#PWR012")
@@ -1192,4 +978,312 @@
 			)
 		)
 	)
+	(symbol
+		(lib_id "Device:R")
+		(at 135.89 85.09 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "6fdf9420-9c2d-4cc9-8a9e-07087fc6af27")
+		(property "Reference" "R1"
+			(at 138.43 83.8199 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "10k"
+			(at 138.43 86.3599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 134.112 85.09 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 135.89 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 135.89 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB Part #" "C22356686"
+			(at 135.89 85.09 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MFR.Part #" "RCA0510KFLF"
+			(at 135.89 85.09 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB URL" "https://jlcpcb.com/partdetail/23790130-RCA0510KFLF/C22356686"
+			(at 135.89 85.09 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "32638e15-1e40-4a03-bbd2-766869f40f78")
+		)
+		(pin "2"
+			(uuid "f2bc6475-16f6-4a24-9c0b-41d8e0d9173c")
+		)
+		(instances
+			(project "bss138"
+				(path "/62e1f9c8-4c41-46b6-90c4-f35600fb2ae9"
+					(reference "R1")
+					(unit 1)
+				)
+			)
+			(project "1551-rePico"
+				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d/4b15f676-6e25-4324-bd76-08f38eb68581"
+					(reference "R5")
+					(unit 1)
+				)
+				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d/67f2276f-cc75-48ac-899c-fedc722307b3"
+					(reference "R1")
+					(unit 1)
+				)
+				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d/75d2c140-5eb5-44c3-a43e-847105354624"
+					(reference "R3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 135.89 76.2 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "8367b025-1bb4-4ae4-955d-9ad24f3c81ca")
+		(property "Reference" "#PWR0101"
+			(at 135.89 80.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 135.89 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 135.89 76.2 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 135.89 76.2 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+3V3\""
+			(at 135.89 76.2 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "6cfc2028-b78e-43ca-ab42-ddf8b07f6ee9")
+		)
+		(instances
+			(project ""
+				(path "/62e1f9c8-4c41-46b6-90c4-f35600fb2ae9"
+					(reference "#PWR01")
+					(unit 1)
+				)
+			)
+			(project "1551-rePico"
+				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d/4b15f676-6e25-4324-bd76-08f38eb68581"
+					(reference "#PWR0104")
+					(unit 1)
+				)
+				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d/67f2276f-cc75-48ac-899c-fedc722307b3"
+					(reference "#PWR0101")
+					(unit 1)
+				)
+				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d/75d2c140-5eb5-44c3-a43e-847105354624"
+					(reference "#PWR0102")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 156.21 85.09 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "c3ccc9ac-9e55-42bc-b18c-84261a45d487")
+		(property "Reference" "R2"
+			(at 158.75 83.8199 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "10k"
+			(at 158.75 86.3599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 154.432 85.09 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 156.21 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 156.21 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB Part #" "C22356686"
+			(at 156.21 85.09 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MFR.Part #" "RCA0510KFLF"
+			(at 156.21 85.09 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB URL" "https://jlcpcb.com/partdetail/23790130-RCA0510KFLF/C22356686"
+			(at 156.21 85.09 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "0650cac5-2bcd-49d7-8a73-19722eed2854")
+		)
+		(pin "2"
+			(uuid "6b26a6d2-aaf9-4cdd-ade1-b6a1e1681c5b")
+		)
+		(instances
+			(project "bss138"
+				(path "/62e1f9c8-4c41-46b6-90c4-f35600fb2ae9"
+					(reference "R?")
+					(unit 1)
+				)
+			)
+			(project "1551-rePico"
+				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d/4b15f676-6e25-4324-bd76-08f38eb68581"
+					(reference "R6")
+					(unit 1)
+				)
+				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d/67f2276f-cc75-48ac-899c-fedc722307b3"
+					(reference "R2")
+					(unit 1)
+				)
+				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d/75d2c140-5eb5-44c3-a43e-847105354624"
+					(reference "R4")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+	(embedded_fonts no)
 )

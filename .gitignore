@@ -5,3 +5,12 @@ build-analysis/*
 .DS_Store
 *.lck
 hardware1551/1551-rePico-backups/*
+hdl/_ngo
+hdl/_xmsgs
+hdl/iseconfig
+hdl/*.err
+hdl/*.xml
+hdl/xlnx_auto_0_xdb
+hdl/xst
+hdl/Fake6523.{bld,cmd_log,gyd,lfp,lso,mfd,ngc,ngd,ngr,nga,pad,pnx,prj,rpt,stx,syr,tim,tspec,vm6,xst}
+hdl/Fake6523_*
