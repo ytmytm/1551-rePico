@@ -2852,128 +2852,6 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "Connector:Conn_01x01_Pin"
-			(pin_names
-				(offset 1.016)
-				(hide yes)
-			)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(property "Reference" "J"
-				(at 0 2.54 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Value" "Conn_01x01_Pin"
-				(at 0 -2.54 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Footprint" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Datasheet" "~"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Description" "Generic connector, single row, 01x01, script generated"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_locked" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_keywords" "connector"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_fp_filters" "Connector*:*_1x??_*"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(symbol "Conn_01x01_Pin_1_1"
-				(rectangle
-					(start 0.8636 0.127)
-					(end 0 -0.127)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type outline)
-					)
-				)
-				(polyline
-					(pts
-						(xy 1.27 0) (xy 0.8636 0)
-					)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(pin passive line
-					(at 5.08 0 180)
-					(length 3.81)
-					(name "Pin_1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
 		(symbol "Connector_Generic:Conn_01x03"
 			(pin_names
 				(offset 1.016)
@@ -4681,6 +4559,130 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "Device:R"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "R"
+				(at 2.032 0 90)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "R"
+				(at 0 0 90)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at -1.778 0 90)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Resistor"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "R res resistor"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "R_*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "R_0_1"
+				(rectangle
+					(start -1.016 -2.54)
+					(end 1.016 2.54)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "R_1_1"
+				(pin passive line
+					(at 0 3.81 270)
+					(length 1.27)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -3.81 90)
+					(length 1.27)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "Jumper:SolderJumper_2_Open"
 			(pin_numbers
 				(hide yes)
@@ -6326,17 +6328,6 @@
 			(embedded_fonts no)
 		)
 	)
-	(text "WPS:\nto U8-pin 1 (74LS14), R18, connector P5-12"
-		(exclude_from_sim no)
-		(at 200.152 84.328 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left top)
-		)
-		(uuid "2240dd37-3573-47f9-984e-4d4a913d11aa")
-	)
 	(text "Rotary encoder\n(KY-040)"
 		(exclude_from_sim no)
 		(at 34.163 186.309 0)
@@ -6368,16 +6359,6 @@
 			(justify left top)
 		)
 		(uuid "76fd16a2-c13f-45eb-8a4b-0e4c277ee510")
-	)
-	(text "WPS"
-		(exclude_from_sim no)
-		(at 175.768 88.138 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-		)
-		(uuid "8fa10f1a-c9b4-44f9-a841-34ac0aaeb97d")
 	)
 	(text "NOTE: no macrocells left to use CPLD for level shifting\nNOTE: all _3V3 signals are for Pico only, NOT for board\nNOTE: YB0..7 are for Pico only\nTODO: RESET_3V3, MODE_3V3, SYNC_3V3\n\nNOTE: XR/~{W} comes from GATE ARRAY, it is NOT CPU's R/~{W}\n      CPLD firmware can be later changed to use R/~{W} + Phi0/Phi2\n      without gate array\n\n"
 		(exclude_from_sim no)
@@ -6434,7 +6415,7 @@
 		)
 		(uuid "dcde9586-56be-4dcb-9450-512eff047867")
 	)
-	(text "TODO: Pico decides about device number - output on GPIO3 0 or 1"
+	(text "Pico firmware TODO:\n- GPIO0: SOE not used (always high), can be fixed in firmware to true\n- GPIO3: Pico decides about device number - 0 or 1\n- GPIO5: switch driver from high/low to hi-z/low"
 		(exclude_from_sim no)
 		(at 200.66 69.596 0)
 		(effects
@@ -6458,10 +6439,28 @@
 		(uuid "32f9628e-2157-4278-bad3-25113d2b075f")
 	)
 	(junction
+		(at 74.93 116.84)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "3e7b0d2d-a43f-42db-8137-79ce4cb6f5cd")
+	)
+	(junction
 		(at 511.81 116.205)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "5215d765-5fbf-44ad-92af-cf10a02a9de7")
+	)
+	(junction
+		(at 65.405 116.84)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "820003d8-588f-45f6-9d5c-a9d90fb7d4fd")
+	)
+	(junction
+		(at 83.185 116.84)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "820343fe-92a9-4db4-afca-00ce8cd98334")
 	)
 	(junction
 		(at 36.195 81.915)
@@ -6474,6 +6473,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "97c7d354-aa8f-47ca-aa74-9ce315931f1e")
+	)
+	(junction
+		(at 91.44 116.84)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "9df25cd2-3f87-4870-9e87-b204e2cb63da")
 	)
 	(junction
 		(at 510.54 116.205)
@@ -6530,6 +6535,26 @@
 		(uuid "fa46f8d7-7f46-41f8-a6d0-4d24133765ff")
 	)
 	(no_connect
+		(at 384.175 36.195)
+		(uuid "050b938a-f852-459e-a550-40cd378207de")
+	)
+	(no_connect
+		(at 384.175 74.295)
+		(uuid "09628c48-444d-49a8-b56a-aaceaae29cd9")
+	)
+	(no_connect
+		(at 156.21 72.39)
+		(uuid "312597e8-57be-4a0e-8a29-ec5c54ac844b")
+	)
+	(no_connect
+		(at 384.175 71.755)
+		(uuid "34194a40-393c-41cd-b371-f6ff3c320bce")
+	)
+	(no_connect
+		(at 384.175 69.215)
+		(uuid "392c2d50-9d17-4401-9a57-3c91db5f5103")
+	)
+	(no_connect
 		(at 488.95 65.405)
 		(uuid "3c85875f-39b0-45d1-8b2c-5de6f24c039c")
 	)
@@ -6546,8 +6571,24 @@
 		(uuid "545c25cb-37d2-481f-bb3c-281274c2d677")
 	)
 	(no_connect
+		(at 384.175 53.975)
+		(uuid "5fc3fe67-947c-4795-a91b-7eca0d3e0b9c")
+	)
+	(no_connect
 		(at 488.95 88.265)
 		(uuid "69cf2638-d653-4447-b647-7720915976ba")
+	)
+	(no_connect
+		(at 384.175 48.895)
+		(uuid "69cfd8a5-30cb-4b8d-a4c4-7f7f61f70f3b")
+	)
+	(no_connect
+		(at 384.175 51.435)
+		(uuid "7d4188aa-3b2e-48c4-a0b0-712143244cf0")
+	)
+	(no_connect
+		(at 488.95 57.785)
+		(uuid "821ac6a8-2089-4610-835d-b4dcef8fee11")
 	)
 	(no_connect
 		(at 120.65 80.01)
@@ -6558,6 +6599,14 @@
 		(uuid "969bf68f-4d7a-4708-a7ae-56605f94a2ce")
 	)
 	(no_connect
+		(at 384.175 38.735)
+		(uuid "b807c005-c35a-4ccb-934c-4df87ef7382c")
+	)
+	(no_connect
+		(at 384.175 46.355)
+		(uuid "c6091385-7716-4498-ab0f-9bc8f605128d")
+	)
+	(no_connect
 		(at 120.65 72.39)
 		(uuid "ce9baff6-03eb-43ec-831f-4ad28c002244")
 	)
@@ -6566,8 +6615,16 @@
 		(uuid "e76076e1-5b84-4ed2-a6f1-02a60c4bd0d3")
 	)
 	(no_connect
+		(at 384.175 41.275)
+		(uuid "e86b9586-1a97-4265-9151-b359cb5b422e")
+	)
+	(no_connect
 		(at 488.95 34.925)
 		(uuid "e94f4799-5f43-4d49-b3da-9f7cbd327588")
+	)
+	(no_connect
+		(at 384.175 43.815)
+		(uuid "f8079685-00af-4555-bac2-69687b6ab691")
 	)
 	(wire
 		(pts
@@ -6578,6 +6635,16 @@
 			(type default)
 		)
 		(uuid "0255bbaa-6f51-458e-8ed6-9c6901613d08")
+	)
+	(wire
+		(pts
+			(xy 233.68 47.625) (xy 226.06 47.625)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "06851cb0-c93f-40e2-b953-baae2d7b4aab")
 	)
 	(wire
 		(pts
@@ -6628,6 +6695,16 @@
 			(type default)
 		)
 		(uuid "17d974ee-d878-41b9-a220-a74ced83b2eb")
+	)
+	(wire
+		(pts
+			(xy 74.93 116.84) (xy 83.185 116.84)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "190c4e69-a274-4a4c-ae1d-b4718d42605b")
 	)
 	(wire
 		(pts
@@ -6781,6 +6858,16 @@
 	)
 	(wire
 		(pts
+			(xy 91.44 116.84) (xy 100.33 116.84)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "56f8d4e1-1ff2-489c-ae4c-864610d035d9")
+	)
+	(wire
+		(pts
 			(xy 514.985 219.075) (xy 492.125 219.075)
 		)
 		(stroke
@@ -6798,6 +6885,26 @@
 			(type default)
 		)
 		(uuid "580640fc-0bbe-40ab-9852-ad53816dca8b")
+	)
+	(wire
+		(pts
+			(xy 83.185 116.84) (xy 91.44 116.84)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "581a8801-060a-4af5-83ad-f11cfa0ee11a")
+	)
+	(wire
+		(pts
+			(xy 57.15 116.84) (xy 65.405 116.84)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5baebda6-2f28-45ff-8363-55f38e4a58f3")
 	)
 	(wire
 		(pts
@@ -6878,6 +6985,16 @@
 			(type default)
 		)
 		(uuid "813711a1-6a3c-44d7-91d9-d067b30d8440")
+	)
+	(wire
+		(pts
+			(xy 65.405 116.84) (xy 74.93 116.84)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "81f9e5be-431e-4060-8f2a-104dc416974a")
 	)
 	(wire
 		(pts
@@ -7011,6 +7128,16 @@
 	)
 	(wire
 		(pts
+			(xy 213.36 47.625) (xy 205.74 47.625)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "bcf20e1d-ca5c-4c0e-bffb-6ef03597de3b")
+	)
+	(wire
+		(pts
 			(xy 19.685 85.725) (xy 19.685 81.915)
 		)
 		(stroke
@@ -7118,16 +7245,6 @@
 			(type default)
 		)
 		(uuid "e791a5dc-4d58-4a5b-bb4d-b39a76bbda7c")
-	)
-	(wire
-		(pts
-			(xy 156.21 87.63) (xy 163.83 87.63)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "f28b124a-6a6f-4276-a786-1605ddb3c47d")
 	)
 	(wire
 		(pts
@@ -7379,6 +7496,16 @@
 		)
 		(uuid "1053a32e-e6d2-4000-9c64-b5b179095d86")
 	)
+	(label "WPS"
+		(at 205.74 47.625 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "1087be4c-b4e0-4eb8-ba61-9403651889e5")
+	)
 	(label "ROT_DT"
 		(at 34.925 174.625 180)
 		(effects
@@ -7399,6 +7526,16 @@
 		)
 		(uuid "1094b9e0-ad4b-4d9c-8f20-df5f0080054d")
 	)
+	(label "SYNC_3V3"
+		(at 100.33 124.46 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "10e94f74-df17-42ae-9438-8e483987548a")
+	)
 	(label "YB1_BRD"
 		(at 384.175 38.735 0)
 		(effects
@@ -7418,6 +7555,16 @@
 			(justify right bottom)
 		)
 		(uuid "127e813c-8660-44b6-8c4e-f4b0bda800bc")
+	)
+	(label "BYTE_READY_3V3"
+		(at 83.185 124.46 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "1565e395-93eb-44aa-90b9-ac19d32ab26d")
 	)
 	(label "DIO2"
 		(at 384.175 15.875 0)
@@ -7679,6 +7826,16 @@
 		)
 		(uuid "283edf3c-2574-4b33-89d6-d992c406dd1e")
 	)
+	(label "WPS_3V3"
+		(at 233.68 47.625 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "2a3d80f7-bfa7-484d-844e-2c105123a022")
+	)
 	(label "A0"
 		(at 344.17 231.775 0)
 		(effects
@@ -7758,16 +7915,6 @@
 			(justify right bottom)
 		)
 		(uuid "36fa8328-264b-4a93-9a75-ec1adf63da1d")
-	)
-	(label "SOE_3V3"
-		(at 488.95 57.785 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "37ddb817-bf9a-4c55-a668-d6d791b7948f")
 	)
 	(label "YB0"
 		(at 529.59 32.385 0)
@@ -8039,16 +8186,6 @@
 		)
 		(uuid "5959da67-016e-4397-b3e2-80ba0c841740")
 	)
-	(label "SOE_3V3"
-		(at 156.21 72.39 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "599573ac-90f3-41d1-827a-0ab59c7e63d0")
-	)
 	(label "STATUS0"
 		(at 514.985 208.915 0)
 		(effects
@@ -8179,6 +8316,16 @@
 		)
 		(uuid "6a459c7d-2306-43da-9d83-ec19a0cbda06")
 	)
+	(label "MODE_3V3"
+		(at 91.44 124.46 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "6a7fa7d0-791c-48ee-ad5c-df53a86eb2aa")
+	)
 	(label "A2"
 		(at 363.855 28.575 180)
 		(effects
@@ -8228,6 +8375,16 @@
 			(justify left bottom)
 		)
 		(uuid "6ede2d6c-c69c-40a4-a542-7a340656d179")
+	)
+	(label "I2C_SCL"
+		(at 65.405 124.46 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "6febe1a6-e49b-4257-91e3-996c50a7cf70")
 	)
 	(label "D7"
 		(at 344.17 295.275 0)
@@ -8469,6 +8626,16 @@
 		)
 		(uuid "9214c48b-f315-4844-8b45-c474b7921f9c")
 	)
+	(label "I2C_SDA"
+		(at 57.15 124.46 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "92739aa9-3d38-4fdc-9651-3e1b32b27e73")
+	)
 	(label "R{slash}~{W}"
 		(at 323.85 249.555 180)
 		(effects
@@ -8659,6 +8826,16 @@
 		)
 		(uuid "ac0ffdbe-2cc7-43f6-b050-7c78887b8590")
 	)
+	(label "WPS_3V3"
+		(at 156.21 87.63 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "ac740801-804c-4e9d-97d5-fd1d0139b466")
+	)
 	(label "XR{slash}~{W}"
 		(at 363.855 33.655 180)
 		(effects
@@ -8738,6 +8915,16 @@
 			(justify left bottom)
 		)
 		(uuid "b4abbba9-23dc-4cf9-bb00-f5242b0bc64d")
+	)
+	(label "~{RESET_3V3}"
+		(at 74.93 124.46 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "b4f078bc-6ff9-4167-90dd-c93566157626")
 	)
 	(label "DIO6"
 		(at 514.985 203.835 0)
@@ -9562,6 +9749,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm"
@@ -10293,6 +10481,103 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:R")
+		(at 83.185 120.65 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "3c4c11bf-ddc1-4cb2-937c-74acca97fead")
+		(property "Reference" "R8"
+			(at 85.725 119.3799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "10k"
+			(at 85.725 121.9199 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 81.407 120.65 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 83.185 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 83.185 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB Part #" "C22356686"
+			(at 83.185 120.65 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MFR.Part #" "RCA0510KFLF"
+			(at 83.185 120.65 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB URL" "https://jlcpcb.com/partdetail/23790130-RCA0510KFLF/C22356686"
+			(at 83.185 120.65 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "b8b8b1a0-cf29-483c-b399-ce3e229e0b75")
+		)
+		(pin "2"
+			(uuid "1ba045cf-80e8-4504-b5dc-4094d422841c")
+		)
+		(instances
+			(project "1551-rePico"
+				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d"
+					(reference "R8")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:+5V")
 		(at 334.01 224.155 0)
 		(unit 1)
@@ -10429,6 +10714,103 @@
 			(project "1551-rePico"
 				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d"
 					(reference "C3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 65.405 120.65 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "4520c71b-056b-44dc-910c-260e792a1791")
+		(property "Reference" "R13"
+			(at 67.945 119.3799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "10k"
+			(at 67.945 121.9199 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 63.627 120.65 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 65.405 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 65.405 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB Part #" "C22356686"
+			(at 65.405 120.65 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MFR.Part #" "RCA0510KFLF"
+			(at 65.405 120.65 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB URL" "https://jlcpcb.com/partdetail/23790130-RCA0510KFLF/C22356686"
+			(at 65.405 120.65 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "7b9c5a5e-d80e-42ed-9ee1-c563f1c28efe")
+		)
+		(pin "2"
+			(uuid "0bea0919-25ae-43c4-8f39-58935d68dd11")
+		)
+		(instances
+			(project "1551-rePico"
+				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d"
+					(reference "R13")
 					(unit 1)
 				)
 			)
@@ -11037,6 +11419,103 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:R")
+		(at 57.15 120.65 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "593c14ab-04d2-4fce-8d4a-18a57e531417")
+		(property "Reference" "R14"
+			(at 59.69 119.3799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "10k"
+			(at 59.69 121.9199 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 55.372 120.65 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 57.15 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 57.15 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB Part #" "C22356686"
+			(at 57.15 120.65 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MFR.Part #" "RCA0510KFLF"
+			(at 57.15 120.65 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB URL" "https://jlcpcb.com/partdetail/23790130-RCA0510KFLF/C22356686"
+			(at 57.15 120.65 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "0844be73-6058-4634-946b-6d381f8bff14")
+		)
+		(pin "2"
+			(uuid "db7fc335-6171-4dbb-901d-6b9a9cfc8b13")
+		)
+		(instances
+			(project "1551-rePico"
+				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d"
+					(reference "R14")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:+3V3")
 		(at 536.575 143.51 0)
 		(unit 1)
@@ -11097,6 +11576,103 @@
 			(project "1551-rePico"
 				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d"
 					(reference "#PWR040")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 100.33 120.65 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "699a0a4b-aa79-4674-9c40-b28665626563")
+		(property "Reference" "R12"
+			(at 102.87 119.3799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "10k"
+			(at 102.87 121.9199 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 98.552 120.65 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 100.33 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 100.33 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB Part #" "C22356686"
+			(at 100.33 120.65 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MFR.Part #" "RCA0510KFLF"
+			(at 100.33 120.65 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB URL" "https://jlcpcb.com/partdetail/23790130-RCA0510KFLF/C22356686"
+			(at 100.33 120.65 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "817435ea-cea9-42a3-ac31-512a5a2db593")
+		)
+		(pin "2"
+			(uuid "6483876b-6e8a-41c2-b2d6-500ddd728a8d")
+		)
+		(instances
+			(project "1551-rePico"
+				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d"
+					(reference "R12")
 					(unit 1)
 				)
 			)
@@ -11314,6 +11890,103 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:R")
+		(at 91.44 120.65 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "7a6e69eb-de8e-43d2-9519-56c3f8dcd207")
+		(property "Reference" "R11"
+			(at 93.98 119.3799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "10k"
+			(at 93.98 121.9199 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 89.662 120.65 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 91.44 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 91.44 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB Part #" "C22356686"
+			(at 91.44 120.65 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MFR.Part #" "RCA0510KFLF"
+			(at 91.44 120.65 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB URL" "https://jlcpcb.com/partdetail/23790130-RCA0510KFLF/C22356686"
+			(at 91.44 120.65 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "de06eddd-990e-4b56-88d9-15d5d57f8183")
+		)
+		(pin "2"
+			(uuid "c9547fb5-a436-4802-85ee-f032f2a5546d")
+		)
+		(instances
+			(project "1551-rePico"
+				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d"
+					(reference "R11")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:+5V")
 		(at 334.645 106.045 0)
 		(unit 1)
@@ -11516,6 +12189,103 @@
 			(project "1551-rePico"
 				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d"
 					(reference "C5")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 74.93 120.65 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "8b1ae8e2-d722-46ff-8304-5ccb9b432a3c")
+		(property "Reference" "R7"
+			(at 77.47 119.3799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "10k"
+			(at 77.47 121.9199 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 73.152 120.65 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 74.93 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 74.93 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB Part #" "C22356686"
+			(at 74.93 120.65 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MFR.Part #" "RCA0510KFLF"
+			(at 74.93 120.65 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB URL" "https://jlcpcb.com/partdetail/23790130-RCA0510KFLF/C22356686"
+			(at 74.93 120.65 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "dcd808d8-7d00-4703-9d5b-0b93b5d5c10a")
+		)
+		(pin "2"
+			(uuid "4d6041fc-245c-424d-876f-42dd9f11b8c2")
+		)
+		(instances
+			(project "1551-rePico"
+				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d"
+					(reference "R7")
 					(unit 1)
 				)
 			)
@@ -12067,6 +12837,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(pin "1"
@@ -12578,6 +13349,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(pin "1"
@@ -12658,71 +13430,6 @@
 			(project "1541-rePico"
 				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d"
 					(reference "#PWR018")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector:Conn_01x01_Pin")
-		(at 168.91 87.63 180)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "bdff926f-2039-4091-84da-6669aea0b7d5")
-		(property "Reference" "J5"
-			(at 171.45 87.63 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "Conn_01x01_Pin"
-			(at 171.196 89.662 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Footprint" "Connector_PinHeader_2.00mm:PinHeader_1x01_P2.00mm_Vertical"
-			(at 168.91 87.63 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 168.91 87.63 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Generic connector, single row, 01x01, script generated"
-			(at 168.91 87.63 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "26a35074-d268-4de5-ab3e-d45d4ef8333a")
-		)
-		(instances
-			(project "1541-rePico"
-				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d"
-					(reference "J5")
 					(unit 1)
 				)
 			)
@@ -13352,6 +14059,72 @@
 		)
 	)
 	(symbol
+		(lib_id "power:+3V3")
+		(at 74.93 116.84 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "ed1034cf-ff5e-4b2e-92db-72a8daed33c0")
+		(property "Reference" "#PWR06"
+			(at 74.93 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 74.93 111.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 74.93 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 74.93 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+3V3\""
+			(at 74.93 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "ae9b0bfd-66c7-4d14-b281-4141bf04d0ea")
+		)
+		(instances
+			(project "1551-rePico"
+				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d"
+					(reference "#PWR06")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Jumper:SolderJumper_3_Bridged12")
 		(at 27.305 81.915 0)
 		(unit 1)
@@ -13623,6 +14396,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(pin "1"
@@ -13956,6 +14730,69 @@
 			(project "1551-rePico"
 				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d"
 					(page "3")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 213.36 45.085)
+		(size 12.7 5.08)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "93c5a10e-e0aa-481a-bb6b-5a0241e2376b")
+		(property "Sheetname" "BSS138_9"
+			(at 213.36 44.3734 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+				(hide yes)
+			)
+		)
+		(property "Sheetfile" "bss138.kicad_sch"
+			(at 207.772 50.165 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(pin "HIGH" input
+			(at 213.36 47.625 180)
+			(uuid "d6a74054-7c42-4135-9a9f-f6812f2d582a")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "LOW" input
+			(at 226.06 47.625 0)
+			(uuid "34fa0f81-95b0-45a7-9f43-9e9cc02117ad")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(instances
+			(project "1551-rePico"
+				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d"
+					(page "5")
 				)
 			)
 		)

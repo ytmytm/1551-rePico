@@ -22,7 +22,6 @@ module Fake6523(
                 input _reset,
                 input _cs,
 					 
-					 input wire soe_3v3,
 					 input wire byte_ready_3v3,
 					 output reg byte_latched,
 					 output wire _reset_3v3,
@@ -39,11 +38,11 @@ module Fake6523(
                );
 
     always @(negedge byte_ready_3v3 or negedge _cs or negedge _reset) begin
-        if (!_reset) begin
+	if (!_reset) begin
             byte_latched <= 1'b0;
-        end else if (! _cs) begin
+        end else if (!_cs) begin
             byte_latched <= 1'b0;
-        end else if (soe_3v3) begin
+        end else begin
             byte_latched <= 1'b1;
         end
     end
