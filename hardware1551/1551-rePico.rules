@@ -1,0 +1,105 @@
+
+(rules PCB 1551-rePico.dsn
+  (snap_angle 
+    fortyfive_degree
+  )
+  (rule
+    (width 200.0)
+    (clearance 200.0)
+    (clearance 100.0 (type smd_to_turn_gap))
+    (clearance 50.0 (type smd))
+    (clearance 200.0 (type "kicad_default"))
+    (clearance 200.0 (type POWER))
+  )
+  (padstack "Via[0-1]_600:300_um"
+    (shape
+      (circle F.Cu 600.0 0.0 0.0)
+    )
+    (shape
+      (circle B.Cu 600.0 0.0 0.0)
+    )
+    (attach off)
+  )
+  (padstack "Via[0-1]_800:600_um"
+    (shape
+      (circle F.Cu 800.0 0.0 0.0)
+    )
+    (shape
+      (circle B.Cu 800.0 0.0 0.0)
+    )
+    (attach off)
+  )
+  (via 
+    "Via[0-1]_600:300_um" "Via[0-1]_600:300_um" default
+  )
+  (via 
+    "Via[0-1]_800:600_um" "Via[0-1]_800:600_um" default
+  )
+  (via 
+    "Via[0-1]_600:300_um-kicad_default" "Via[0-1]_600:300_um" "kicad_default"
+  )
+  (via 
+    "Via[0-1]_800:600_um-kicad_default" "Via[0-1]_800:600_um" "kicad_default"
+  )
+  (via 
+    "Via[0-1]_600:300_um-POWER" "Via[0-1]_600:300_um" POWER
+  )
+  (via 
+    "Via[0-1]_800:600_um-POWER" "Via[0-1]_800:600_um" POWER
+  )
+  (via_rule
+    default "Via[0-1]_600:300_um"
+  )
+  (via_rule
+    "kicad_default" "Via[0-1]_600:300_um-kicad_default"
+  )
+  (via_rule
+    POWER "Via[0-1]_800:600_um-POWER"
+  )
+  (class default
+    (clearance_class default)
+    (via_rule default)
+    (rule
+      (width 200.0)
+    )
+    (circuit 
+      (use_layer F.Cu B.Cu)
+    )
+  )
+  (class "kicad_default"
+    +3V3 "/I2C_SDA" "/I2C_SCL" "Net-(J1-Pin_2)" "/ROT_CLK" "/ROT_DT" "/ROT_SW" "/SD_MOSI"
+    "/SD_CS" "/SD_MISO" "/SD_SCK" /DIO6 /DAV /DIO3 /DEV /STATUS1
+    /DIO5 /STATUS0 /DIO2 /ACK /DIO4 /~{RESET} /DIO1 /DIO8
+    /DIO7 /TDI /TDO /TCK /TMS "Net-(JP1-B)" "/~{RESET_3V3}" "/MTR_3V3"
+    /MTR "/STP0_3V3" /STP0 /STP1 "/STP1_3V3" "/WPS_3V3" /WPS "Net-(J1-Pin_1)"
+    "/BYTE_READY_3V3" "/MODE_3V3" "/SYNC_3V3" /YB1 /YB3 "unconnected-(U1-ADC_VREF-Pad35)" "unconnected-(U1-3V3_EN-Pad37)" "unconnected-(U1-VBUS-Pad40)"
+    /YB7 /YB0 /YB5 "Net-(SWDBG1-Pin_2)" "Net-(SWDBG1-Pin_3)" "Net-(SWDBG1-Pin_1)" "unconnected-(U1-GPIO0-Pad1)" "/DEVNUM_3V3"
+    /YB2 "unconnected-(U1-VBUS-Pad40)_1" "unconnected-(U1-3V3_EN-Pad37)_1" "unconnected-(U1-ADC_VREF-Pad35)_1" /YB4 /YB6 "unconnected-(U1-GPIO0-Pad1)_1" /PHI2
+    /D4 /R{slash}~{W} /A0 "/~{CS_TPI}" /XR{slash}~{W} /D2 "unconnected-(U3-P23-Pad23)" /D5
+    /D0 /D6 "unconnected-(U3-P58-Pad58)" "unconnected-(U3-P8-Pad8)" "unconnected-(U3-P61-Pad61)" /D3 "/BYTE_LATCHED" /PHI0
+    /D1 "unconnected-(U3-P42-Pad42)" "unconnected-(U3-P62-Pad62)" "unconnected-(U3-P59-Pad59)" /D7 /A1 /A2 "unconnected-(U3-P18-Pad18)"
+    "/YB6_BRD" "/YB5_BRD" /MODE "/YB3_BRD" "/YB0_BRD" "/YB2_BRD" "/YB7_BRD" "/YB1_BRD"
+    "/DEVNUM_BRD" /SYNC "/YB4_BRD" /A4 /A12 /A13 /A5 /DS1
+    /A11 /A8 /DS0 /A15 /ACT /A3 /A7 /AEC
+    /A9 /~{IRQ} /A14 /A6 /A10
+    (clearance_class "kicad_default")
+    (via_rule "kicad_default")
+    (rule
+      (width 200.0)
+    )
+    (circuit 
+      (use_layer F.Cu B.Cu)
+    )
+  )
+  (class POWER
+    +5V GND
+    (clearance_class POWER)
+    (via_rule POWER)
+    (rule
+      (width 400.0)
+    )
+    (circuit 
+      (use_layer F.Cu B.Cu)
+    )
+  )
+)
