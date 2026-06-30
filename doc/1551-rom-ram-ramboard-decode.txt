@@ -1,0 +1,300 @@
+Jasne — schematycznie jako lista połączeń/netów.
+
+## 74LS139
+
+### Zasilanie
+
+```text
+VCC = +5V
+GND = GND
+```
+
+## 74LS139 — sekcja 1
+
+```text
+E1  = GND          ; enable aktywne niskim poziomem
+A1  = A14
+B1  = A15
+```
+
+Wyjścia:
+
+```text
+Y0_1 = RAM_LOW     ; aktywne dla 0x0000-0x3FFF
+Y1_1 = /TPI        ; aktywne dla 0x4000-0x7FFF
+Y2_1 = DEC_HIGH    ; aktywne dla 0x8000-0xBFFF
+Y3_1 = ROM_HIGH    ; aktywne dla 0xC000-0xFFFF
+```
+
+Czyli połączenie do drugiej sekcji:
+
+```text
+E2 = Y2_1
+```
+
+## 74LS139 — sekcja 2
+
+```text
+E2  = Y2_1         ; enable z zakresu 0x8000-0xBFFF
+A2  = A13
+B2  = GND
+```
+
+Wyjścia:
+
+```text
+Y0_2 = RAM_HIGH    ; aktywne dla 0x8000-0x9FFF
+Y1_2 = ROM_LOW     ; aktywne dla 0xA000-0xBFFF
+Y2_2 = NC
+Y3_2 = NC
+```
+
+## 74LS00 — składanie `/RAMSEL`
+
+### NAND 1
+
+```text
+1A = Y0_1          ; RAM_LOW
+1B = Y0_2          ; RAM_HIGH
+1Y = RAM_NAND
+```
+
+### NAND 2 jako inwerter
+
+```text
+2A = RAM_NAND
+2B = RAM_NAND
+2Y = /RAMSEL
+```
+
+## 74LS00 — składanie `/ROMSEL`
+
+### NAND 3
+
+```text
+3A = Y1_2          ; ROM_LOW
+3B = Y3_1          ; ROM_HIGH
+3Y = ROM_NAND
+```
+
+### NAND 4 jako inwerter
+
+```text
+4A = ROM_NAND
+4B = ROM_NAND
+4Y = /ROMSEL
+```
+
+## Finalne sygnały
+
+```text
+/TPI     = Y1_1
+/RAMSEL  = 2Y z 74LS00
+/ROMSEL  = 4Y z 74LS00
+```
+
+Czyli w skrócie:
+
+```text
+74LS139:
+E1 = GND
+A1 = A14
+B1 = A15
+
+Y0_1 = RAM_LOW
+Y1_1 = /TPI
+Y2_1 = E2
+Y3_1 = ROM_HIGH
+
+E2 = Y2_1
+A2 = A13
+B2 = GND
+
+Y0_2 = RAM_HIGH
+Y1_2 = ROM_LOW
+
+
+74LS00:
+1A = Y0_1
+1B = Y0_2
+1Y = RAM_NAND
+
+2A = RAM_NAND
+2B = RAM_NAND
+2Y = /RAMSEL
+
+3A = Y1_2
+3B = Y3_1
+3Y = ROM_NAND
+
+4A = ROM_NAND
+4B = ROM_NAND
+4Y = /ROMSEL
+```
+
+Uwaga tylko na nazewnictwo: w wielu symbolach 74LS139 enable jest opisane jako `/G`, `/E` albo `E` z kreską. Chodzi o **wejście aktywne stanem niskim**.
+
+
+Dla SRAM **32K × 8**, typu np. **62256 / 43256 / AS6C62256**, masz zwykle linie:
+
+```text id="r4m32k"
+RAM A0-A14
+RAM D0-D7
+/RAM_CE albo /CS
+/OE
+/WE
+```
+
+Przy Twojej mapie:
+
+```text id="9fup6n"
+RAM aktywny:
+0x0000-0x3FFF
+0x8000-0x9FFF
+```
+
+najprościej podłączyć adresy tak:
+
+```text id="k3b8gx"
+CPU A0  = RAM A0
+CPU A1  = RAM A1
+CPU A2  = RAM A2
+CPU A3  = RAM A3
+CPU A4  = RAM A4
+CPU A5  = RAM A5
+CPU A6  = RAM A6
+CPU A7  = RAM A7
+CPU A8  = RAM A8
+CPU A9  = RAM A9
+CPU A10 = RAM A10
+CPU A11 = RAM A11
+CPU A12 = RAM A12
+CPU A13 = RAM A13
+CPU A15 = RAM A14
+```
+
+Czyli ważne:
+
+```text id="n6q6w5"
+CPU A14 nie idzie do RAM-u
+CPU A15 idzie na najwyższy adres RAM-u, czyli RAM A14
+```
+
+## Chip select RAM-u
+
+```text id="trg7m5"
+/RAMSEL = RAM /CE albo RAM /CS
+```
+
+Jeśli SRAM ma dwa chip selecty, np. `/CE1` i `CE2`, wtedy:
+
+```text id="bwkcnf"
+/RAMSEL = RAM /CE1
++5V     = RAM CE2
+```
+
+## Dane
+
+```text id="m9k5tv"
+CPU D0 = RAM D0
+CPU D1 = RAM D1
+CPU D2 = RAM D2
+CPU D3 = RAM D3
+CPU D4 = RAM D4
+CPU D5 = RAM D5
+CPU D6 = RAM D6
+CPU D7 = RAM D7
+```
+
+## Odczyt i zapis
+
+Typowo:
+
+```text id="epalbo"
+/RD = RAM /OE
+/WR = RAM /WE
+```
+
+Jeżeli masz procesor w stylu 6502, gdzie jest jedna linia `R/W`, to wtedy zwykle:
+
+```text id="y9zv6w"
+RAM /OE = /RAMSEL OR NOT(R/W)      ; aktywne przy odczycie
+RAM /WE = /RAMSEL OR R/W           ; aktywne przy zapisie
+```
+
+Ale jeżeli masz już gotowe sygnały `/RD` i `/WR`, to prosto:
+
+```text id="g7s810"
+RAM /OE = /RD
+RAM /WE = /WR
+```
+
+ewentualnie bezpieczniej z dekodowaniem:
+
+```text id="d8qdtc"
+RAM /OE aktywne tylko gdy /RAMSEL = 0 i /RD = 0
+RAM /WE aktywne tylko gdy /RAMSEL = 0 i /WR = 0
+```
+
+## Jak to się mapuje w środku RAM-u
+
+Przy połączeniu:
+
+```text id="bbfb75"
+RAM A14 = CPU A15
+RAM A13 = CPU A13
+RAM A0-A12 = CPU A0-A12
+```
+
+dostajesz:
+
+```text id="i5oyto"
+CPU 0x0000-0x1FFF -> RAM 0x0000-0x1FFF
+CPU 0x2000-0x3FFF -> RAM 0x2000-0x3FFF
+
+CPU 0x8000-0x9FFF -> RAM 0x4000-0x5FFF
+```
+
+Czyli fizycznie w RAM-ie:
+
+```text id="b091mj"
+RAM 0x0000-0x3FFF używane jako dolne 16 KB
+RAM 0x4000-0x5FFF używane jako górne 8 KB
+RAM 0x6000-0x7FFF niewykorzystane
+```
+
+## Minimalna lista połączeń dla RAM-u
+
+```text id="tjamnu"
+RAM A0  = CPU A0
+RAM A1  = CPU A1
+RAM A2  = CPU A2
+RAM A3  = CPU A3
+RAM A4  = CPU A4
+RAM A5  = CPU A5
+RAM A6  = CPU A6
+RAM A7  = CPU A7
+RAM A8  = CPU A8
+RAM A9  = CPU A9
+RAM A10 = CPU A10
+RAM A11 = CPU A11
+RAM A12 = CPU A12
+RAM A13 = CPU A13
+RAM A14 = CPU A15
+
+RAM D0  = CPU D0
+RAM D1  = CPU D1
+RAM D2  = CPU D2
+RAM D3  = CPU D3
+RAM D4  = CPU D4
+RAM D5  = CPU D5
+RAM D6  = CPU D6
+RAM D7  = CPU D7
+
+RAM /CE = /RAMSEL
+RAM /OE = /RD
+RAM /WE = /WR
+```
+
+Jeśli to jest SRAM 62256 z pinami `/CE`, `/OE`, `/WE`, to właśnie tak bym ją podłączyła.
+
