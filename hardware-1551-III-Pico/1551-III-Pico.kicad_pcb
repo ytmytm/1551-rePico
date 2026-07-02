@@ -8,8 +8,8 @@
 	)
 	(paper "A4")
 	(title_block
-		(title "PI1551-III Module")
-		(date "2026-03-10")
+		(title "1551-III Pico")
+		(date "2026-07-01")
 		(rev "2")
 	)
 	(layers

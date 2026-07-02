@@ -719,6 +719,18 @@
           "label": "#",
           "name": "${ITEM_NUMBER}",
           "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Manf#",
+          "name": "Manf#",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Manf",
+          "name": "Manf",
+          "show": false
         }
       ],
       "filter_string": "",
