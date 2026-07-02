@@ -869,6 +869,33 @@
 				(hide yes)
 			)
 		)
+		(property "JLCPCB Part #" "C78284"
+			(at 146.05 86.36 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB URL" "https://jlcpcb.com/partdetail/79418-BSS138/C78284"
+			(at 146.05 86.36 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MFR.Part #" "BSS138"
+			(at 146.05 86.36 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "3"
 			(uuid "1aced5da-ca61-4088-84c8-7a4c95fa7607")
 		)
@@ -896,6 +923,10 @@
 				)
 				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d/75d2c140-5eb5-44c3-a43e-847105354624"
 					(reference "Q2")
+					(unit 1)
+				)
+				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d/93c5a10e-e0aa-481a-bb6b-5a0241e2376b"
+					(reference "Q4")
 					(unit 1)
 				)
 			)
@@ -973,6 +1004,10 @@
 				)
 				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d/75d2c140-5eb5-44c3-a43e-847105354624"
 					(reference "#PWR010")
+					(unit 1)
+				)
+				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d/93c5a10e-e0aa-481a-bb6b-5a0241e2376b"
+					(reference "#PWR0106")
 					(unit 1)
 				)
 			)
@@ -1086,6 +1121,10 @@
 					(reference "R3")
 					(unit 1)
 				)
+				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d/93c5a10e-e0aa-481a-bb6b-5a0241e2376b"
+					(reference "R9")
+					(unit 1)
+				)
 			)
 		)
 	)
@@ -1164,6 +1203,10 @@
 				)
 				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d/75d2c140-5eb5-44c3-a43e-847105354624"
 					(reference "#PWR0102")
+					(unit 1)
+				)
+				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d/93c5a10e-e0aa-481a-bb6b-5a0241e2376b"
+					(reference "#PWR0105")
 					(unit 1)
 				)
 			)
@@ -1275,6 +1318,10 @@
 				)
 				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d/75d2c140-5eb5-44c3-a43e-847105354624"
 					(reference "R4")
+					(unit 1)
+				)
+				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d/93c5a10e-e0aa-481a-bb6b-5a0241e2376b"
+					(reference "R10")
 					(unit 1)
 				)
 			)

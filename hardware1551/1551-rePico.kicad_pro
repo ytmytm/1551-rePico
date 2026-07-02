@@ -571,7 +571,7 @@
         "pattern": "GND"
       },
       {
-        "netclass": "POWER",
+        "netclass": "Default",
         "pattern": "+3.3V"
       }
     ]
@@ -654,14 +654,56 @@
           "label": "Datasheet",
           "name": "Datasheet",
           "show": true
+        },
+        {
+          "group_by": false,
+          "label": "JLCPCB URL",
+          "name": "JLCPCB URL",
+          "show": true
+        },
+        {
+          "group_by": false,
+          "label": "MFR.Part #",
+          "name": "MFR.Part #",
+          "show": true
+        },
+        {
+          "group_by": false,
+          "label": "Manf",
+          "name": "Manf",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Manf#",
+          "name": "Manf#",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "JLCPCB Part #",
+          "name": "JLCPCB Part #",
+          "show": true
+        },
+        {
+          "group_by": false,
+          "label": "Description",
+          "name": "Description",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "#",
+          "name": "${ITEM_NUMBER}",
+          "show": false
         }
       ],
       "filter_string": "",
       "group_symbols": true,
       "include_excluded_from_bom": true,
-      "name": "Default Editing",
+      "name": "",
       "sort_asc": true,
-      "sort_field": "Referenz"
+      "sort_field": "Reference"
     },
     "connection_grid_size": 50.0,
     "drawing": {
