@@ -9,5 +9,4 @@
   (lib (name "IIC_4CH_Level_Converter")(type "KiCad")(uri "$KIPRJMOD/../common/modules/IIC_4CH_Level_Converter.pretty")(options "")(descr ""))
   (lib (name "resistor")(type "KiCad")(uri "$KIPRJMOD/../common/modules/resistor.pretty")(options "")(descr ""))
   (lib (name "pi1541")(type "KiCad")(uri "${KIPRJMOD}/../common/modules/Pi1541.pretty")(options "")(descr ""))
-  (lib (name "Conn_DIN_round")(type "KiCad")(uri "${KIPRJMOD}/Conn_DIN_round.pretty")(options "")(descr ""))
 )
