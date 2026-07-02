@@ -15,13 +15,18 @@ This file now lists only the remaining or intentionally deferred items. Confirme
    - Current design uses gate-array `/XR{slash}~{W}` on `_write`.
    - `/R{slash}~{W}`, `/PHI2`, and `/PHI0` are already routed to CPLD pins for possible later use.
 
+3. Keep the new experiment jumpers in their default positions for normal bring-up.
+   - `JP2` default: board `PHI0_BRD` feeds the active `/PHI0` net.
+   - `JP5`/`JP6` default: Pico `GPIO3` drives `/DEVNUM_3V3`, and board `/~{IRQ_BRD}` feeds `/~{IRQ}`.
+   - `JP7` default ties the alternate DEVNUM source to `GND`, but it is isolated while `JP5` is in the default position.
+
 ## Firmware TODO
 
 1. Update Pico firmware for the 1551 pin map.
-   - `GPIO0`: use for the planned 2 MHz clock generator / 100 Hz IRQ spike generator test.
+   - `GPIO0`: normally isolated by `JP2`; can be switched in later to test a Pico-generated 2 MHz `PHI0`.
    - `GPIO1`: `/MODE_3V3`
    - `GPIO2`: `/SYNC_3V3`
-   - `GPIO3`: `/DEVNUM_3V3`
+   - `GPIO3`: normally `/DEVNUM_3V3`; can be switched later to test Pico-generated IRQ pulses.
    - `GPIO4`: `/MTR_3V3`
    - `GPIO5`: `/WPS_3V3`
    - `GPIO6`: `/STP0_3V3`
@@ -53,9 +58,18 @@ This file now lists only the remaining or intentionally deferred items. Confirme
    - CPLD passes `/~{RESET}` to `/~{RESET_3V3}`.
    - Pico `RUN` only follows that reset if `JP1` is bridged.
 
+6. Document the IRQ/PHI0 experiment jumper modes.
+   - `JP2` is a 3-way solder jumper for `PHI0`: default `A-C` connects `PHI0_BRD` to `/PHI0`; experiment `B-C` connects Pico `GPIO0` to `/PHI0` instead.
+   - `JP5` and `JP6` must be changed together for the IRQ experiment. Default keeps `GPIO3 -> /DEVNUM_3V3` and `/~{IRQ_BRD} -> /~{IRQ}`. Swapped mode connects `GPIO3 -> /~{IRQ}` and lets `JP7` set `/DEVNUM_3V3`.
+   - `JP7` selects the fixed device number only when `JP5` is in swapped mode: default `GND` is device #8; switched `+3V3` is device #9.
+   - Avoid partial jumper swaps: changing only one of `JP5` or `JP6` can leave either IRQ or DEVNUM disconnected from the intended source.
+   - When changing any 3-way jumper, cut the default `A-C` bridge before adding the `B-C` bridge. Leaving both bridges closed can short two signal sources together.
+   - Before testing Pico-generated `PHI0`, verify the programmed CPLD leaves `U3 P31` as input/high-Z. The old fitted output marks `P31` as unused/tied, but the final JED should be checked before driving `/PHI0` from `GPIO0`.
+
 ## Reference Notes To Keep
 
 - KiCad files were saved again after the hardware corrections; this report intentionally keeps only deferred CPLD/firmware work and a few bring-up reminders.
 - TCBM connector naming is intentionally preserved for the adapter: `/DAV` is on `J10` pin 11 and `/ACK` is on `J10` pin 13.
 - Board-side `YB*`, `MODE`, `DEVNUM_BRD`, `SYNC`, `DS0`, and `DS1` are intentionally not connected to the active Pico-side nets.
 - Only SMD parts are expected in the assembly BOM; through-hole parts/modules are manual assembly.
+- New `JP2`, `JP5`, `JP6`, and `JP7` solder jumpers are for future CPU clock/IRQ experiments, not for the first normal bring-up.

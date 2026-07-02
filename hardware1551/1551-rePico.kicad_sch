@@ -6328,6 +6328,17 @@
 			(embedded_fonts no)
 		)
 	)
+	(text "DEFAULT\n- use GPIO3 to drive DEVNUM_3V3 (Pico sets device number)\n- IRQ comes from the board\nOR\n- swap both JP5/JP6\n- IRQ comes from GPIO3\n- DEVNUM_3V3 set by JP7: GND (default) is #8, +3V3 is #9\n"
+		(exclude_from_sim no)
+		(at 200.914 99.314 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "17fbc320-8c10-4b56-950a-8176b08db20e")
+	)
 	(text "Rotary encoder\n(KY-040)"
 		(exclude_from_sim no)
 		(at 34.163 186.309 0)
@@ -6415,7 +6426,7 @@
 		)
 		(uuid "dcde9586-56be-4dcb-9450-512eff047867")
 	)
-	(text "Pico firmware TODO:\n- GPIO0: SOE not used (always high), can be fixed in firmware to true\n- GPIO3: Pico decides about device number - 0 or 1\n- GPIO5: switch driver from high/low to hi-z/low"
+	(text "Pico firmware TODO:\n- GPIO0: SOE not used (always high), can be fixed in firmware to true\n  OR can be used to test 2MHz clock (PHI0) for 6502\n- GPIO3: Pico decides about device number - 0 or 1\n  OR can be used to test 100Hz (IRQ) for 6502\n- GPIO5: switch driver from high/low to hi-z/low"
 		(exclude_from_sim no)
 		(at 200.66 69.596 0)
 		(effects
@@ -6437,6 +6448,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "32f9628e-2157-4278-bad3-25113d2b075f")
+	)
+	(junction
+		(at 180.34 94.615)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "3860d509-18af-4e97-8c81-5566b10ba29b")
 	)
 	(junction
 		(at 74.93 116.84)
@@ -6543,10 +6560,6 @@
 		(uuid "09628c48-444d-49a8-b56a-aaceaae29cd9")
 	)
 	(no_connect
-		(at 156.21 72.39)
-		(uuid "312597e8-57be-4a0e-8a29-ec5c54ac844b")
-	)
-	(no_connect
 		(at 384.175 71.755)
 		(uuid "34194a40-393c-41cd-b371-f6ff3c320bce")
 	)
@@ -6635,6 +6648,16 @@
 			(type default)
 		)
 		(uuid "0255bbaa-6f51-458e-8ed6-9c6901613d08")
+	)
+	(wire
+		(pts
+			(xy 180.34 94.615) (xy 180.34 104.775)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0488a6b9-82ad-4433-b786-59c68e750942")
 	)
 	(wire
 		(pts
@@ -6878,6 +6901,16 @@
 	)
 	(wire
 		(pts
+			(xy 180.34 82.55) (xy 156.21 82.55)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "57dca55d-dd5d-43bc-bbc1-7997f1e5920f")
+	)
+	(wire
+		(pts
 			(xy 487.68 154.305) (xy 492.76 154.305)
 		)
 		(stroke
@@ -6975,6 +7008,16 @@
 			(type default)
 		)
 		(uuid "7798c645-bd34-467b-a596-531080d02e31")
+	)
+	(wire
+		(pts
+			(xy 156.21 72.39) (xy 170.815 72.39)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7c7e082f-02d2-4b23-bf2d-8d4ede5f86a9")
 	)
 	(wire
 		(pts
@@ -7248,6 +7291,16 @@
 	)
 	(wire
 		(pts
+			(xy 180.34 82.55) (xy 180.34 94.615)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ee06f422-3d1e-45b5-99f2-7803ae2262ea")
+	)
+	(wire
+		(pts
 			(xy 32.385 106.045) (xy 32.385 97.79)
 		)
 		(stroke
@@ -7375,6 +7428,16 @@
 			(justify left bottom)
 		)
 		(uuid "051e2f4b-9cce-4593-9dc4-067a0e9086fb")
+	)
+	(label "~{IRQ}"
+		(at 185.42 108.585 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "05e6a514-c450-4ff3-8981-867633123617")
 	)
 	(label "D1"
 		(at 363.855 41.275 180)
@@ -7886,6 +7949,16 @@
 		)
 		(uuid "2e658c06-0e11-4ffe-ae74-5ca350def2c9")
 	)
+	(label "PHI0_BRD"
+		(at 180.975 72.39 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "32784795-8d07-4556-8c85-f5322be60083")
+	)
 	(label "A1"
 		(at 344.805 116.205 0)
 		(effects
@@ -8096,7 +8169,7 @@
 		)
 		(uuid "53afad48-a7cb-4c33-a2ac-0aa27dfbc86b")
 	)
-	(label "~{IRQ}"
+	(label "~{IRQ_BRD}"
 		(at 324.485 126.365 180)
 		(effects
 			(font
@@ -8155,16 +8228,6 @@
 			(justify left bottom)
 		)
 		(uuid "55a148d3-7ae9-425c-9688-d0ca87d02bf1")
-	)
-	(label "DEVNUM_3V3"
-		(at 156.21 82.55 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "565d4db8-fce1-4fdf-b56d-7ec40337a0e3")
 	)
 	(label "SD_MOSI"
 		(at 120.65 110.49 180)
@@ -8486,7 +8549,7 @@
 		)
 		(uuid "7e7b8f93-43e6-426a-8f13-5780792abda4")
 	)
-	(label "PHI0"
+	(label "PHI0_BRD"
 		(at 324.485 118.745 180)
 		(effects
 			(font
@@ -8856,6 +8919,16 @@
 		)
 		(uuid "ad8775d6-2582-4bad-b36d-5fc2e7f1b7b6")
 	)
+	(label "~{IRQ_BRD}"
+		(at 190.5 104.775 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "adde4c2f-e23a-4529-bc5e-4597c868413d")
+	)
 	(label "STP0"
 		(at 344.805 184.785 0)
 		(effects
@@ -8936,6 +9009,16 @@
 		)
 		(uuid "b61c51b7-fe7c-4f2d-8faf-46bf2602f82f")
 	)
+	(label "PHI0"
+		(at 175.895 68.58 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "b755a25e-040b-4ad8-a2e5-65cb109bcd5b")
+	)
 	(label "YB5_BRD"
 		(at 384.175 48.895 0)
 		(effects
@@ -8985,6 +9068,16 @@
 			(justify left bottom)
 		)
 		(uuid "bbf6ae53-a326-4ce7-afe8-126190859cef")
+	)
+	(label "DEVNUM_3V3"
+		(at 185.42 90.805 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "bc17a851-f293-4349-9305-cfaa1e8d4869")
 	)
 	(label "MODE"
 		(at 384.175 69.215 0)
@@ -9860,6 +9953,78 @@
 			(project "1541-rePico"
 				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d"
 					(reference "#PWR025")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Jumper:SolderJumper_3_Bridged12")
+		(at 175.895 72.39 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "1fc344ac-bb17-423e-baaf-3fba664e81c4")
+		(property "Reference" "JP2"
+			(at 175.895 76.2 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "SolderJumper_3_Bridged12"
+			(at 175.895 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Footprint" "Jumper:SolderJumper-3_P1.3mm_Bridged12_RoundedPad1.0x1.5mm_NumberLabels"
+			(at 175.895 72.39 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 175.895 72.39 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "3-pole Solder Jumper, pins 1+2 closed/bridged"
+			(at 175.895 72.39 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "3"
+			(uuid "78524e58-ea59-427c-9610-913db8af8afe")
+		)
+		(pin "2"
+			(uuid "ba3c3b8f-e353-4434-bc95-407939d5ef64")
+		)
+		(pin "1"
+			(uuid "1d2bd223-1f7d-456e-9cf9-9ce8d0f00921")
+		)
+		(instances
+			(project ""
+				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d"
+					(reference "JP2")
 					(unit 1)
 				)
 			)
@@ -10817,6 +10982,71 @@
 		)
 	)
 	(symbol
+		(lib_id "power:GND")
+		(at 194.31 99.695 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "47b5dbbc-e9f2-46e0-94a2-8ac66d52b4dd")
+		(property "Reference" "#PWR09"
+			(at 200.66 99.695 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 198.12 99.695 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 194.31 99.695 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 194.31 99.695 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 194.31 99.695 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "2775a7c5-744e-4a49-b42b-f0f265b72143")
+		)
+		(instances
+			(project "1551-rePico"
+				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d"
+					(reference "#PWR09")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:+3V3")
 		(at 510.54 20.955 0)
 		(unit 1)
@@ -11576,6 +11806,78 @@
 			(project "1551-rePico"
 				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d"
 					(reference "#PWR040")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Jumper:SolderJumper_3_Bridged12")
+		(at 185.42 104.775 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "694d8459-1fb4-4e00-b4d6-64ccd8ae4a81")
+		(property "Reference" "JP6"
+			(at 185.42 100.965 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "SolderJumper_3_Bridged12"
+			(at 185.42 98.425 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Footprint" "Jumper:SolderJumper-3_P1.3mm_Bridged12_RoundedPad1.0x1.5mm_NumberLabels"
+			(at 185.42 104.775 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 185.42 104.775 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "3-pole Solder Jumper, pins 1+2 closed/bridged"
+			(at 185.42 104.775 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "3"
+			(uuid "f2df349f-873c-4460-9cf3-ba6562f81d02")
+		)
+		(pin "2"
+			(uuid "1ef3381f-fce6-4215-9f50-4ccb63914713")
+		)
+		(pin "1"
+			(uuid "7b4617f3-5fd5-4045-b3cd-7d4a08405cb0")
+		)
+		(instances
+			(project "1551-rePico"
+				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d"
+					(reference "JP6")
 					(unit 1)
 				)
 			)
@@ -12788,6 +13090,144 @@
 		)
 	)
 	(symbol
+		(lib_id "Jumper:SolderJumper_3_Bridged12")
+		(at 185.42 94.615 0)
+		(mirror x)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "9db4127b-a64b-48b5-9b8b-7cf4ae1b9f73")
+		(property "Reference" "JP5"
+			(at 185.42 98.425 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "SolderJumper_3_Bridged12"
+			(at 185.42 100.965 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Footprint" "Jumper:SolderJumper-3_P1.3mm_Bridged12_RoundedPad1.0x1.5mm_NumberLabels"
+			(at 185.42 94.615 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 185.42 94.615 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "3-pole Solder Jumper, pins 1+2 closed/bridged"
+			(at 185.42 94.615 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "3"
+			(uuid "ed73cbf5-a59a-4eaf-912d-7bb9f6172ed9")
+		)
+		(pin "2"
+			(uuid "926c4638-4a6f-42c6-9d06-2d482cf968d8")
+		)
+		(pin "1"
+			(uuid "5f9c914e-d3ce-4a79-bb5a-afd628b1646c")
+		)
+		(instances
+			(project "1551-rePico"
+				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d"
+					(reference "JP5")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 194.31 89.535 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "a09ab01b-4168-476a-89db-d387a45f8010")
+		(property "Reference" "#PWR011"
+			(at 194.31 93.345 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 194.31 84.455 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 194.31 89.535 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 194.31 89.535 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+3V3\""
+			(at 194.31 89.535 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "13c0139f-800d-4f54-b90f-06d1fed1152d")
+		)
+		(instances
+			(project "1551-rePico"
+				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d"
+					(reference "#PWR011")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:GND")
 		(at 334.01 325.755 0)
 		(unit 1)
@@ -13712,6 +14152,78 @@
 			(project "1551-rePico"
 				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d"
 					(reference "#PWR068")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Jumper:SolderJumper_3_Bridged12")
+		(at 194.31 94.615 270)
+		(mirror x)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "d5019309-9aa1-42ab-8681-63e7ffd8d3db")
+		(property "Reference" "JP7"
+			(at 198.12 94.615 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "SolderJumper_3_Bridged12"
+			(at 200.66 94.615 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Footprint" "Jumper:SolderJumper-3_P1.3mm_Bridged12_RoundedPad1.0x1.5mm_NumberLabels"
+			(at 194.31 94.615 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 194.31 94.615 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "3-pole Solder Jumper, pins 1+2 closed/bridged"
+			(at 194.31 94.615 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "3"
+			(uuid "198b19f2-0596-40fe-96a7-3f001754ccec")
+		)
+		(pin "2"
+			(uuid "93b579ac-ab2f-4fb4-93ab-ce9ea34fc11f")
+		)
+		(pin "1"
+			(uuid "f4f703d0-38dc-4547-8f90-6cb3622dd686")
+		)
+		(instances
+			(project "1551-rePico"
+				(path "/7c37ffbe-d8d1-4c30-ad42-fd3ef959e14d"
+					(reference "JP7")
 					(unit 1)
 				)
 			)
