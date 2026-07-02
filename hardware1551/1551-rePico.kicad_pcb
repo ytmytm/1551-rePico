@@ -8,9 +8,11 @@
 	)
 	(paper "A4")
 	(title_block
-		(title "1541-rePico")
-		(date "2026-04-13")
-		(rev "1.6")
+		(title "1551-rePico")
+		(date "2026-07-03")
+		(rev "1.0")
+		(company "YTM Enterprises")
+		(comment 1 "based on 1541-rePico and Fake6523")
 	)
 	(layers
 		(0 "F.Cu" signal)
@@ -305,7 +307,7 @@
 		(path "/abc8f4c8-681d-4390-918d-1d566ff78073")
 		(sheetname "/")
 		(sheetfile "1551-rePico.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_bom)
 		(fp_line
 			(start 14.08 -1.33)
 			(end 8.62 -1.33)
@@ -914,6 +916,7 @@
 		(property "Value" "SD CARD"
 			(at 0 15.08 0)
 			(layer "F.SilkS")
+			(hide yes)
 			(uuid "948db0ea-3126-4675-a963-f2f97a13c3bd")
 			(effects
 				(font
@@ -950,7 +953,7 @@
 		(path "/9018f14d-df68-4e77-9b3c-96f20a3d35ae")
 		(sheetname "/")
 		(sheetfile "1551-rePico.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_bom)
 		(fp_line
 			(start 1.38 1.27)
 			(end 1.38 14.08)
@@ -1218,7 +1221,7 @@
 		(path "/2eb4e6b5-550f-4154-b27b-04b2d8ac759b")
 		(sheetname "/")
 		(sheetfile "1551-rePico.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_bom)
 		(fp_line
 			(start 14.08 -1.33)
 			(end 8.62 -1.33)
@@ -2354,9 +2357,10 @@
 				)
 			)
 		)
-		(property "Value" "Rotary encoder"
+		(property "Value" "Conn_01x05"
 			(at 0 12.54 0)
 			(layer "F.SilkS")
+			(hide yes)
 			(uuid "a8c12b5c-194c-422b-89a0-b14459823d77")
 			(effects
 				(font
@@ -2615,6 +2619,7 @@
 		(property "Value" "0.96_I2C_OLED"
 			(at 0 10 0)
 			(layer "F.Fab")
+			(hide yes)
 			(uuid "2fb11cf5-1cc5-4788-b1fd-eb44b2bd7ddc")
 			(effects
 				(font
@@ -2651,7 +2656,7 @@
 		(path "/93571d42-5880-4b80-bfb0-684b79f40a6a")
 		(sheetname "/")
 		(sheetfile "1551-rePico.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_bom)
 		(fp_line
 			(start -1.38 -1.38)
 			(end 0 -1.38)
@@ -2898,7 +2903,7 @@
 		(path "/d7c3964d-31e4-42ed-a817-459f4e5c7245")
 		(sheetname "/")
 		(sheetfile "1551-rePico.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_bom)
 		(fp_line
 			(start 14.08 -1.33)
 			(end 8.62 -1.33)
@@ -3542,7 +3547,7 @@
 		(path "/c7f6d062-6489-4cde-8c2c-88e4ff031b43")
 		(sheetname "/")
 		(sheetfile "1551-rePico.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_bom)
 		(fp_line
 			(start 1.29 -2.58)
 			(end 1.29 2.58)
@@ -4898,7 +4903,7 @@
 		(path "/d6f50c4b-5fe3-4d55-accc-40116cdc1fd0")
 		(sheetname "/")
 		(sheetfile "1551-rePico.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_bom)
 		(fp_line
 			(start -1.38 -1.38)
 			(end 0 -1.38)
@@ -5167,7 +5172,7 @@
 		(path "/bb0c1fc3-8747-4949-a6d6-c4ca1cc68cda")
 		(sheetname "/")
 		(sheetfile "1551-rePico.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_bom)
 		(fp_line
 			(start -3.7 25.5)
 			(end -10.5 25.5)
@@ -6864,7 +6869,7 @@
 		(path "/4a3f6aed-0b4f-4ca1-b975-c22d9425fd70")
 		(sheetname "/")
 		(sheetfile "1551-rePico.kicad_sch")
-		(attr through_hole)
+		(attr through_hole exclude_from_bom)
 		(fp_line
 			(start -1.38 -1.38)
 			(end 0 -1.38)
@@ -8326,6 +8331,48 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "JLCPCB Part #" "C78284"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "0fc01882-0c01-4476-b43a-01be850b813a")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "JLCPCB URL" "https://jlcpcb.com/partdetail/79418-BSS138/C78284"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "9fe9dec0-6361-4e9a-9482-4fd1bb5a0cba")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "MFR.Part #" "BSS138"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "5154d797-8a46-4a51-bd6d-419ec86ca02a")
+			(effects
+				(font
+					(size 1 1)
 					(thickness 0.15)
 				)
 				(justify mirror)
@@ -10977,6 +11024,48 @@
 				(justify mirror)
 			)
 		)
+		(property "JLCPCB Part #" "C78284"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "cb08198f-130c-4a5c-9b3b-a68e12c0e586")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "JLCPCB URL" "https://jlcpcb.com/partdetail/79418-BSS138/C78284"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "2f9c318c-1ce3-45aa-9aee-f76c639a73c5")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "MFR.Part #" "BSS138"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "801e0393-c225-4241-b276-a40f603e8080")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
 		(property ki_fp_filters "SOT?23*")
 		(path "/93c5a10e-e0aa-481a-bb6b-5a0241e2376b/364a730f-a686-4287-ad1c-0a1ba65c2ecf")
 		(sheetname "/BSS138_9/")
@@ -11723,6 +11812,48 @@
 				(justify mirror)
 			)
 		)
+		(property "JLCPCB Part #" "C78284"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "543bec88-ad7d-45e2-8474-abdb29c01c62")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "JLCPCB URL" "https://jlcpcb.com/partdetail/79418-BSS138/C78284"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "4c3d0f8f-66ca-4538-90a3-64a65228c5c5")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "MFR.Part #" "BSS138"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "039b7c7a-e29c-49ed-9eb0-524e797d6043")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
 		(property ki_fp_filters "SOT?23*")
 		(path "/67f2276f-cc75-48ac-899c-fedc722307b3/364a730f-a686-4287-ad1c-0a1ba65c2ecf")
 		(sheetname "/BSS138_6/")
@@ -12276,6 +12407,48 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "JLCPCB Part #" "C78284"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "57ab5c2d-d953-4852-bedf-de466b3c2084")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "JLCPCB URL" "https://jlcpcb.com/partdetail/79418-BSS138/C78284"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "cba90136-c4c1-44d2-bb55-4193c43d43e4")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "MFR.Part #" "BSS138"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "290c8c78-635c-485d-adfd-e6f3b428e879")
+			(effects
+				(font
+					(size 1 1)
 					(thickness 0.15)
 				)
 				(justify mirror)
@@ -57600,6 +57773,18 @@
 				(thickness 0.1)
 			)
 			(justify left bottom)
+		)
+	)
+	(gr_text "1551-rePico v1.0, VII 2026\nby Maciej Witkowiak <ytm@elysium.pl>"
+		(at 131.9276 109.8296 0)
+		(layer "F.SilkS")
+		(uuid "666881f9-eb71-4040-8e2d-a8253c263da7")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.1)
+			)
+			(justify bottom)
 		)
 	)
 	(gr_text "pins ->"

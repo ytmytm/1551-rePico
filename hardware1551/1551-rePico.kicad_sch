@@ -6,8 +6,8 @@
 	(paper "A4")
 	(title_block
 		(title "1551-rePico")
-		(date "2026-06-24")
-		(rev "1.6")
+		(date "2026-07-03")
+		(rev "1.0")
 		(company "YTM Enterprises")
 		(comment 1 "based on 1541-rePico and Fake6523")
 	)
