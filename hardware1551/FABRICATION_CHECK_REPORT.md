@@ -68,7 +68,6 @@ This file now lists only the remaining or intentionally deferred items. Confirme
 
 ## Reference Notes To Keep
 
-- KiCad files were saved again after the hardware corrections; this report intentionally keeps only deferred CPLD/firmware work and a few bring-up reminders.
 - TCBM connector naming is intentionally preserved for the adapter: `/DAV` is on `J10` pin 11 and `/ACK` is on `J10` pin 13.
 - Board-side `YB*`, `MODE`, `DEVNUM_BRD`, `SYNC`, `DS0`, and `DS1` are intentionally not connected to the active Pico-side nets.
 - Only SMD parts are expected in the assembly BOM; through-hole parts/modules are manual assembly.
