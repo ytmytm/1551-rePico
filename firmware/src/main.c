@@ -14,6 +14,7 @@
 #include "hardware/clocks.h"
 
 #include "pinout.h"
+#include "board1551.h"
 
 #define _EXTERN_
 
@@ -138,8 +139,12 @@ int main()
     // Steursignale BYTE_READY, SYNC und SOE Initialisieren
     init_control_signals();
 
+#if REPICO1551
+    init_board1551();
+#else
     init_soe_gatearray();
     clear_soe_gatearray();
+#endif
 
     init_bytetimer();
 
@@ -1650,9 +1655,11 @@ void init_control_signals(void)
     gpio_set_drive_strength(GPIO_PAPORT+6, GPIO_DRIVE_STRENGTH_12MA);
     gpio_set_drive_strength(GPIO_PAPORT+7, GPIO_DRIVE_STRENGTH_12MA);
 
+#if !REPICO1551
     gpio_init(GPIO_SOE);
     gpio_set_pulls(GPIO_SOE, true, false);
     gpio_set_dir(GPIO_SOE, GPIO_IN);
+#endif
 
     gpio_init(GPIO_OE);
     gpio_set_pulls(GPIO_OE, true, false);
@@ -1661,12 +1668,14 @@ void init_control_signals(void)
 
 /////////////////////////////////////////////////////////////////////
 
+#if !REPICO1551
 void init_soe_gatearray(void)
 {
     gpio_init(GPIO_SOE_GA);
     gpio_set_dir(GPIO_SOE_GA, GPIO_OUT);
     set_soe_gatearray();
 }
+#endif
 
 /////////////////////////////////////////////////////////////////////
 

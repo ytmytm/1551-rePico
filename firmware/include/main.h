@@ -8,6 +8,7 @@
 #include "f_util.h"
 #include "ff.h"
 #include "globals.h"
+#include "board_config.h"
 
 // functions
 int64_t input_debounce_callback(alarm_id_t id, void *user_data);
@@ -44,7 +45,11 @@ void stepper_inc(void);
 void stepper_dec(void);
 void init_motor(void);
 void init_control_signals(void);
+#if REPICO1551
+void init_board1551(void);
+#else
 void init_soe_gatearray(void);
+#endif
 
 uint8_t open_dir_entry(FILINFO od_file_entry);
 
@@ -67,12 +72,15 @@ void start_stepper_timer(void);
 #define set_byte_ready()    gpio_set_dir(GPIO_BRDY,GPIO_IN)    // HiZ
 #define clear_byte_ready()  {gpio_set_dir(GPIO_BRDY,GPIO_OUT);gpio_put(GPIO_BRDY,false);}   // auf Ground ziehen
 
+#if REPICO1551
+#define get_soe_status()    (true)
+#else
 #define get_soe_status()    gpio_get(GPIO_SOE)
-
-#define get_so_status()     gpio_get(GPIO_OE)
-
 #define set_soe_gatearray()     gpio_put(GPIO_SOE_GA,true)
 #define clear_soe_gatearray()   gpio_put(GPIO_SOE_GA,false)
+#endif
+
+#define get_so_status()     gpio_get(GPIO_OE)
 
 // WPS will be generated via inverter 74ls04 on 1541*-mainboard
 // ... thus we send the inverse here (clear_wps = "1" on WPS)

@@ -6,7 +6,8 @@
 ***********************************/
 #include "hardware/spi.h"
 
-// Via connection
+// Gate-array / 1551 bus connection (GPIO numbers shared across targets)
+// 1551: GPIO0=PHI0(PWM), GPIO1=MODE, GPIO3=IRQ-exp(PWM), GPIO8..15=YB0..7
 #define GPIO_SOE    0
 #define GPIO_OE     1
 #define GPIO_SYNC   2

@@ -30,6 +30,8 @@ include(pico_sdk_import.cmake)
 
 project(1541-rePico C CXX ASM)
 
+option(REPICO1551 "Build for 1551-rePico hardware" ON)
+
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
@@ -46,6 +48,12 @@ file(GLOB_RECURSE mysources  CONFIGURE_DEPENDS "src/*.c")
 file(GLOB_RECURSE myincludes CONFIGURE_DEPENDS "include/*.h")
 
 target_sources(1541-rePico PUBLIC ${mysources} ${myincludes})
+
+if(REPICO1551)
+    target_compile_definitions(1541-rePico PRIVATE REPICO1551=1)
+else()
+    target_compile_definitions(1541-rePico PRIVATE REPICO1541=1 REPICO1551=0)
+endif()
 
 pico_set_program_name(1541-rePico "1541-rePico")
 pico_set_program_version(1541-rePico "0.1")
@@ -79,6 +87,7 @@ target_link_libraries(1541-rePico
         hardware_interp
         hardware_timer
         hardware_clocks
+        hardware_pwm
         no-OS-FatFS-SD-SDIO-SPI-RPi-Pico
         )
 
