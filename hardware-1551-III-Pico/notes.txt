@@ -1,1 +1,17 @@
 ﻿Mini-Din-7 https://forum.kicad.info/t/mini-din-connectors-their-footprints-and-3-d-models-asking-for-discussion-and-a-bit-of-help-discussion/58247/11
+
+6502 computers:
+https://wilsonminesco.com/6502primer/potpourri.html
+
+https://coronax.wordpress.com/2024/01/24/adding-io-ports-to-a-6502-computer-using-7400-series-ics/
+
+https://github.com/maarten-pennings/6502/tree/master/1clock
+
+RAM /WE is always R/W combined with Phi2
+
+https://github.com/maarten-pennings/6502/blob/master/4ram/README.md
+
+https://www.grappendorf.net/projects/6502-home-computer/
+
+Something completely different:
+https://eaw.app/pico6502/
