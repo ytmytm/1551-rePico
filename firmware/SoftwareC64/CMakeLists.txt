@@ -46,7 +46,7 @@ add_custom_target(GenSelector
   DEPENDS ${MENUPRG_BINARY}
   COMMAND echo \"\#ifndef _MENU_PRG_H_\\n\#define _MENU_PRG_H_\" > ${PROJECT_INCLUDE}/c64_selector.h
   COMMAND xxd -i -n \"menu_prg\" ${MENUPRG_BINARY} >> ${PROJECT_INCLUDE}/c64_selector.h
-  COMMAND sed -i \"s!unsigned!const unsigned!g\" ${PROJECT_INCLUDE}/c64_selector.h
+  COMMAND perl -pi -e \"s!unsigned!const unsigned!g\" ${PROJECT_INCLUDE}/c64_selector.h
   COMMAND echo \"\#endif\" >> ${PROJECT_INCLUDE}/c64_selector.h
 )
 
@@ -57,6 +57,6 @@ add_custom_target(GenIntro
   DEPENDS intro.prg
   COMMAND echo \"\#ifndef _INTRO_PRG_H_\\n\#define _INTRO_PRG_H_\" > ${PROJECT_INCLUDE}/c64_intro.h
   COMMAND xxd -i -n \"intro_prg\" intro.prg >> ${PROJECT_INCLUDE}/c64_intro.h
-  COMMAND sed -i \"s!unsigned!const unsigned!g\" ${PROJECT_INCLUDE}/c64_intro.h
+  COMMAND perl -pi -e \"s!unsigned!const unsigned!g\" ${PROJECT_INCLUDE}/c64_intro.h
   COMMAND echo \"\#endif\" >> ${PROJECT_INCLUDE}/c64_intro.h
 )
