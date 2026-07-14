@@ -1,5 +1,5 @@
 /**********************************
- * 1551-rePico PWM outputs on GPIO0 (PHI0) and GPIO3 (IRQ experiment)
+ * 1551-rePico board init: GPIO0 PHI0 PWM; GPIO3 DEVNUM or optional IRQ PWM
 ***********************************/
 #include "pico/stdlib.h"
 #include "hardware/pwm.h"
@@ -44,17 +44,20 @@ static void start_pwm(uint gpio, float div, uint32_t top, uint32_t level)
     pwm_set_chan_level(slice, channel, level);
 }
 
-void init_board1551(void)
+static void init_gpio3_devnum_device8(void)
+{
+    gpio_init(GPIO_SOE_GA);
+    gpio_set_dir(GPIO_SOE_GA, GPIO_OUT);
+    gpio_put(GPIO_SOE_GA, REPICO1551_DEVNUM_DEVICE8_LEVEL);
+}
+
+#if defined(REPICO1551_GPIO3_IRQ_PWM)
+static void init_gpio3_irq_pwm(void)
 {
     float div;
     uint32_t top;
     uint32_t period;
 
-    // GPIO0: 2 MHz PHI0, 50% duty cycle
-    calc_pwm_params(REPICO1551_PHI0_HZ, &div, &top, &period);
-    start_pwm(GPIO_SOE, div, top, top / 2u);
-
-    // GPIO3: 100 Hz IRQ experiment, brief active-low pulses (line mostly high)
     calc_pwm_params(REPICO1551_IRQ_HZ, &div, &top, &period);
     uint32_t low_counts = (uint32_t)(((uint64_t)period * REPICO1551_IRQ_LOW_US * REPICO1551_IRQ_HZ) / 1000000ull);
     if (low_counts < 1u) {
@@ -65,6 +68,24 @@ void init_board1551(void)
     }
     const uint32_t level = top - low_counts;
     start_pwm(GPIO_SOE_GA, div, top, level);
+}
+#endif
+
+void init_board1551(void)
+{
+    float div;
+    uint32_t top;
+    uint32_t period;
+
+    // GPIO0: 2 MHz PHI0, 50% duty cycle (isolated from /PHI0 until JP2 experiment bridge)
+    calc_pwm_params(REPICO1551_PHI0_HZ, &div, &top, &period);
+    start_pwm(GPIO_SOE, div, top, top / 2u);
+
+#if defined(REPICO1551_GPIO3_IRQ_PWM)
+    init_gpio3_irq_pwm();
+#else
+    init_gpio3_devnum_device8();
+#endif
 }
 
 #endif

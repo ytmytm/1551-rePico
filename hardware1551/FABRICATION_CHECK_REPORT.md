@@ -26,7 +26,7 @@ This file now lists only the remaining or intentionally deferred items. Confirme
    - `GPIO0`: normally isolated by `JP2`; can be switched in later to test a Pico-generated 2 MHz `PHI0`.
    - `GPIO1`: `/MODE_3V3`
    - `GPIO2`: `/SYNC_3V3`
-   - `GPIO3`: normally `/DEVNUM_3V3`; can be switched later to test Pico-generated IRQ pulses.
+   - `GPIO3`: normally `/DEVNUM_3V3` (static **low** = device #8 / Plus/4 `FEE0`–`FEF7`); optional 100 Hz IRQ PWM via `#define REPICO1551_GPIO3_IRQ_PWM` in `firmware/include/board1551.h` **only** after swapping both `JP5` and `JP6`.
    - `GPIO4`: `/MTR_3V3`
    - `GPIO5`: `/WPS_3V3`
    - `GPIO6`: `/STP0_3V3`
