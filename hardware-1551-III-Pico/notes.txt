@@ -24,17 +24,25 @@ But there is no response to TCBM.
 We don't even know if the port is accessible to CPU.
 Should we use R/W + Phi2 instead of XR/W+Phi0? We don't know.
 We might test it with repico using debug firmware and debug ROM, but it will have to wait.
-Pico generates 2MHz on GPIO0 and 100Hz with short low on GPIO3, that should be fine (unless we use inverting buffer).
+Pico generates 2MHz on GPIO0 and 100Hz with 10us low on GPIO3, same as onboard circuit, that should be fine (unless we use inverting buffer).
+- uncomment /* #define REPICO1551_GPIO3_IRQ_PWM */ in include/board1551.h to enble PWM back
 
 Flash firmware (switches ot bootsel on its own):
 picotool load "/Users/apple/Documents/Batibat/Maciejdev/plus4/pico1551/1551-rePico/firmware/build/1541-rePico.uf2" -f
 
 Next steps:
+- most important: confirm that CPU is working with custom debug ROM with CPU port
+    - cpld: write 0,1,2,...,255 to head register on every irq?
+    - no cpld: copy write protect to act led in main loop?
+    - monitor in pico OLED (debug firmware)
+    - drop the whole SD card thing in debug firmware
+    - need to wire up rotary encoder for input
+- only then that passes we can debug CPLD further
 - if CPU can't write to TPI ports we can check if using phi2+r/w would help here
     (in fact we can start with it? could be faster check than custom ROM)
     - maybe it should just write 0 and use hi-z instead of 1?
 - repico knows something about TPI / CPU port state - should display that on OLED
-    - we could drop the whole SD card thing
+- we don't use WPS (write protect) as input, nor ACT (LED) as output - no hardware
 - we need custom debug ROM for 1551 part:
     - we must be somehow sure that CPU works
         - repico knows about some CPU lines, use that and debug on OLED
@@ -43,4 +51,3 @@ Next steps:
         - again - repico has access to something and can show it
     - only after this is confirmed we can write test patterns to TCBM DIO port
       and expect to see them on Plus4 side
-- measure how long IRQ is low and replicate that on GPIO3
