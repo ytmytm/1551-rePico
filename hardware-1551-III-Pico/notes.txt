@@ -15,3 +15,32 @@ https://www.grappendorf.net/projects/6502-home-computer/
 
 Something completely different:
 https://eaw.app/pico6502/
+
+[20260714]
+Put together daughterboard, but no success yet.
+The CPU might be running or might be faulty, not sure yet.
+Some lines display expected pattern, so it might be ok.
+But there is no response to TCBM.
+We don't even know if the port is accessible to CPU.
+Should we use R/W + Phi2 instead of XR/W+Phi0? We don't know.
+We might test it with repico using debug firmware and debug ROM, but it will have to wait.
+Pico generates 2MHz on GPIO0 and 100Hz with short low on GPIO3, that should be fine (unless we use inverting buffer).
+
+Flash firmware (switches ot bootsel on its own):
+picotool load "/Users/apple/Documents/Batibat/Maciejdev/plus4/pico1551/1551-rePico/firmware/build/1541-rePico.uf2" -f
+
+Next steps:
+- if CPU can't write to TPI ports we can check if using phi2+r/w would help here
+    (in fact we can start with it? could be faster check than custom ROM)
+    - maybe it should just write 0 and use hi-z instead of 1?
+- repico knows something about TPI / CPU port state - should display that on OLED
+    - we could drop the whole SD card thing
+- we need custom debug ROM for 1551 part:
+    - we must be somehow sure that CPU works
+        - repico knows about some CPU lines, use that and debug on OLED
+          (a simple pattern will be enough)
+    - we must be somehow sure that CPU can read and write TPI ports
+        - again - repico has access to something and can show it
+    - only after this is confirmed we can write test patterns to TCBM DIO port
+      and expect to see them on Plus4 side
+- measure how long IRQ is low and replicate that on GPIO3
