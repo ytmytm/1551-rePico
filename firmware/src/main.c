@@ -561,7 +561,7 @@ void check_menu_events(const uint16_t menu_event)
                             menu_refresh();
                             break;
                         }
-                        if (FR_OK == f_open(&fd, "1541-repico.g64", FA_CREATE_ALWAYS|FA_WRITE))
+                        if (FR_OK == f_open(&fd, product_save_g64_name_s, FA_CREATE_ALWAYS|FA_WRITE))
                         {
                             display_string("G64 file opened");
                             display_setcursor(0,1);
@@ -587,7 +587,7 @@ void check_menu_events(const uint16_t menu_event)
                         sleep_ms(3000);
                         display_clear();
                         display_home();
-                        if (FR_OK == f_open(&fd, "1541-repico.d64", FA_CREATE_ALWAYS|FA_WRITE))
+                        if (FR_OK == f_open(&fd, product_save_d64_name_s, FA_CREATE_ALWAYS|FA_WRITE))
                         {
                             display_string("D64 file opened");
                             display_setcursor(0,1);
@@ -910,7 +910,7 @@ void insert_menu_image(char* menu_path)
 
             memset(d64_sector_puffer, 0, sizeof(d64_sector_puffer));
             strcpy(image_filename, "\06 ONSCREEN MENU");
-            generate_bam("- 1541 REPICO -", id_buffer);
+            generate_bam(product_bam_label_s, id_buffer);
             // create a file-entry in the directory...
             generate_directory_entry("SELECTOR", CBMDOS_TYPE_PRG, SELECTOR_TRACK ,0,((uint16_t) (menu_prg_len/254))+1);
             generate_directory_entry("DATAFILE", CBMDOS_TYPE_PRG, MENU_DATA_TRACK,0,((uint16_t) (menu_file_len/254))+1);

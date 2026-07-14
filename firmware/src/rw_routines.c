@@ -9,6 +9,7 @@
 #include "menu_image.h"
 #include "globals.h"
 #include "gcr.h"
+#include "gui_constants.h"
 
 int8_t read_disk(FIL* fd, const int image_type, FILINFO fileinfo)
 {
@@ -175,7 +176,7 @@ int8_t read_disk(FIL* fd, const int image_type, FILINFO fileinfo)
 
         case PRG_IMAGE: // PRG Datei
         {
-            const uint8_t id_buffer[]={" 1541"};      // disk-id
+            const uint8_t id_buffer[] = product_disk_id_s;      // disk-id
             id1 = id_buffer[0];
             id2 = id_buffer[1];
             const uint8_t num_max_tracks = MAX_TRACKS;

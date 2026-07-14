@@ -8,6 +8,8 @@
 #ifndef GUI_CONSTANCY_H
 #define GUI_CONSTANCY_H
 
+#include "board_config.h"
+
 #define TIMEOUT1_KEY2  250000llu // 250ms
 #define TIMEOUT2_KEY2 1000000llu // 1s
 
@@ -36,9 +38,27 @@ enum GUI_MODE{GUI_INFO_MODE, GUI_MENU_MODE, GUI_FILE_BROWSER, GUI_SELECTOR};
 #define disp_unsupportedimg_s "Img unsupported!"
 
 #define disp_versiontxt_p     0,0
+#if REPICO1551
+#define disp_versiontxt_s     "- 1551-rePico -"
+#else
 #define disp_versiontxt_s     "- 1541-rePico -"
+#endif
 #define disp_firmwaretxt_p    0,1
 #define disp_firmwaretxt_s    "Firmware:"
+
+#if REPICO1551
+#define product_bam_label_s     "- 1551 REPICO -"
+#define product_save_g64_name_s "1551-repico.g64"
+#define product_save_d64_name_s "1551-repico.d64"
+#define product_disk_id_s       " 1551"
+#define product_version_name_s  "1551-REPICO"
+#else
+#define product_bam_label_s     "- 1541 REPICO -"
+#define product_save_g64_name_s "1541-repico.g64"
+#define product_save_d64_name_s "1541-repico.d64"
+#define product_disk_id_s       " 1541"
+#define product_version_name_s  "1541-REPICO"
+#endif
 
 #define disp_sdinfo_manuf_p   0,0
 #define disp_sdinfo_manuf_s   "MANU:"

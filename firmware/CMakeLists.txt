@@ -51,11 +51,12 @@ target_sources(1541-rePico PUBLIC ${mysources} ${myincludes})
 
 if(REPICO1551)
     target_compile_definitions(1541-rePico PRIVATE REPICO1551=1)
+    pico_set_program_name(1541-rePico "1551-rePico")
 else()
     target_compile_definitions(1541-rePico PRIVATE REPICO1541=1 REPICO1551=0)
+    pico_set_program_name(1541-rePico "1541-rePico")
 endif()
 
-pico_set_program_name(1541-rePico "1541-rePico")
 pico_set_program_version(1541-rePico "0.1")
 
 # Modify the below lines to enable/disable output over UART/USB
