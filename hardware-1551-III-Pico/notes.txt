@@ -32,17 +32,24 @@ picotool load "/Users/apple/Documents/Batibat/Maciejdev/plus4/pico1551/1551-rePi
 
 Next steps:
 - most important: confirm that CPU is working with custom debug ROM with CPU port
-    - cpld: write 0,1,2,...,255 to head register on every irq?
-    - no cpld: copy write protect to act led in main loop?
-    - monitor in pico OLED (debug firmware)
-    - drop the whole SD card thing in debug firmware
-    - need to wire up rotary encoder for input
+    - debug branch: debug/cpu-bringup
+    - ROM: firmware/Software1551/debug_rom.asm -> debug_rom_64k.bin (4x 16K)
+    - Pico FW: cmake -DREPICO_DEBUG=ON -> firmware/build-debug/1541-rePico.uf2
+    - cpld: write 0,1,2,...,255 to TPI Port A on every irq (needs CPLD)
+    - no cpld: ROM mirrors WPS(P4)->ACT(P3) on 6510 port $0001
+      short WPS to GND, watch ACT LED on main board
+    - full protocol: firmware/Software1551/DEBUG_PROTOCOL.md
+    - standalone: no Plus/4, no TCBM — mechanics PSU + debug ROM + REPICO_DEBUG UF2 only
+    - drop the whole SD card thing in debug firmware (REPICO_DEBUG=ON)
+    - need to wire up rotary encoder for input (GPIO 26-28, already in debug FW)
+    - for IRQ test: uncomment REPICO1551_GPIO3_IRQ_PWM in board1551.h, swap JP5+JP6
 - only then that passes we can debug CPLD further
 - if CPU can't write to TPI ports we can check if using phi2+r/w would help here
     (in fact we can start with it? could be faster check than custom ROM)
     - maybe it should just write 0 and use hi-z instead of 1?
 - repico knows something about TPI / CPU port state - should display that on OLED
-- we don't use WPS (write protect) as input, nor ACT (LED) as output - no hardware
+- we don't use WPS (write protect) as input, nor ACT (LED) as output on 1551-III
+  daughterboard alone — but on the main 1551 board ACT LED and WPS are available
 - we need custom debug ROM for 1551 part:
     - we must be somehow sure that CPU works
         - repico knows about some CPU lines, use that and debug on OLED
@@ -51,3 +58,20 @@ Next steps:
         - again - repico has access to something and can show it
     - only after this is confirmed we can write test patterns to TCBM DIO port
       and expect to see them on Plus4 side
+
+[20260715]
+Did some checks with custom ROMs to conclude:
+- CPU most likely works fine
+- CPU port state unknown (no conclusive tests)
+- TCBM port works, we can read/write data from 1551 coming to computer
+- TCBM port is not reliable, seems that DDR writes sometimes fail
+    - wrong value is stored, so some bits remain in wrong direction leading to stuck bits
+- SRAM seems to be bad
+    - that explains weird IRQ behavior and failure of CPU ports (RAM was used to hold state)
+
+Next steps:
+- desolder SRAM
+- solder 24pin socket
+- put a replacement:
+    - after https://github.com/ytmytm/c128-bytewide-color-ram-1571cr-expansion
+      I have 2 2K SRAM chips
