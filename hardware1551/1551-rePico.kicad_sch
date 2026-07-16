@@ -6349,7 +6349,7 @@
 		)
 		(uuid "3a70b741-2221-4119-8c1d-5af16b0c04ea")
 	)
-	(text "NOTE: WPS can be disconnected from board and controled on daughterboard\nNOTE: DS0/DS1 not connected to pico, no way for unusual formats like SuperDOS?\n      (unless it's not needed at all for G64)\nNOTE: Phi2 NC onboard, AEC pulled up"
+	(text "NOTE: DS0/DS1 not connected to pico, no way for unusual formats like SuperDOS?\n      (unless it's not needed at all for G64)\nNOTE: Phi2 NC onboard, AEC pulled up"
 		(exclude_from_sim no)
 		(at 353.06 121.158 0)
 		(effects
@@ -6425,6 +6425,17 @@
 			(justify left)
 		)
 		(uuid "dcde9586-56be-4dcb-9450-512eff047867")
+	)
+	(text "WPS would be on P4, but don't connect it to mainboard\nb/c it's an output of U8 inverter, with no mechanism\nit drives it low"
+		(exclude_from_sim no)
+		(at 355.092 192.024 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e8507dfb-96b4-4a4e-9f88-a8ab98bc66db")
 	)
 	(text "Pico firmware TODO:\n- GPIO0: SOE not used (always high), can be fixed in firmware to true\n  OR can be used to test 2MHz clock (PHI0) for 6502\n- GPIO3: Pico decides about device number - 0 or 1\n  OR can be used to test 100Hz (IRQ) for 6502\n- GPIO5: switch driver from high/low to hi-z/low"
 		(exclude_from_sim no)
@@ -6558,6 +6569,10 @@
 	(no_connect
 		(at 384.175 74.295)
 		(uuid "09628c48-444d-49a8-b56a-aaceaae29cd9")
+	)
+	(no_connect
+		(at 344.805 192.405)
+		(uuid "1584d38e-1846-4cba-b0db-885b8800be37")
 	)
 	(no_connect
 		(at 384.175 71.755)
@@ -8068,16 +8083,6 @@
 			(justify left bottom)
 		)
 		(uuid "470ec611-6038-4ac1-8403-5600a344b8d1")
-	)
-	(label "WPS"
-		(at 344.805 192.405 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "475ae2fe-6345-4cba-902b-09620bfe1bc4")
 	)
 	(label "STATUS1"
 		(at 529.59 80.645 0)
