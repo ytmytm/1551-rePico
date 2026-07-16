@@ -65,6 +65,8 @@ It's not perfect:
 3. "Load Selector" means embedded binaries, we don't need the C64 ones, FB16 or DIRECTORY BROWSER will be enough
 4. reading from disk images is not very reliable - sometimes works, sometimes bytes are corrupted
 5. reading from "Selector" or virtual disk image (PRG) is more reliable but not perfect
+6. need to test WPS - try saving something with it on or off
+7. need to tie LED to see activity
 
 4+5 - not sure if the problem is on TCBM side or BYTE_LATCHED set/clear side. Since directory loader
       works it's more likely that the problem is on pico side
