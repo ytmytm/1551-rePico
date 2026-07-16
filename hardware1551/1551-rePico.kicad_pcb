@@ -568,6 +568,7 @@
 		(embedded_fonts no)
 	)
 	(footprint "Package_DIP:DIP-40_W15.24mm"
+		(locked yes)
 		(layer "F.Cu")
 		(uuid "18bedfd4-6f88-40f8-b107-d4105bd3f515")
 		(at 107.0356 81.2546 90)
@@ -3792,6 +3793,7 @@
 		)
 	)
 	(footprint "Package_DIP:DIP-40_W15.24mm"
+		(locked yes)
 		(layer "F.Cu")
 		(uuid "8611d45b-ff40-44d9-9834-6e3b6009a08c")
 		(at 107.0356 104.1146 90)
