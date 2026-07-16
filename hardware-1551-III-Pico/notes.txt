@@ -60,22 +60,25 @@ SRAM didn't have to be removed - just reseating CPU was enough.
 Locked CPU/TPI pins positions, they were perfectly aligned.
 
 It's not perfect:
-4. reading from disk images is not very reliable - sometimes works, sometimes bytes are corrupted
-    corruption is reliably the same, e.g.
-    "GEOS BOKT" instead of "GEOS BOOT"
-    "GEOS 3.%2" instead of "GEOS 3.52"
-    "DESC TOP"  instead of "DESK TOP" 
+4. reading from disk images is not very reliable
+    some disk images fail reading from tracks 1-17 (first speed zone)
 5. reading from "Selector" or virtual disk image (PRG) is more reliable but not perfect
 7. need to tie LED to see activity
+8. Temporarily change 1551 to #define get_soe_status() (false) or gate it on get_motor_status() && is_image_mount, rebuild, and try the encoder with a mounted image (worst case).
+    (on 1551 soe is always active but w/o image nor spinning there is no sense it outputting bytes, this may help with encoder?)
 
-4+5 - not sure if the problem is on TCBM side or BYTE_LATCHED set/clear side. Since directory loader
-      works it's more likely that the problem is on pico side
+4+5 - not sure if the problem is on TCBM side or BYTE_LATCHED set/clear side
+      Since directory loader works it's more likely that the problem is on pico side
+      cut BYTE_LATCHED from pins like WPS (b/c it's an input)
+      - cpld already drives it lo/hi so it should be ok
+      hypothesis: pico is too busy in speed zone 0
+        - there is a 3uS pulse on byte_ready, with CPLD it can be much shorter(?)
 
 IRQ/PHI experiments need to be completed:
 A. route GPIO3 to IRQ, possibly add pullup to 3V3
 B. route GPIO0 to PHI0
-C. reset is driven by TCBM
+C. /RESET is driven by TCBM
 D. untie CPLD from /CS and XR/W:
 D1. switch from XR/W to R/W+Phi2
 D2. generate /CS from A15-A13 with 74'139
-
+E. confirm that UI works with Pi1551-III front panel connected
