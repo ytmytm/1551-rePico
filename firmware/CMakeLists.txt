@@ -35,14 +35,22 @@ option(REPICO1551 "Build for 1551-rePico hardware" ON)
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
-add_subdirectory(./buildtools)
+if(REPICO1551)
+    # Plus/4 selector PRGs — do not build SoftwareC64 / dali for this target
+    add_subdirectory(./SoftwareC16)
+else()
+    add_subdirectory(./buildtools)
+    add_subdirectory(./SoftwareC64)
+endif()
 
-add_subdirectory(./SoftwareC64)
 file(GLOB_RECURSE FIRMWARE_SOURCES CONFIGURE_DEPENDS "src/*.c")
 
 add_executable(1541-rePico ${FIRMWARE_SOURCES})
 
-add_dependencies(1541-rePico GenSelector GenIntro)
+add_dependencies(1541-rePico GenSelector)
+if(NOT REPICO1551)
+    add_dependencies(1541-rePico GenIntro)
+endif()
 
 if(REPICO1551)
     target_compile_definitions(1541-rePico PRIVATE REPICO1551=1)

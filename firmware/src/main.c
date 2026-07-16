@@ -31,7 +31,9 @@
 #include "rw_routines.h"
 #include "menu_image.h"
 #include "c64_selector.h"
+#if !defined(REPICO1551)
 #include "c64_intro.h"
+#endif
 
 #include "hw_config.h"
 #include "f_util.h"
@@ -885,6 +887,7 @@ void insert_menu_image(char* menu_path)
                 /* code */
             } while (buffer_left>0);
 
+#if !defined(REPICO1551)
             // generates intro file..
             buffer_size = intro_prg_len;
             file_track++;   // we just take the next track after the last selector-file-track
@@ -907,6 +910,7 @@ void insert_menu_image(char* menu_path)
                 file_track = next_file_track;
                 /* code */
             } while (buffer_left>0);
+#endif
 
             memset(d64_sector_puffer, 0, sizeof(d64_sector_puffer));
             strcpy(image_filename, "\06 ONSCREEN MENU");
@@ -914,7 +918,9 @@ void insert_menu_image(char* menu_path)
             // create a file-entry in the directory...
             generate_directory_entry("SELECTOR", CBMDOS_TYPE_PRG, SELECTOR_TRACK ,0,((uint16_t) (menu_prg_len/254))+1);
             generate_directory_entry("DATAFILE", CBMDOS_TYPE_PRG, MENU_DATA_TRACK,0,((uint16_t) (menu_file_len/254))+1);
+#if !defined(REPICO1551)
             generate_directory_entry("INTRO",    CBMDOS_TYPE_PRG, intro_track    ,0,((uint16_t) (intro_prg_len/254))+1);
+#endif
             convert_d64track2gcr(DIRECTORY_TRACK, id1, id2);
 
             akt_track_pos = 0;

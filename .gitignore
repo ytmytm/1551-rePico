@@ -1,6 +1,8 @@
 build/*
 firmware/build/
 firmware/include/selector.h
+firmware/include/c64_selector.h
+firmware/include/c64_intro.h
 analysis-reports/*
 build-analysis/*
 .DS_Store
