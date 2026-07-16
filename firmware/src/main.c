@@ -1388,35 +1388,38 @@ void close_disk_image(FIL* fd)
 void init_writeprot(void)
 {
     gpio_init(GPIO_WPS);
-    gpio_set_dir(GPIO_WPS, GPIO_IN);
+#if REPICO1551
+    // Drive both levels on WPS_3V3 (BSS138 gate@3V3). High = FET off; low = FET on.
+    // R10 must pull CPU WPS to 5V when FET is off — Pico cannot force 5V high through the FET.
+    gpio_set_dir(GPIO_WPS, GPIO_OUT);
+    gpio_put(GPIO_WPS, false);   // default protected until mount/menu sets otherwise
     gpio_set_pulls(GPIO_WPS, false, false);
-    // remark:
-    // 1541 schematics include a 74ls04 which drives WPS low by default
-    // having a pull-up enabled is not a good idea
+#else
+    gpio_set_dir(GPIO_WPS, GPIO_IN);
+    // 1541: external 74LS04; Pico pull-up would fight the inverter input.
+    gpio_set_pulls(GPIO_WPS, false, false);
+#endif
 }
 
 /////////////////////////////////////////////////////////////////////
 
 void send_disk_change(void)
 {
-    if(floppy_wp)
-    {                   // WP enabled = wps set to 0
-        set_wps();
-        sleep_ms(1);
-        clear_wps();
-        sleep_ms(1);
-        set_wps();
-        sleep_ms(1);
-        clear_wps();
-    } else {            // WP disabled = wps set to 1
-        clear_wps();
-        sleep_ms(1);
-        set_wps();
-        sleep_ms(1);
-        clear_wps();
-        sleep_ms(1);
-        set_wps();
+    // 1551 IRQ (~every 16650 cycles @ 2 MHz ≈ 8 ms) samples $01 bit4 in L_FA41.
+    // Hold each level long enough for several IRQ samples (Pi1541-style eject/insert).
+    // clear_wps/set_wps are board-mapped so clear=protected (0), set=writable (1) at the CPU.
+    const uint32_t hold_ms = 50;
+
+    clear_wps();            // protected while old disk ejects
+    sleep_ms(hold_ms);
+    set_wps();              // no disk / notch open
+    sleep_ms(hold_ms);
+    clear_wps();            // protected while new disk inserts
+    sleep_ms(hold_ms);
+    if (!floppy_wp) {
+        set_wps();          // final: writable
     }
+    // else leave protected
 }
 
 /////////////////////////////////////////////////////////////////////

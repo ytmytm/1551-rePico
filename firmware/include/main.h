@@ -82,10 +82,17 @@ void start_stepper_timer(void);
 
 #define get_so_status()     gpio_get(GPIO_OE)
 
-// WPS will be generated via inverter 74ls04 on 1541*-mainboard
-// ... thus we send the inverse here (clear_wps = "1" on WPS)
-#define clear_wps()          gpio_set_dir(GPIO_WPS,GPIO_IN)    // HiZ
-#define set_wps()           {gpio_set_dir(GPIO_WPS,GPIO_OUT);gpio_put(GPIO_WPS,false);}   // pull low
+// WPS at CPU bit4: 0 = write-protected, 1 = writable (1551 ROM AND #$10 / BNE = not protected).
+// 1541: Pico feeds board 74LS04 → invert at GPIO (HiZ → protected at VIA).
+// 1551-rePico: GPIO5 → BSS138 → CPU WPS (no inverter). MOSFET can only pull WPS low;
+//   high is R10 (+ Pico driving WPS_3V3 high so the FET is firmly off). Never push 5V.
+#if REPICO1551
+#define clear_wps()         {gpio_set_dir(GPIO_WPS,GPIO_OUT);gpio_put(GPIO_WPS,false);}  // FET on  → WPS=0
+#define set_wps()           {gpio_set_dir(GPIO_WPS,GPIO_OUT);gpio_put(GPIO_WPS,true);}   // FET off → WPS=1 via R10
+#else
+#define clear_wps()          gpio_set_dir(GPIO_WPS,GPIO_IN)    // HiZ → inverter → protected
+#define set_wps()           {gpio_set_dir(GPIO_WPS,GPIO_OUT);gpio_put(GPIO_WPS,false);}   // low → inverter → writable
+#endif
 
 #define get_motor_status()  gpio_get(GPIO_MTR)
 
