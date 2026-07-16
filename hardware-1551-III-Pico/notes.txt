@@ -31,33 +31,11 @@ Flash firmware (switches ot bootsel on its own):
 picotool load "/Users/apple/Documents/Batibat/Maciejdev/plus4/pico1551/1551-rePico/firmware/build/1541-rePico.uf2" -f
 
 Next steps:
-- most important: confirm that CPU is working with custom debug ROM with CPU port
-    - debug branch: debug/cpu-bringup
-    - ROM: firmware/Software1551/debug_rom.asm -> debug_rom_64k.bin (4x 16K)
-    - Pico FW: cmake -DREPICO_DEBUG=ON -> firmware/build-debug/1541-rePico.uf2
-    - cpld: write 0,1,2,...,255 to TPI Port A on every irq (needs CPLD)
-    - no cpld: ROM mirrors WPS(P4)->ACT(P3) on 6510 port $0001
-      short WPS to GND, watch ACT LED on main board
-    - full protocol: firmware/Software1551/DEBUG_PROTOCOL.md
-    - standalone: no Plus/4, no TCBM — mechanics PSU + debug ROM + REPICO_DEBUG UF2 only
-    - drop the whole SD card thing in debug firmware (REPICO_DEBUG=ON)
-    - need to wire up rotary encoder for input (GPIO 26-28, already in debug FW)
-    - for IRQ test: uncomment REPICO1551_GPIO3_IRQ_PWM in board1551.h, swap JP5+JP6
-- only then that passes we can debug CPLD further
 - if CPU can't write to TPI ports we can check if using phi2+r/w would help here
     (in fact we can start with it? could be faster check than custom ROM)
     - maybe it should just write 0 and use hi-z instead of 1?
-- repico knows something about TPI / CPU port state - should display that on OLED
 - we don't use WPS (write protect) as input, nor ACT (LED) as output on 1551-III
   daughterboard alone — but on the main 1551 board ACT LED and WPS are available
-- we need custom debug ROM for 1551 part:
-    - we must be somehow sure that CPU works
-        - repico knows about some CPU lines, use that and debug on OLED
-          (a simple pattern will be enough)
-    - we must be somehow sure that CPU can read and write TPI ports
-        - again - repico has access to something and can show it
-    - only after this is confirmed we can write test patterns to TCBM DIO port
-      and expect to see them on Plus4 side
 
 [20260715]
 Did some checks with custom ROMs to conclude:
@@ -75,3 +53,27 @@ Next steps:
 - put a replacement:
     - after https://github.com/ytmytm/c128-bytewide-color-ram-1571cr-expansion
       I have 2 2K SRAM chips
+
+[20260716]
+Everything works. Debug ROM / REPICO_DEBUG bring-up target removed.
+SRAM didn't have to be removed - just reseating CPU was enough.
+Locked CPU/TPI pins positions, they were perfectly aligned.
+
+It's not perfect:
+1. drive doesn't recognize disk change, has to be 'I'nitialized with command
+2. when browsing for disk image there is no ".." item to go to parent folder (or root)
+3. "Load Selector" means embedded binaries, we don't need the C64 ones, FB16 or DIRECTORY BROWSER will be enough
+4. reading from disk images is not very reliable - sometimes works, sometimes bytes are corrupted
+5. reading from "Selector" or virtual disk image (PRG) is more reliable but not perfect
+
+4+5 - not sure if the problem is on TCBM side or BYTE_LATCHED set/clear side. Since directory loader
+      works it's more likely that the problem is on pico side
+
+IRQ/PHI experiments need to be completed:
+A. route GPIO3 to IRQ, possibly add pullup to 3V3
+B. route GPIO0 to PHI0
+C. reset is driven by TCBM
+D. untie CPLD from /CS and XR/W:
+D1. switch from XR/W to R/W+Phi2
+D2. generate /CS from A15-A13 with 74'139
+
