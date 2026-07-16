@@ -63,8 +63,6 @@ It's not perfect:
 1. drive doesn't recognize disk change, has to be 'I'nitialized with command
     it's supposed to work: 7a27e690bf49eb718fce19206c60d8c7152238f4 by toggling write protection (WPS)
     maybe we've got the polarity wrong?
-2. when browsing for disk image there is no ".." item to go to parent folder (or root)
-3. "Load Selector" means embedded binaries, we don't need the C64 ones, FB16 or DIRECTORY BROWSER will be enough
 4. reading from disk images is not very reliable - sometimes works, sometimes bytes are corrupted
 5. reading from "Selector" or virtual disk image (PRG) is more reliable but not perfect
 6. need to test WPS - try saving something with it on or off
