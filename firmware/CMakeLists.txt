@@ -38,16 +38,11 @@ pico_sdk_init()
 add_subdirectory(./buildtools)
 
 add_subdirectory(./SoftwareC64)
+file(GLOB_RECURSE FIRMWARE_SOURCES CONFIGURE_DEPENDS "src/*.c")
 
-add_executable(1541-rePico)
+add_executable(1541-rePico ${FIRMWARE_SOURCES})
 
 add_dependencies(1541-rePico GenSelector GenIntro)
-
-# Add executable. Default name is the project name, version 0.1
-file(GLOB_RECURSE mysources  CONFIGURE_DEPENDS "src/*.c")
-file(GLOB_RECURSE myincludes CONFIGURE_DEPENDS "include/*.h")
-
-target_sources(1541-rePico PUBLIC ${mysources} ${myincludes})
 
 if(REPICO1551)
     target_compile_definitions(1541-rePico PRIVATE REPICO1551=1)
@@ -63,25 +58,16 @@ pico_set_program_version(1541-rePico "0.1")
 pico_enable_stdio_uart(1541-rePico 0)
 pico_enable_stdio_usb(1541-rePico 1)
 
-# NOTE: for this to work, src\ff15\source\ffconf.h must be removed or renamed.
-# target_include_directories(no-OS-FatFS-SD-SDIO-SPI-RPi-Pico BEFORE INTERFACE
-#     ${CMAKE_CURRENT_LIST_DIR}/include
-# )
-
-add_subdirectory(no-OS-FatFS-SD-SDIO-SPI-RPi-Pico/src build)
-
-# Add the standard include files to the build
 target_include_directories(1541-rePico PRIVATE
         ${PROJECT_SOURCE_DIR}/include
         ${CMAKE_CURRENT_LIST_DIR}
 )
 
-# Add the standard library to the build
-# Add any user requested libraries
-target_link_libraries(1541-rePico 
+add_subdirectory(no-OS-FatFS-SD-SDIO-SPI-RPi-Pico/src build)
+
+target_link_libraries(1541-rePico
         pico_stdlib
         pico_multicore
-        hardware_spi
         hardware_i2c
         hardware_dma
         hardware_pio
@@ -89,9 +75,8 @@ target_link_libraries(1541-rePico
         hardware_timer
         hardware_clocks
         hardware_pwm
+        hardware_spi
         no-OS-FatFS-SD-SDIO-SPI-RPi-Pico
-        )
+)
 
 pico_add_extra_outputs(1541-rePico)
-
-

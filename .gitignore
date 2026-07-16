@@ -7,6 +7,7 @@ build-analysis/*
 *.lck
 hardware-1551-III-Pico/*-backups/
 hardware1551/*-backups/
+hardware1551/production/backups/
 hdl/_ngo
 hdl/_xmsgs
 hdl/iseconfig
