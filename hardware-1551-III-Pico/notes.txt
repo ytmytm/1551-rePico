@@ -67,10 +67,7 @@ It's not perfect:
 8. Temporarily change 1551 to #define get_soe_status() (false) or gate it on get_motor_status() && is_image_mount, rebuild, and try the encoder with a mounted image (worst case).
     (on 1551 soe is always active but w/o image nor spinning there is no sense it outputting bytes, this may help with encoder?)
 
-4+5 - not sure if the problem is on TCBM side or BYTE_LATCHED set/clear side
-      Since directory loader works it's more likely that the problem is on pico side
-      cut BYTE_LATCHED from pins like WPS (b/c it's an input)
-      - cpld already drives it lo/hi so it should be ok
+4+5 - Since directory loader works it's more likely that the problem is on pico side
       hypothesis: pico is too busy in speed zone 0
         - there is a 3uS pulse on byte_ready, with CPLD it can be much shorter(?)
 

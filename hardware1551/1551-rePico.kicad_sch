@@ -6426,7 +6426,7 @@
 		)
 		(uuid "dcde9586-56be-4dcb-9450-512eff047867")
 	)
-	(text "WPS would be on P4, but don't connect it to mainboard\nb/c it's an output of U8 inverter, with no mechanism\nit drives it low"
+	(text "WPS would be on P4, but don't connect it to mainboard\nb/c it's an output of U8 inverter, with no mechanism\nit drives it low\nBYTE_LATCHED would be on P7, not connected either\n(gate array ould drive it)"
 		(exclude_from_sim no)
 		(at 355.092 192.024 0)
 		(effects
@@ -6637,6 +6637,10 @@
 	(no_connect
 		(at 120.65 72.39)
 		(uuid "ce9baff6-03eb-43ec-831f-4ad28c002244")
+	)
+	(no_connect
+		(at 344.805 200.025)
+		(uuid "d768a242-9430-47e2-969e-f7b83dc241df")
 	)
 	(no_connect
 		(at 529.59 65.405)
@@ -8833,16 +8837,6 @@
 			(justify left bottom)
 		)
 		(uuid "a2e9036c-2bc5-47ff-9d3d-30affeb63fa4")
-	)
-	(label "BYTE_LATCHED"
-		(at 344.805 200.025 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "a47f4042-383b-4fd3-8c85-273a8e4ea5db")
 	)
 	(label "SD_CS"
 		(at 34.29 143.51 180)

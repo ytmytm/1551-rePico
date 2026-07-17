@@ -254,6 +254,7 @@
 	(net 121 "Net-(JP5-A)")
 	(net 122 "/~{IRQ_BRD}")
 	(net 123 "unconnected-(U5-P4-Pad26)")
+	(net 124 "unconnected-(U5-P7-Pad23)")
 	(footprint "Jumper:SolderJumper-3_P1.3mm_Bridged12_RoundedPad1.0x1.5mm_NumberLabels"
 		(layer "F.Cu")
 		(uuid "01c8fb62-3ce5-4d2f-855e-87895956a900")
@@ -1009,9 +1010,9 @@
 			(drill 0.8)
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
-			(net 81 "/BYTE_LATCHED")
+			(net 124 "unconnected-(U5-P7-Pad23)")
 			(pinfunction "P7")
-			(pintype "bidirectional")
+			(pintype "bidirectional+no_connect")
 			(uuid "caba4f23-64bf-45db-ac76-65deb871ac3e")
 		)
 		(pad "24" thru_hole circle
@@ -69472,14 +69473,6 @@
 		(layer "F.Cu")
 		(net 81)
 		(uuid "1bc3a4e4-061a-4f16-8bba-1fdd0605dcff")
-	)
-	(segment
-		(start 150.2156 68.5546)
-		(end 150.2156 66.0146)
-		(width 0.2)
-		(layer "F.Cu")
-		(net 81)
-		(uuid "445cc430-76e8-442d-8eae-2272528d35f4")
 	)
 	(segment
 		(start 140.828 107.7766)
