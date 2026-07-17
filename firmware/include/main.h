@@ -11,8 +11,6 @@
 #include "board_config.h"
 
 // functions
-int64_t input_debounce_callback(alarm_id_t id, void *user_data);
-
 FRESULT mount_sdcard(void);
 FRESULT umount_sdcard(void);
 void show_fs_error(FRESULT error_code);
@@ -113,10 +111,11 @@ FIL         fd;             // file descriptor for every open file
 FILINFO     fb_dir_entry[LCD_LINE_COUNT];
 //
 //
-#define ROTARY_DEBOUNCE_TIME    (200)
-#define BUTTON_DEBOUNCE_TIME    (100)
-
-alarm_id_t input_debounce_alarm = 0;
+// Button bounce filter (us). Rotary uses a quadrature state machine (no ms block).
+#define BUTTON_DEBOUNCE_US      (30000u)
+#define KEY_QUEUE_SIZE          (8)
+// KY-040: 4 gray-code transitions per detent click
+#define ROTARY_DETENT_STEPS     (4)
 // timer_t key_longpress_timer;
 
 volatile uint16_t akt_track_pos = 0;

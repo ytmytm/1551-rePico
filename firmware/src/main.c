@@ -12,6 +12,7 @@
 #include "hardware/i2c.h"
 #include "hardware/timer.h"
 #include "hardware/clocks.h"
+#include "hardware/sync.h"
 
 #include "pinout.h"
 #include "board1551.h"
@@ -44,24 +45,72 @@
 
 #define START_MESSAGE_TIME 1500
 
-volatile uint8_t irq_key_value = NO_KEY;
+volatile int16_t rotary_delta = 0;
 
-volatile bool input_block = false;
+static volatile uint8_t key_queue[KEY_QUEUE_SIZE];
+static volatile uint8_t key_q_head = 0;
+static volatile uint8_t key_q_tail = 0;
 
-uint64_t key2_down_time=0;
+static uint64_t key2_down_time=0;
 uint8_t num_max_tracks;
 uint16_t selected_image_nr = 0xFFFF;
 
+// Quadrature gray-code: index = (prev<<2)|curr, value = step direction (0 = invalid/noise)
+static const int8_t rotary_transition[16] = {
+     0, -1,  1,  0,
+     1,  0,  0, -1,
+    -1,  0,  0,  1,
+     0,  1, -1,  0
+};
+static uint8_t rotary_prev_ab = 0;
+static int8_t rotary_accum = 0;
+
 // ---------------------------------------------------------------
 
-int64_t input_debounce_callback(alarm_id_t id, void *user_data)
+static void key_push(uint8_t key)
 {
-    input_block = false;
-    return 0;
+    uint8_t next = (uint8_t)((key_q_head + 1u) % KEY_QUEUE_SIZE);
+    if (next != key_q_tail)
+    {
+        key_queue[key_q_head] = key;
+        key_q_head = next;
+    }
+}
+
+static void wait_key(uint8_t want)
+{
+    while (get_key_from_buffer() != want)
+    {
+    }
+}
+
+static void rotary_on_edge(void)
+{
+    // Full quadrature decode on A/B. Sampling only A-fall+B (old approach) is
+    // direction-stable with a long block, but with a short filter it accepts the
+    // opposite half-cycle and reverses. Count a detent after ROTARY_DETENT_STEPS.
+    uint8_t curr = (uint8_t)((gpio_get(GPIO_BT1) ? 2u : 0u) | (gpio_get(GPIO_BT2) ? 1u : 0u));
+    int8_t step = rotary_transition[(rotary_prev_ab << 2) | curr];
+    rotary_prev_ab = curr;
+    if (step == 0)
+        return;
+
+    rotary_accum = (int8_t)(rotary_accum + step);
+    if (rotary_accum >= ROTARY_DETENT_STEPS)
+    {
+        rotary_accum = (int8_t)(rotary_accum - ROTARY_DETENT_STEPS);
+        rotary_delta++;
+    }
+    else if (rotary_accum <= -ROTARY_DETENT_STEPS)
+    {
+        rotary_accum = (int8_t)(rotary_accum + ROTARY_DETENT_STEPS);
+        rotary_delta--;
+    }
 }
 
 void gpio_callback(uint gpio, uint32_t events)
 {
+    (void)events;
     if ((GPIO_STP0==gpio) || (GPIO_STP1==gpio))
     {
         static uint64_t last_int;
@@ -72,46 +121,50 @@ void gpio_callback(uint gpio, uint32_t events)
             stepper_signal_w_pos++;
         }
         last_int = time_us_64();
-    } else {
-        if ((NO_KEY == irq_key_value) && (false == input_block))
+    }
+    else if ((GPIO_BT1 == gpio) || (GPIO_BT2 == gpio))
+    {
+        rotary_on_edge();
+    }
+    else if (GPIO_BT3 == gpio)
+    {
+        // Pushbutton: level-based edge after debounce. Avoids release bounce
+        // producing a second KEY2_DOWN/KEY2_UP pair.
+        static bool button_down = false;
+        static uint64_t last_button_us;
+        uint64_t now = time_us_64();
+        if ((now - last_button_us) < BUTTON_DEBOUNCE_US)
+            return;
+
+        bool pressed = !gpio_get(GPIO_BT3); // active low with pull-up
+        if (pressed == button_down)
+            return;
+
+        button_down = pressed;
+        last_button_us = now;
+
+        if (pressed)
         {
-            if (GPIO_BT3==gpio)
+            key2_down_time = now;
+            key_push(KEY2_DOWN);
+        }
+        else
+        {
+            uint64_t down_time = key2_down_time;
+            if (down_time > now)
             {
-                input_block = true;
-                if (events==GPIO_IRQ_EDGE_FALL)
-                {
-                    irq_key_value = KEY2_DOWN;
-                    input_debounce_alarm = add_alarm_in_ms(BUTTON_DEBOUNCE_TIME, input_debounce_callback, NULL, false);
-                    key2_down_time = time_us_64();
-                } else {
-                    uint64_t now_time = time_us_64();
-                    if (key2_down_time > now_time)
-                    {
-                        key2_down_time -= (now_time+1);
-                        now_time = ((uint64_t)-1);
-                    }
-
-                    if ((now_time-key2_down_time) > TIMEOUT2_KEY2)
-                    { irq_key_value = KEY2_TIMEOUT2; }
-                    else if ((now_time-key2_down_time) > TIMEOUT1_KEY2)
-                    { irq_key_value = KEY2_TIMEOUT1; }
-                    else
-                    { irq_key_value = KEY2_UP; }
-
-                    key2_down_time = now_time;
-                    input_debounce_alarm = add_alarm_in_ms(BUTTON_DEBOUNCE_TIME, input_debounce_callback, NULL, false);
-                }
-            } else if (GPIO_BT1==gpio)
-            {
-                input_block = true;
-                if (gpio_get(GPIO_BT2))
-                {
-                    irq_key_value = KEY1_DOWN;
-                } else {
-                    irq_key_value = KEY0_DOWN;
-                }
-                input_debounce_alarm = add_alarm_in_ms(ROTARY_DEBOUNCE_TIME, input_debounce_callback, NULL, false);
+                down_time -= (now + 1);
+                now = (uint64_t)-1;
             }
+
+            if ((now - down_time) > TIMEOUT2_KEY2)
+                key_push(KEY2_TIMEOUT2);
+            else if ((now - down_time) > TIMEOUT1_KEY2)
+                key_push(KEY2_TIMEOUT1);
+            else
+                key_push(KEY2_UP);
+
+            key2_down_time = now;
         }
     }
 }
@@ -215,17 +268,22 @@ void show_fs_error(FRESULT error_code)
     const char* error_txt=FRESULT_str(error_code);
     size_t err_str_len=strlen(error_txt);
     uint8_t err_str_offset=0;
-    irq_key_value = NO_KEY;
+    bool pressed = false;
     do
     {
         display_setcursor(0, 1);
         display_print(error_txt, err_str_offset++, 16);
         sleep_ms(333);
+        if (get_key_from_buffer() == KEY2_DOWN)
+            pressed = true;
     }
-    while (((err_str_offset+15)<err_str_len) && (irq_key_value != KEY2_DOWN));
+    while (!pressed && ((err_str_offset+15)<err_str_len));
 
-    while(irq_key_value != KEY2_DOWN) {};
-    irq_key_value = NO_KEY;
+    while (!pressed)
+    {
+        if (get_key_from_buffer() == KEY2_DOWN)
+            pressed = true;
+    }
     return;
 }
 /////////////////////////////////////////////////////////////////////
@@ -308,18 +366,42 @@ void init_key_inputs(void)
     gpio_set_pulls(GPIO_BT1, true, false);
     gpio_set_pulls(GPIO_BT2, true, false);
     gpio_set_pulls(GPIO_BT3, true, false);
-    gpio_set_irq_enabled_with_callback(GPIO_BT1, GPIO_IRQ_EDGE_FALL, true, &gpio_callback);
+
+    rotary_prev_ab = (uint8_t)((gpio_get(GPIO_BT1) ? 2u : 0u) | (gpio_get(GPIO_BT2) ? 1u : 0u));
+    rotary_accum = 0;
+    rotary_delta = 0;
+
+    gpio_set_irq_enabled_with_callback(GPIO_BT1, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &gpio_callback);
+    gpio_set_irq_enabled(GPIO_BT2, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true);
     gpio_set_irq_enabled(GPIO_BT3, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true);
 }
 
 uint8_t get_key_from_buffer(void)
 {
-    uint8_t val;
+    uint32_t ints = save_and_disable_interrupts();
+    int16_t delta = rotary_delta;
+    if (delta < 0)
+    {
+        rotary_delta = (int16_t)(delta + 1);
+        restore_interrupts(ints);
+        return KEY0_DOWN;
+    }
+    if (delta > 0)
+    {
+        rotary_delta = (int16_t)(delta - 1);
+        restore_interrupts(ints);
+        return KEY1_DOWN;
+    }
 
-    val = irq_key_value;    // get last detected key
-    irq_key_value = NO_KEY; // reset last state - ready for more
-
-    return val;
+    if (key_q_tail != key_q_head)
+    {
+        uint8_t val = key_queue[key_q_tail];
+        key_q_tail = (uint8_t)((key_q_tail + 1u) % KEY_QUEUE_SIZE);
+        restore_interrupts(ints);
+        return val;
+    }
+    restore_interrupts(ints);
+    return NO_KEY;
 }
 
 void show_longpress(void)
@@ -664,8 +746,7 @@ void check_menu_events(const uint16_t menu_event)
                 /// Info Menü
                 case M_VERSION_INFO:
                     show_start_message();
-                    while(irq_key_value != KEY2_DOWN) {};
-                    irq_key_value = NO_KEY;
+                    wait_key(KEY2_DOWN);
                     menu_refresh();
                     break;
 
@@ -673,8 +754,7 @@ void check_menu_events(const uint16_t menu_event)
                     if (FR_OK == mount_sdcard())
                     {
                         show_sdcard_info_message();
-                        while(irq_key_value != KEY2_DOWN) {};
-                        irq_key_value = NO_KEY;
+                        wait_key(KEY2_DOWN);
                     } else {
                         display_clear();
                         display_home();

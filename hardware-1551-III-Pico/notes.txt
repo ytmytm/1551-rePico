@@ -64,8 +64,15 @@ It's not perfect:
     some disk images fail reading from tracks 1-17 (first speed zone)
 5. reading from "Selector" or virtual disk image (PRG) is more reliable but not perfect
 7. need to tie LED to see activity
-8. Temporarily change 1551 to #define get_soe_status() (false) or gate it on get_motor_status() && is_image_mount, rebuild, and try the encoder with a mounted image (worst case).
-    (on 1551 soe is always active but w/o image nor spinning there is no sense it outputting bytes, this may help with encoder?)
+8. SOE-always-true experiment: forced get_soe_status()=(false) — did NOT help encoder.
+    Reverted. Encoder issues are debounce/input handling, not ISR load from SOE.
+9. Encoder input: missing rotary steps + noisy multi-press on button
+    Cause: shared 200ms input_block after each rotary edge (max ~5 steps/s) and
+    single irq_key_value slot; button used same block + edge== compare, release
+    bounce → second KEY2_UP. Fix: button level state machine (30ms) + key queue.
+    Rotary: A-fall+B with 2ms filter reversed direction (half-cycle). Replaced with
+    full A/B quadrature state machine, 4 transitions per detent.
+    Confirmed OK (20260717).
 
 4+5 - Since directory loader works it's more likely that the problem is on pico side
       hypothesis: pico is too busy in speed zone 0
