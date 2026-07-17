@@ -1799,8 +1799,22 @@ bool repeating_timer_callback(__unused struct repeating_timer *t)
     // Je nach dem welche Spur gerade aktiv ist
 
     uint8_t akt_gcr_byte;
+    static bool pa_dir_is_output = false;
+    static bool pa_dir_known = false;
+    const bool so_read = get_so_status();
 
-    if(get_so_status())
+    // PA direction only on SO read/write mode change (not every byte)
+    if (!pa_dir_known || so_read != pa_dir_is_output)
+    {
+        if (so_read)
+            gpio_set_dir_out_masked(PAPORT_MASK);
+        else
+            gpio_set_dir_in_masked(PAPORT_MASK);
+        pa_dir_is_output = so_read;
+        pa_dir_known = true;
+    }
+
+    if(so_read)
     {
         static uint8_t old_gcr_byte = 0;
         uint8_t is_sync;
@@ -1834,7 +1848,6 @@ bool repeating_timer_callback(__unused struct repeating_timer *t)
         {
             if(!is_sync)
             {
-                gpio_set_dir_out_masked(PAPORT_MASK);
                 out_gcr_byte(akt_gcr_byte);
 
                 if(send_byte_ready)
@@ -1859,7 +1872,6 @@ bool repeating_timer_callback(__unused struct repeating_timer *t)
             // Unabhängig ob der Motor läuft oder nicht
             if(get_soe_status())
             {
-                gpio_set_dir_in_masked(PAPORT_MASK);
                 akt_gcr_byte = in_gcr_byte();
 
                 if(send_byte_ready)
