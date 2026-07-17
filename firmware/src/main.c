@@ -1852,9 +1852,12 @@ bool repeating_timer_callback(__unused struct repeating_timer *t)
 
                 if(send_byte_ready)
                 {
-                    // BYTE_READY für 3µs löschen
+                    // BYTE_READY pulse: CPLD latches on falling edge; no hold needed on 1551.
+                    // 1541 VIA/gate-array path still needs a short low time.
                     clear_byte_ready();
+#if !REPICO1551
                     sleep_us(3);
+#endif
                     set_byte_ready();
                 }
             }
@@ -1876,9 +1879,10 @@ bool repeating_timer_callback(__unused struct repeating_timer *t)
 
                 if(send_byte_ready)
                 {
-                    // BYTE_READY für 3µs löschen
                     clear_byte_ready();
+#if !REPICO1551
                     sleep_us(3);
+#endif
                     set_byte_ready();
                 }
             }
