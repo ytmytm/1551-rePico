@@ -52,6 +52,7 @@ static volatile uint8_t key_q_head = 0;
 static volatile uint8_t key_q_tail = 0;
 
 static uint64_t key2_down_time=0;
+static bool key2_long_consumed = false; // long-press already handled while held
 uint8_t num_max_tracks;
 uint16_t selected_image_nr = 0xFFFF;
 
@@ -146,6 +147,7 @@ void gpio_callback(uint gpio, uint32_t events)
         if (pressed)
         {
             key2_down_time = now;
+            key2_long_consumed = false;
             key_push(KEY2_DOWN);
         }
         else
@@ -157,7 +159,12 @@ void gpio_callback(uint gpio, uint32_t events)
                 now = (uint64_t)-1;
             }
 
-            if ((now - down_time) > TIMEOUT2_KEY2)
+            // If next-image already ran when the bar filled, ignore release
+            if (key2_long_consumed)
+            {
+                /* no key event */
+            }
+            else if ((now - down_time) > TIMEOUT2_KEY2)
                 key_push(KEY2_TIMEOUT2);
             else if ((now - down_time) > TIMEOUT1_KEY2)
                 key_push(KEY2_TIMEOUT1);
@@ -457,6 +464,7 @@ void show_longpress(void)
 
     if (shown_time_steps != time_steps)
     {
+        shown_time_steps = time_steps;
         display_setcursor(0,2);
         for(int i=0; i<LCD_LINE_SIZE; i++)
         {
@@ -468,6 +476,40 @@ void show_longpress(void)
     }
 }
 
+// Advance to next loadable image in current_path (skips dirs / bad files).
+static void load_next_image(void)
+{
+    FILINFO next_dir_entry;
+
+    // Image is in RAM; FatFS may still need a live mount for directory scan
+    if (FR_OK != mount_sdcard())
+    {
+        set_gui_mode(GUI_INFO_MODE);
+        return;
+    }
+
+    while (selected_image_nr < fb_dir_entry_count)
+    {
+        seek_to_dir_entry(selected_image_nr, current_path);
+        FRESULT fr = f_readdir(&dir_object, &next_dir_entry);
+        if ((0 == next_dir_entry.fname[0]) || (FR_OK != fr))
+            break;
+
+        ++selected_image_nr;
+
+        if (next_dir_entry.fattrib & AM_DIR)
+            continue;
+
+        if (TYPE_VALID == open_dir_entry(next_dir_entry))
+        {
+            set_gui_mode(GUI_INFO_MODE);
+            return;
+        }
+    }
+
+    set_gui_mode(GUI_INFO_MODE); // clear long-press bar even if nothing loaded
+}
+
 void update_gui(void)
 {
     static uint8_t shown_half_track = 255;
@@ -477,7 +519,6 @@ void update_gui(void)
     bool new_motor_status;
     uint8_t key_code = get_key_from_buffer();
     char byte_str[8];
-    FILINFO next_dir_entry;
 
     switch (current_gui_mode)
     {
@@ -490,23 +531,8 @@ void update_gui(void)
         } else if(KEY2_TIMEOUT2 == key_code)
         {
             key2_pressed = false;
-            // next image...
-            if (selected_image_nr<fb_dir_entry_count)
-            {
-                seek_to_dir_entry(selected_image_nr, current_path);
-                FRESULT fr = f_readdir(&dir_object, &next_dir_entry);
-                if((0 != next_dir_entry.fname[0]) && (FR_OK == fr))
-                {
-                    if(!(next_dir_entry.fattrib & AM_DIR))
-                    {
-                        if (TYPE_VALID == open_dir_entry(next_dir_entry))
-                        {
-                            ++selected_image_nr;
-                            set_gui_mode(GUI_INFO_MODE);
-                        }
-                    }
-                }
-            }
+            key2_long_consumed = true;
+            load_next_image();
         } else if(KEY2_TIMEOUT1 == key_code)
         {
             key2_pressed = false;
@@ -514,7 +540,27 @@ void update_gui(void)
         {
             key2_pressed = true;
         }
-        if (key2_pressed) { show_longpress(); }
+        if (key2_pressed)
+        {
+            show_longpress();
+            // Act when the bar completes — do not wait for button release
+            if (!key2_long_consumed)
+            {
+                uint64_t now = time_us_64();
+                uint64_t down = key2_down_time;
+                if (down > now)
+                {
+                    down -= (now + 1);
+                    now = (uint64_t)-1;
+                }
+                if ((now - down) > TIMEOUT2_KEY2)
+                {
+                    key2_long_consumed = true;
+                    key2_pressed = false;
+                    load_next_image();
+                }
+            }
+        }
 
         if(shown_half_track != akt_half_track)
         {
