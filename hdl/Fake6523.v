@@ -24,12 +24,13 @@ module Fake6523(
 					 
 					 input wire byte_ready_3v3,
 					 output reg byte_latched,
-					 output wire _reset_3v3,
-//					 input _writereal,
-//					 input phi2,
+//					 output wire _reset_3v3,
+					 output _xrw,
+					 input _writereal,
+					 input phi2,
 					 
                 input [2:0]rs,
-                input _write,
+//                input _write,
                 inout [7:0]data,
                 inout [7:0]port_a,
                 inout [7:0]port_b,
@@ -47,9 +48,9 @@ module Fake6523(
         end
     end
 
-assign _reset_3v3 = _reset;
+//assign _reset_3v3 = _reset;
 
-//assign _write = !(!_cs & _writereal & phi2);
+assign _xrw = !(!_writereal & phi2);
 
 reg [7:0]data_out;
 reg [2:0] rs_r;
@@ -65,12 +66,19 @@ wire we_port_a;
 wire we_port_b;
 wire we_port_c;
 
-assign we_ddr_a = !_write & (rs_r == 3'd3);
-assign we_ddr_b = !_write & (rs_r == 3'd4);
-assign we_ddr_c = !_write & (rs_r == 3'd5);
-assign we_port_a = !_write & (rs_r == 3'd0);
-assign we_port_b = !_write & (rs_r == 3'd1);
-assign we_port_c = !_write & (rs_r == 3'd2);
+assign we_ddr_a = !_cs & !_xrw & (rs_r == 3'd3);
+assign we_ddr_b = !_cs & !_xrw & (rs_r == 3'd4);
+assign we_ddr_c = !_cs & !_xrw & (rs_r == 3'd5);
+assign we_port_a = !_cs & !_xrw & (rs_r == 3'd0);
+assign we_port_b = !_cs & !_xrw & (rs_r == 3'd1);
+assign we_port_c = !_cs & !_xrw & (rs_r == 3'd2);
+
+//assign we_ddr_a = !_cs & !_xrw & (rs == 3'd3);
+//assign we_ddr_b = !_cs & !_xrw & (rs == 3'd4);
+//assign we_ddr_c = !_cs & !_xrw & (rs == 3'd5);
+//assign we_port_a = !_cs & !_xrw & (rs == 3'd0);
+//assign we_port_b = !_cs & !_xrw & (rs == 3'd1);
+//assign we_port_c = !_cs & !_xrw & (rs == 3'd2);
 
 ioport         ioport_a(
 								.clock(clock), 
@@ -103,12 +111,13 @@ ioport         ioport_c(
 								);
 
 
-assign data =  (!_cs & _write ? data_out : 8'bz);
+assign data =  (!_cs & _xrw ? data_out : 8'bz);
 
 always @(posedge clock)
 begin
    rs_r = rs;
 	case(rs_r)
+//	case (rs)
       0: data_out = port_a;
       1: data_out = port_b;
       2: data_out = port_c;

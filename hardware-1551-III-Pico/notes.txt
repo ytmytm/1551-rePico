@@ -75,14 +75,17 @@ Locked CPU/TPI pins positions, they were perfectly aligned.
 - confirmed that IRQ 100Hz/10µs from GPIO3 PWM works fine
 - no need for reset circuit for 1551-III-Pico, it's driven by tcbm2sd
 - LED connected, P5 pins 8 (+5V) and 9 (ACT), activity when loading, not during reset
+- drop use of gate array's XR/W, generate it on (former RESET_3V3 pin) in CPLD, expose for RAM
+- confirmed that RAM works on /WE generated from CPLD (from former RESET_3V3 pin)
 
 Drop gate array dependencies: XR/W, /CS:TPI,RAM,ROM, Phi0:
-D1. switch from XR/W to R/W+Phi2 for TPI emulation
-D2. pass R/W+Phi2 back to RAM as /WR (cut X/RW and reuse?)
 D3. route GPIO0 to Phi0 on daughterboard only
-D4. generate /CS for RAM, ROM and TPI from A15-A13 with 74'139
 
 Pico1551-III readiness:
 E. confirm that UI would work with Pi1551-III front panel connected
     - act will be inverted (active low)
     - need correct OLED type driver
+F. cut off gate array dependencies completely
+    - generate /CS signels for RAM, ROM and TPI from A15-A13 with 74'139
+    - raise pins on RAM/ROM
+    - cut CS_TPI trace
