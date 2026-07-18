@@ -76,15 +76,13 @@ Locked CPU/TPI pins positions, they were perfectly aligned.
 - no need for reset circuit for 1551-III-Pico, it's driven by tcbm2sd
 - LED connected, P5 pins 8 (+5V) and 9 (ACT), activity when loading, not during reset
 
-IRQ/PHI experiments need to be completed:
-B. route GPIO0 to PHI0 -> cut original crystal, route GPIO0 to mainboard phi0, no need to switch jumper
-    it goes from oscilator pin 8 through FB1 to GA#1 and GA#2, but it's 16MHz
-D. untie CPLD from /CS and XR/W:
+Drop gate array dependencies: XR/W, /CS:TPI,RAM,ROM, Phi0:
 D1. switch from XR/W to R/W+Phi2 for TPI emulation
-D2. generate /CS for RAM, ROM and TPI from A15-A13 with 74'139
-D3. pass R/W+Phi2 back to RAM as /WR
+D2. pass R/W+Phi2 back to RAM as /WR (cut X/RW and reuse?)
+D3. route GPIO0 to Phi0 on daughterboard only
+D4. generate /CS for RAM, ROM and TPI from A15-A13 with 74'139
+
+Pico1551-III readiness:
 E. confirm that UI would work with Pi1551-III front panel connected
     - act will be inverted (active low)
     - need correct OLED type driver
-
-B+D[2..3] - all of this has to be done at once to disconnect from gate arrays
