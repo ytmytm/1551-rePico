@@ -18,7 +18,8 @@ enum  MENU_IDS{M_BACK, M_IMAGE, M_SETTINGS, M_INFO, \
                M_BACK_INFO, M_VERSION_INFO, M_SDCARD_INFO};
 
 /// Hauptmenü
-MENU_ENTRY main_menu_entrys[] = {{"Disk Menu", M_IMAGE,ENTRY_MENU,   0,&image_menu},
+MENU_ENTRY main_menu_entrys[] = {{"..",        M_BACK, ENTRY_NORMAL},
+                                 {"Disk Menu", M_IMAGE,ENTRY_MENU,   0,&image_menu},
                                  {"Settings",  M_SETTINGS,ENTRY_MENU,0,&settings_menu},
                                  {"Info",      M_INFO,ENTRY_MENU,    0,&info_menu}};
 /// Image Menü

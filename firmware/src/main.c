@@ -87,6 +87,21 @@ static void wait_key(uint8_t want)
     }
 }
 
+/* Wait for a full click and drain the queue so KEY2_UP does not re-select the menu item. */
+static void wait_button_click(void)
+{
+    wait_key(KEY2_DOWN);
+    for (;;)
+    {
+        uint8_t k = get_key_from_buffer();
+        if ((KEY2_UP == k) || (KEY2_TIMEOUT1 == k) || (KEY2_TIMEOUT2 == k))
+            break;
+    }
+    while (NO_KEY != get_key_from_buffer())
+    {
+    }
+}
+
 static void rotary_on_edge(void)
 {
     // Full quadrature decode on A/B. Sampling only A-fall+B (old approach) is
@@ -222,6 +237,7 @@ int main()
     menu_init(&info_menu,     info_menu_entrys,     count_of(info_menu_entrys),     LCD_LINE_SIZE, LCD_LINE_COUNT);
 
     menu_set_root(&main_menu);
+    main_menu.lcd_cursor_pos = 1; /* skip ".." — land on Disk Menu */
     settings_boot_load();
     menu_set_entry_var1(&settings_menu, M_Z0_TIMER, settings_get_zone0_timer());
     menu_set_entry_var1(&settings_menu, M_Z0_GAP, settings_get_zone0_gap());
@@ -692,7 +708,9 @@ void check_menu_events(const uint16_t menu_event)
             switch(value)
             {
                 /// Main Menü
-
+                case M_BACK:
+                    set_gui_mode(GUI_INFO_MODE);
+                    break;
                 /// Image Menü
                 case M_MENU_IMAGE:
                     set_gui_mode(GUI_SELECTOR);
@@ -884,7 +902,7 @@ void check_menu_events(const uint16_t menu_event)
                 /// Info Menü
                 case M_VERSION_INFO:
                     show_start_message();
-                    wait_key(KEY2_DOWN);
+                    wait_button_click();
                     menu_refresh();
                     break;
 
@@ -892,7 +910,7 @@ void check_menu_events(const uint16_t menu_event)
                     if (FR_OK == mount_sdcard())
                     {
                         show_sdcard_info_message();
-                        wait_key(KEY2_DOWN);
+                        wait_button_click();
                     } else {
                         display_clear();
                         display_home();
@@ -1655,18 +1673,57 @@ void unmount_image(void)
 
 /////////////////////////////////////////////////////////////////////
 
+static void display_size_mb(uint32_t size_mb)
+{
+    char byte_str[12];
+    if (size_mb >= 1024u)
+    {
+        uint32_t size_gb = (size_mb + 512u) / 1024u;
+        (void)dez2out((int32_t)size_gb, 0, byte_str);
+        display_string(byte_str);
+        display_string(" GB");
+    }
+    else
+    {
+        (void)dez2out((int32_t)size_mb, 0, byte_str);
+        display_string(byte_str);
+        display_string(" MB");
+    }
+}
+
 void show_sdcard_info_message(void)
 {
     if (0 != fs.fs_type)    // check for valid mounted file-system
     {
+        uint32_t size_mb = 0;
+        uint32_t free_mb = 0;
+        sd_card_t *card = sd_get_by_num(0);
+        if (NULL != card)
+        {
+            uint32_t sectors = card->state.sectors;
+            if ((0 == sectors) && (NULL != card->get_num_sectors))
+                sectors = card->get_num_sectors(card);
+            if (0 != sectors)
+                size_mb = sectors / 2048u; /* 512-byte sectors → MiB */
+        }
+
+        {
+            DWORD free_clst = 0;
+            FATFS *pfs = 0;
+            if (FR_OK == f_getfree("", &free_clst, &pfs) && (0 != pfs))
+                free_mb = (uint32_t)((free_clst * (DWORD)pfs->csize) / 2048u);
+        }
+
         display_clear();
         display_home();
+        display_string("Size:");
+        display_size_mb(size_mb);
 
-        display_string(disp_sdinfo_size_s);
-        // sprintf(out_str, "%d MB", (uint16_t)(info.capacity / 1024 / 1024));
-        // display_string(out_str);
+        display_setcursor(0, 1);
+        display_string("Free:");
+        display_size_mb(free_mb);
 
-        display_setcursor(0,1);
+        display_setcursor(0, 2);
         display_string(disp_sdinfo_part_s);
 
         switch (fs.fs_type)
@@ -1681,118 +1738,13 @@ void show_sdcard_info_message(void)
                 display_string("FAT32");
                 break;
             case FS_EXFAT:
-                display_string("EXT FAT");
+                display_string("exFAT");
                 break;
             default:
+                display_string("?");
                 break;
         }
     }
-    sleep_ms(START_MESSAGE_TIME);
-
-    // struct sd_raw_info info;
-
-    // uint8_t counter = 5;
-    // uint8_t get_info_ok = 0;
-    // char out_str[21];
-
-    // while(counter != 0)
-    // {
-    //     if(0 != sd_raw_get_info(&info))
-    //     {
-    //         display_setcursor(disp_sdinfo_manuf_p);
-    //         display_string(disp_sdinfo_manuf_s);
-    //         sprintf(out_str, "%.x", info.manufacturer);
-    //         display_string(out_str);
-
-    //         display_setcursor(disp_sdinfo_oem_p);
-    //         display_string(disp_sdinfo_oem_s);
-    //         display_string((char*) info.oem);
-
-    //         display_setcursor(disp_sdinfo_prod_p);
-    //         display_string(disp_sdinfo_prod_s);
-    //         display_string((char*) info.product);
-
-    //         display_setcursor(disp_sdinfo_size_p);
-    //         display_string(disp_sdinfo_size_s);
-    //         sprintf(out_str, "%d MB", (uint16_t)(info.capacity / 1024 / 1024));
-    //         display_string(out_str);
-
-    //         get_info_ok = 1;
-
-    //         break;
-    //     }
-
-    //     release_sd_card();
-    //     (void) init_sd_card();
-
-    //     counter--;
-    // }
-
-    // if(!get_info_ok)
-    // {
-    //     display_clear();
-    //     display_setcursor(disp_geterr_failure_p);
-    //     display_string(disp_geterr_failure_s);
-    //     display_setcursor(disp_sdrawgetinfo_p);
-    //     display_string(disp_sdrawgetinfo_s);
-    //     return;
-    // }
-
-    // _delay_ms(START_MESSAGE_TIME);
-
-    // display_clear();
-
-    // display_setcursor(disp_sdinfo_rev_p);
-    // display_string(disp_sdinfo_rev_s);
-    // sprintf(out_str,"%c.%c",(info.revision>>4)+'0', (info.revision&0x0f)+'0');
-    // display_string(out_str);
-
-    // display_setcursor(disp_sdinfo_serial_p);
-    // display_string(disp_sdinfo_serial_s);
-    // sprintf(out_str,"%04X%04X",(unsigned int) (info.serial >> 16),(unsigned int) (info.serial & 0xffff));
-    // display_string(out_str);
-
-    // display_setcursor(disp_sdinfo_part_p);
-    // display_string(disp_sdinfo_part_s);
-    // switch(partition->type)
-    // {
-    //     case 0x01:
-    //         display_string("FAT12");
-    //         break;
-
-    //     case 0x04:
-    //         display_string("FAT16 <32MB");
-    //         break;
-
-    //     case 0x05:
-    //         display_string("EXTENDED");
-    //         break;
-
-    //     case 0x06:
-    //         display_string("FAT16");
-    //         break;
-
-    //     case 0x0b:
-    //         display_string("FAT32");
-    //         break;
-
-    //     case 0x0c:
-    //         display_string("FAT32 LBA");
-    //         break;
-
-    //     case 0x0e:
-    //         display_string("FAT16 LBA");
-    //         break;
-
-    //     case 0x0f:
-    //         display_string("EXT LBA");
-    //         break;
-
-    //     default:
-    //         display_string("UNKNOWN");
-    //         break;
-    // }
-    // _delay_ms(START_MESSAGE_TIME);
 }
 
 /////////////////////////////////////////////////////////////////////
