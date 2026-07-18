@@ -13,6 +13,7 @@
 #include "hardware/timer.h"
 #include "hardware/clocks.h"
 #include "hardware/sync.h"
+#include "hardware/watchdog.h"
 
 #include "pinout.h"
 #include "board1551.h"
@@ -28,6 +29,7 @@
 #include "menu.h"
 #include "mymenu.h"
 #include "gui_constants.h"
+#include "settings.h"
 #include "globals.h"
 #include "rw_routines.h"
 #include "menu_image.h"
@@ -220,6 +222,10 @@ int main()
     menu_init(&info_menu,     info_menu_entrys,     count_of(info_menu_entrys),     LCD_LINE_SIZE, LCD_LINE_COUNT);
 
     menu_set_root(&main_menu);
+    settings_boot_load();
+    menu_set_entry_var1(&settings_menu, M_Z0_TIMER, settings_get_zone0_timer());
+    menu_set_entry_var1(&settings_menu, M_Z0_GAP, settings_get_zone0_gap());
+    menu_set_entry_var1(&settings_menu, M_REV_ROTARY, settings_get_rotary_reversed() ? 1u : 0u);
     // ----
 
     sleep_ms(START_MESSAGE_TIME);
@@ -421,17 +427,16 @@ uint8_t get_key_from_buffer(void)
 {
     uint32_t ints = save_and_disable_interrupts();
     int16_t delta = rotary_delta;
-    if (delta < 0)
+    if (delta != 0)
     {
-        rotary_delta = (int16_t)(delta + 1);
+        if (delta < 0)
+            rotary_delta = (int16_t)(delta + 1);
+        else
+            rotary_delta = (int16_t)(delta - 1);
         restore_interrupts(ints);
-        return KEY0_DOWN;
-    }
-    if (delta > 0)
-    {
-        rotary_delta = (int16_t)(delta - 1);
-        restore_interrupts(ints);
-        return KEY1_DOWN;
+        if (settings_get_rotary_reversed())
+            return (delta < 0) ? KEY1_DOWN : KEY0_DOWN;
+        return (delta < 0) ? KEY0_DOWN : KEY1_DOWN;
     }
 
     if (key_q_tail != key_q_head)
@@ -818,9 +823,62 @@ void check_menu_events(const uint16_t menu_event)
                     break;
 
                 /// Settings Menü
-                case M_RESTART:
-                    // exit_main = 0;
+                case M_SETTINGS:
+                    menu_set_entry_var1(&settings_menu, M_Z0_TIMER, settings_get_zone0_timer());
+                    menu_set_entry_var1(&settings_menu, M_Z0_GAP, settings_get_zone0_gap());
+                    menu_set_entry_var1(&settings_menu, M_REV_ROTARY, settings_get_rotary_reversed() ? 1u : 0u);
                     menu_refresh();
+                    break;
+
+                case M_Z0_TIMER:
+                    settings_set_zone0_timer(menu_get_entry_var1(&settings_menu, M_Z0_TIMER));
+                    menu_refresh();
+                    break;
+
+                case M_Z0_GAP:
+                    settings_set_zone0_gap(menu_get_entry_var1(&settings_menu, M_Z0_GAP));
+                    menu_refresh();
+                    break;
+
+                case M_REV_ROTARY:
+                    settings_set_rotary_reversed(0 != menu_get_entry_var1(&settings_menu, M_REV_ROTARY));
+                    menu_refresh();
+                    break;
+
+                case M_LOAD_SETTINGS:
+                    display_clear();
+                    display_home();
+                    if (settings_load_from_flash())
+                    {
+                        menu_set_entry_var1(&settings_menu, M_Z0_TIMER, settings_get_zone0_timer());
+                        menu_set_entry_var1(&settings_menu, M_Z0_GAP, settings_get_zone0_gap());
+                        menu_set_entry_var1(&settings_menu, M_REV_ROTARY, settings_get_rotary_reversed() ? 1u : 0u);
+                        display_string("Loaded");
+                    } else {
+                        display_string("No save");
+                    }
+                    sleep_ms(800);
+                    menu_refresh();
+                    break;
+
+                case M_SAVE_SETTINGS:
+                    display_clear();
+                    display_home();
+                    if (settings_save_to_flash())
+                        display_string("Saved");
+                    else
+                        display_string("Save fail");
+                    sleep_ms(800);
+                    menu_refresh();
+                    break;
+
+                case M_RESTART:
+                    display_clear();
+                    display_home();
+                    display_string("Restarting...");
+                    sleep_ms(300);
+                    watchdog_reboot(0, 0, 0);
+                    while (true) { }
                     break;
 
                 /// Info Menü

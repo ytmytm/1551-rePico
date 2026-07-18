@@ -26,8 +26,10 @@ struct MENU_ENTRY
     char *name;         // Name Menue Entry
     uint8_t id;         // Menu Entry ID
     uint8_t type;       // Menu Entry Type
-    uint8_t var1;       // Menu Variable1
+    uint8_t var1;       // Menu Variable1 (ONOFF / 8BIT value)
     MENU_STRUCT *menu;  // Zeiger auf Untermenu
+    uint8_t var_min;    // ENTRY_8BIT_DEC lower bound
+    uint8_t var_max;    // ENTRY_8BIT_DEC upper bound
 };
 
 struct MENU_STRUCT

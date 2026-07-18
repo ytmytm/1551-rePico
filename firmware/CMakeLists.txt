@@ -84,6 +84,7 @@ target_link_libraries(1541-rePico
         hardware_clocks
         hardware_pwm
         hardware_spi
+        hardware_flash
         no-OS-FatFS-SD-SDIO-SPI-RPi-Pico
 )
 

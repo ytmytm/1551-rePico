@@ -53,11 +53,11 @@ uint8_t id2 = 0;    // - these need to change to .. signal a disk-change or afte
 // 1551: zone 0 at 28µs + gap 21 (required for reliable DOS/GEOS/fastloaders;
 // see doc/1551-zone0-gcr-timing.md — gap-only or timer-only each leave some titles failing)
 #if REPICO1551
-const int64_t bytetimer_values[NUM_SPEEDZONES] = {28, 28, 30, 32};
-const uint8_t d64_sector_gap[NUM_SPEEDZONES] = {21, 21, 16, 13};
+int64_t bytetimer_values[NUM_SPEEDZONES] = {28, 28, 30, 32};
+uint8_t d64_sector_gap[NUM_SPEEDZONES] = {21, 21, 16, 13};
 #else
-const int64_t bytetimer_values[NUM_SPEEDZONES] = {26, 28, 30, 32};
-const uint8_t d64_sector_gap[NUM_SPEEDZONES] = {12, 21, 16, 13};
+int64_t bytetimer_values[NUM_SPEEDZONES] = {26, 28, 30, 32};
+uint8_t d64_sector_gap[NUM_SPEEDZONES] = {12, 21, 16, 13};
 #endif
 
 bool block_data_changes = false;
