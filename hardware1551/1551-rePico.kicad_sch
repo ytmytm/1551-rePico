@@ -6426,7 +6426,7 @@
 		)
 		(uuid "dcde9586-56be-4dcb-9450-512eff047867")
 	)
-	(text "WPS would be on P4, but don't connect it to mainboard\nb/c it's an output of U8 inverter, with no mechanism\nit drives it low\nBYTE_LATCHED would be on P7, not connected either\n(gate array ould drive it)"
+	(text "P4: WPS, but don't connect it to mainboard\n    b/c it's an output of U8 inverter, with no\n    other mechanism to drive it low\nP7: BYTE_LATCHED, not connected either\n    (gate array could drive it)\nP3: ACT led goes between pins 8 (+5V) and 9 (ACT) of P5 (pin 1 is GND)\n    (on 1551 separated from LED with buffer)"
 		(exclude_from_sim no)
 		(at 355.092 192.024 0)
 		(effects
@@ -6437,7 +6437,7 @@
 		)
 		(uuid "e8507dfb-96b4-4a4e-9f88-a8ab98bc66db")
 	)
-	(text "Pico firmware TODO:\n- GPIO0: SOE not used (always high), can be fixed in firmware to true\n  OR can be used to test 2MHz clock (PHI0) for 6502\n- GPIO3: Pico decides about device number - 0 or 1\n  OR can be used to test 100Hz (IRQ) for 6502\n- GPIO5: switch driver from high/low to hi-z/low"
+	(text "Pico firmware:\n- GPIO0: SOE not used (always high), set in firmware to always true\n  OR can be used to test 2MHz clock (PHI0) for 6502\n- GPIO3: Pico decides about device number - 0 or 1\n  OR drives ~{IRQ} for 6502"
 		(exclude_from_sim no)
 		(at 200.66 69.596 0)
 		(effects
