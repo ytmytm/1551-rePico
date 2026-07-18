@@ -72,17 +72,17 @@ Locked CPU/TPI pins positions, they were perfectly aligned.
 - UI / UIX improvements
 - options in settings to control zone0 (Z0) timer/gap for experiments
 - reversible encoder direction
+- confirmed that IRQ 100Hz/10µs from GPIO3 PWM works fine
+- no need for reset circuit for 1551-III-Pico, it's driven by tcbm2sd
 
 IRQ/PHI experiments need to be completed:
 @. tie LED to see activity
-A. route GPIO3 to IRQ
 B. route GPIO0 to PHI0 -> cut original crystal, route GPIO0 to mainboard phi0, no need to switch jumper
     it goes from oscilator pin 8 through FB1 to GA#1 and GA#2, but it's 16MHz
-C. /RESET is driven by TCBM
 D. untie CPLD from /CS and XR/W:
 D1. switch from XR/W to R/W+Phi2
 D2. generate /CS from A15-A13 with 74'139
-D3. pass R/W+Phi0 back to RAM
-E. confirm that UI works with Pi1551-III front panel connected
+D3. pass R/W+Phi2 back to RAM
+E. confirm that UI would work with Pi1551-III front panel connected
 
 B+D[1..3] - all of this has to be done at once to disconnect from gate arrays
