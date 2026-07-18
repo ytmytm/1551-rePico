@@ -54,11 +54,13 @@ This file now lists only the remaining or intentionally deferred items. Confirme
    - The 1541/1571 service manuals are still relevant here: they document the gate-array byte-ready/SOE behavior and the reused ATN-related latch behavior, even though there is no dedicated 1551 service manual in the repo.
    - Re-confirm exact behavior after rebuilding the CPLD.
 
-5. Decide reset handling.
+5. **Zone 0 GCR timing (firmware, confirmed):** stock DOS/GEOS need slower zone-0 byte timer (28 µs) and larger sector gaps (21) on 1551-rePico. Full A/B notes and rationale: [doc/1551-zone0-gcr-timing.md](../doc/1551-zone0-gcr-timing.md). Do not “restore” 26 µs / gap 12 for `REPICO1551` without retesting GEOS, hypaload, and qm_ demos.
+
+6. Decide reset handling.
    - CPLD passes `/~{RESET}` to `/~{RESET_3V3}`.
    - Pico `RUN` only follows that reset if `JP1` is bridged.
 
-6. Document the IRQ/PHI0 experiment jumper modes.
+7. Document the IRQ/PHI0 experiment jumper modes.
    - `JP2` is a 3-way solder jumper for `PHI0`: default `A-C` connects `PHI0_BRD` to `/PHI0`; experiment `B-C` connects Pico `GPIO0` to `/PHI0` instead.
    - `JP5` and `JP6` must be changed together for the IRQ experiment. Default keeps `GPIO3 -> /DEVNUM_3V3` and `/~{IRQ_BRD} -> /~{IRQ}`. Swapped mode connects `GPIO3 -> /~{IRQ}` and lets `JP7` set `/DEVNUM_3V3`.
    - `JP7` selects the fixed device number only when `JP5` is in swapped mode: default `GND` is device #8; switched `+3V3` is device #9.
