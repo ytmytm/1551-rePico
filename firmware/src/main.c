@@ -246,9 +246,43 @@ FRESULT mount_sdcard(void)
 
     if (FR_OK == fr)
     {
-        fb_dir_entry_count = get_dir_entry_count(mount_path); // open card, count entries on root level
+        // Keep previous folder across remounts (Load Image / selector rebuild).
+        // Only start at root when path was never set or is no longer valid.
+        if (0 == current_path[0])
+        {
+            strcpy(current_path, mount_path);
+        }
 
-        strcpy(current_path, mount_path);
+        if (FR_OK != f_chdir(current_path))
+        {
+            strcpy(current_path, mount_path);
+            fb_cursor_pos = 0;
+            fb_window_pos = 0;
+            (void)f_chdir(current_path);
+        }
+
+        fb_dir_entry_count = get_dir_entry_count(current_path);
+
+        // Clamp browser cursor if directory shrank since last visit
+        if (0 == fb_dir_entry_count)
+        {
+            fb_cursor_pos = 0;
+            fb_window_pos = 0;
+        }
+        else if ((fb_window_pos + fb_cursor_pos) >= fb_dir_entry_count)
+        {
+            uint16_t last = fb_dir_entry_count - 1;
+            if (last < LCD_LINE_COUNT)
+            {
+                fb_window_pos = 0;
+                fb_cursor_pos = (uint8_t)last;
+            }
+            else
+            {
+                fb_window_pos = last - (LCD_LINE_COUNT - 1);
+                fb_cursor_pos = LCD_LINE_COUNT - 1;
+            }
+        }
     }
     return fr;
 }
