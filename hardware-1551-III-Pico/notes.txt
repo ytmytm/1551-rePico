@@ -69,6 +69,9 @@ Locked CPU/TPI pins positions, they were perfectly aligned.
 - problems with zone 0 (tracks 1-17) seem to be solved (hopefully we don't break anything else)
   - timer set to 28µs and gap 21 instead of 26/12
   Doc: doc/1551-zone0-gcr-timing.md
+- UI / UIX improvements
+- options in settings to control zone0 (Z0) timer/gap for experiments
+- reversible encoder direction
 
 IRQ/PHI experiments need to be completed:
 @. tie LED to see activity
