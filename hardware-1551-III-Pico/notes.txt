@@ -77,15 +77,56 @@ Locked CPU/TPI pins positions, they were perfectly aligned.
 - LED connected, P5 pins 8 (+5V) and 9 (ACT), activity when loading, not during reset
 - drop use of gate array's XR/W, generate it on (former RESET_3V3 pin) in CPLD, expose for RAM
 - confirmed that RAM works on /WE generated from CPLD (from former RESET_3V3 pin)
+- switched Phi0 to come from Pico and that blew up(?) GA? there is no onboard 2MHz anymore
+  (or it could be unfortunate conincidence - Pico didn't want to start several times, maybe something shorted and blew GA?)
+  (U7 GA is probably broken, no 2MHz clock, we don't need it though)
+- desoldered U7 GA and connected like below to 74'139
+- 1551 motherboard used only as carrier for RAM and ROM
+- pico1551 can be recreated
+- AI claims that if we switch in CPLD rs (address) from register to input
+  we might save just enough gates to generate RAM/ROM/TPI chip-select signals
+  *also* with 1551-RAMBOard setup ($00-$3f RAM, $40-$7F TPI, $80-$9F RAM, $A0-$FF ROM)
+  need A13-A15 on input and /RAMSEL, /ROMSEL on output
 
-Drop gate array dependencies: XR/W, /CS:TPI,RAM,ROM, Phi0:
-D3. route GPIO0 to Phi0 on daughterboard only
+remove U7 and wire 74'139
+U7      '139    signal
+4       16      VCC, also to 15,14,13
+        15      /E2 (keep input high)
+6       3       A15
+7       2       A14
+20      4       /RAM
+14      7       /ROM
+16      5       /TPI
+5       1       /E1, GND also to 8
+        8       GND
+        13      VCC (keep input high)
+        14      VCC (keep input high)
+
+or directly:
+
+74LS139 (DIP-16)
+================
+
+ pin | signal   | connect
+-----+----------+----------------
+  1  | 1G (/E1) | GND
+  2  | 1A       | CPU A14   (21)
+  3  | 1B       | CPU A15   (22)
+  4  | 1Y0      | /CS_RAM   (18+20 shorted)
+  5  | 1Y1      | /CS_TPI   (18)
+  6  | 1Y2      | NC
+  7  | 1Y3      | /CS_ROM   (22, 20 tied to GND)
+  8  | GND      | GND
+  9  | 2Y0      | NC
+ 10  | 2Y1      | NC
+ 11  | 2Y2      | NC
+ 12  | 2Y3      | NC
+ 13  | 2A       | VCC
+ 14  | 2B       | VCC
+ 15  | 2G (/E2) | VCC
+ 16  | VCC      | VCC
 
 Pico1551-III readiness:
-E. confirm that UI would work with Pi1551-III front panel connected
+confirm that UI would work with Pi1551-III front panel connected
     - act will be inverted (active low)
     - need correct OLED type driver
-F. cut off gate array dependencies completely
-    - generate /CS signels for RAM, ROM and TPI from A15-A13 with 74'139
-    - raise pins on RAM/ROM
-    - cut CS_TPI trace
