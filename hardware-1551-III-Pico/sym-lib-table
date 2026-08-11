@@ -8,4 +8,7 @@
   (lib (name "4ch_i2c_level_converter")(type "Legacy")(uri "${KIPRJMOD}/../common/library/4ch_i2c_level_converter.lib")(options "")(descr ""))
   (lib (name "C64_IEC")(type "Legacy")(uri "${KIPRJMOD}/../common/library/C64_IEC.lib")(options "")(descr ""))
   (lib (name "pi1541")(type "Legacy")(uri "${KIPRJMOD}/../common/library/pi1541.lib")(options "")(descr ""))
+  (lib (name "6502")(type "KiCad")(uri "${KIPRJMOD}/contrib/library/6502.kicad_sym")(options "")(descr "from MOS_CPU_Replacer"))
+  (lib (name "65xx")(type "KiCad")(uri "${KIPRJMOD}/contrib/library/65xx-library.kicad_sym")(options "")(descr "from hardware1551 / Alarm-Siren 6502-kicad-library"))
+  (lib (name "uSD_push-push_ebay")(type "KiCad")(uri "${KIPRJMOD}/contrib/library/uSD_push-push_ebay.kicad_sym")(options "")(descr "from tcbm2sd"))
 )

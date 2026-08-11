@@ -23702,7 +23702,7 @@
 				)
 			)
 		)
-		(property "Footprint" "BulkyMIDI-32:PWR_Specification"
+		(property "Footprint" "pi1541:PWR_Specification"
 			(at 58.42 167.005 0)
 			(effects
 				(font
