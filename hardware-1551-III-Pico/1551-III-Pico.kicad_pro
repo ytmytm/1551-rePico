@@ -51,7 +51,13 @@
           "min_clearance": 0.0
         }
       },
-      "diff_pair_dimensions": [],
+      "diff_pair_dimensions": [
+        {
+          "gap": 0.0,
+          "via_gap": 0.0,
+          "width": 0.0
+        }
+      ],
       "drc_exclusions": [],
       "meta": {
         "filename": "board_design_settings.json",
@@ -598,15 +604,15 @@
         "pattern": "SW5_INSERT"
       },
       {
-        "netclass": "Power",
+        "netclass": "Default",
         "pattern": "+3V3"
       },
       {
-        "netclass": "Power",
+        "netclass": "Default",
         "pattern": "+5V"
       },
       {
-        "netclass": "Power",
+        "netclass": "Default",
         "pattern": "GND"
       }
     ]
