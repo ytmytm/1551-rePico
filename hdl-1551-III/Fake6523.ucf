@@ -1,0 +1,47 @@
+
+NET "_reset"  LOC = "P64"  ;    // RESET // TCBM bus
+NET "data<0>"  LOC = "P60" ;
+NET "data<1>"  LOC = "P1"  ;
+NET "data<2>"  LOC = "P2"  ;
+NET "data<3>"  LOC = "P4"  ;
+NET "data<4>"  LOC = "P5"  ;
+NET "data<5>"  LOC = "P6"  ;
+NET "data<6>"  LOC = "P7"  ;
+NET "data<7>"  LOC = "P63"  ;
+NET "port_a<0>"  LOC = "P9"  ;  // DIO1 // TCBM bus
+NET "port_a<1>"  LOC = "P10"  ; // DIO2
+NET "port_a<2>"  LOC = "P11"  ; // DIO3
+NET "port_a<3>"  LOC = "P12"  ; // DIO4
+NET "port_a<4>"  LOC = "P13"  ; // DIO5
+NET "port_a<5>"  LOC = "P15"  ; // DIO6
+NET "port_a<6>"  LOC = "P16"  ; // DIO7
+NET "port_a<7>"  LOC = "P17"  ; // DIO8
+NET "port_b<0>"  LOC = "P22"  ; // YB0  // head register
+NET "port_b<1>"  LOC = "P27"  ; // YB1
+NET "port_b<2>"  LOC = "P32"  ; // YB2
+NET "port_b<3>"  LOC = "P33"  ; // YB3
+NET "port_b<4>"  LOC = "P34"  ; // YB4
+NET "port_b<5>"  LOC = "P35"  ; // YB5
+NET "port_b<6>"  LOC = "P36"  ; // YB6
+NET "port_b<7>"  LOC = "P38"  ; // YB7
+NET "port_c<0>"  LOC = "P46"  ; // STATUS0
+NET "port_c<1>"  LOC = "P47"  ; // STATUS1
+NET "port_c<2>"  LOC = "P48"  ; // DEV
+NET "port_c<3>"  LOC = "P49"  ; // DAV
+NET "port_c<4>"  LOC = "P50"  ; // MODE (head R/W)
+NET "port_c<5>"  LOC = "P52"  ; // DEVNUM (0=#9, 1=#8)
+NET "port_c<6>"  LOC = "P56"  ; // SYNC
+NET "port_c<7>"  LOC = "P57"  ; // ACK
+NET "rs<0>"  LOC = "P45"  ;     // A0
+NET "rs<1>"  LOC = "P44"  ;     // A1
+NET "rs<2>"  LOC = "P43"  ;     // A2
+
+NET "byte_ready_3v3" LOC = "P19";
+NET "byte_latched" LOC = "P20";
+
+NET "_cs"  LOC = "P39"  ;       // TPI /CS to clear byte_latched/byte_ready
+
+NET "_writereal" LOC = "P24";   // R/W from CPU
+//NET "phi0" LOC = "P31";
+NET "phi2" LOC = "P25";         // PHI2 from CPU
+NET "_xrw" LOC = "P40";         // output to RAM

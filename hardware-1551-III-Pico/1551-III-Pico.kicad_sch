@@ -8777,131 +8777,6 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "power:+3.3V"
-			(power)
-			(pin_numbers
-				(hide yes)
-			)
-			(pin_names
-				(offset 0)
-				(hide yes)
-			)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(property "Reference" "#PWR"
-				(at 0 -3.81 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Value" "+3.3V"
-				(at 0 3.556 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Footprint" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Datasheet" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Description" "Power symbol creates a global label with name \"+3.3V\""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_keywords" "global power"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(symbol "+3.3V_0_1"
-				(polyline
-					(pts
-						(xy -0.762 1.27) (xy 0 2.54)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 0 2.54) (xy 0.762 1.27)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 0 0) (xy 0 2.54)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-			)
-			(symbol "+3.3V_1_1"
-				(pin power_in line
-					(at 0 0 90)
-					(length 0)
-					(name "~"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
 		(symbol "power:+3V3"
 			(power)
 			(pin_numbers
@@ -9510,7 +9385,7 @@
 		)
 		(uuid e4eb790d-56e6-4f4a-a762-8c50af3e6b70)
 	)
-	(text "Pico firmware:\n- encoder, DS0/DS1, SD card change from shift register, SW4, SW5\n- GPIO0: output 2MHz system clock\n- GPIO3: output 100Hz irq\n(buffer both through 74AHCT1G125?)\n- footprints\n- SW4/SW5 need pullups?"
+	(text "Pico firmware:\n- encoder, DS0/DS1, SD card change from shift register, SW4, SW5\n- GPIO0: output 2MHz system clock\n- GPIO3: output 100Hz irq"
 		(exclude_from_sim no)
 		(at 35.56 20.828 0)
 		(effects
@@ -9823,6 +9698,12 @@
 		(uuid "43f8e8d1-13a7-4f80-b39e-ea03a746d778")
 	)
 	(junction
+		(at 64.77 121.285)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "4410cc85-2995-4039-859c-408bff83e7ce")
+	)
+	(junction
 		(at 64.77 116.205)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -9947,6 +9828,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "9bfb3102-1155-48ba-866a-36a00e9338db")
+	)
+	(junction
+		(at 231.775 185.42)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "9e95a8c0-05af-42b3-b628-ceadb75f32a2")
 	)
 	(junction
 		(at 274.955 171.45)
@@ -10085,12 +9972,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "f54f9291-f02a-403a-9ddc-6118ba5b30d4")
-	)
-	(junction
-		(at 231.775 185.42)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "f7cf0703-60c0-4618-891b-e35dac78b1d4")
 	)
 	(junction
 		(at 192.405 271.78)
@@ -10337,16 +10218,6 @@
 			(type default)
 		)
 		(uuid "13a6f710-7b40-46cd-9b43-99bdc031f203")
-	)
-	(wire
-		(pts
-			(xy 231.775 170.18) (xy 231.775 185.42)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "13b63f24-cf1a-41e7-b88b-3affeee8be9a")
 	)
 	(wire
 		(pts
@@ -10597,6 +10468,26 @@
 			(type default)
 		)
 		(uuid "2bb869bb-2ec8-438c-8977-71afe9f259f2")
+	)
+	(wire
+		(pts
+			(xy 439.42 158.75) (xy 439.42 161.29)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2be3131d-3771-4399-b597-cc4c1532f2a7")
+	)
+	(wire
+		(pts
+			(xy 231.775 169.545) (xy 231.775 185.42)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2c812c81-87ca-4b69-ac70-258f9d20db05")
 	)
 	(wire
 		(pts
@@ -11220,7 +11111,7 @@
 	)
 	(wire
 		(pts
-			(xy 439.42 161.29) (xy 450.85 161.29)
+			(xy 439.42 158.75) (xy 450.85 158.75)
 		)
 		(stroke
 			(width 0)
@@ -11940,6 +11831,16 @@
 	)
 	(wire
 		(pts
+			(xy 64.77 121.285) (xy 64.77 126.365)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ba536e63-024d-4bf1-a33e-c48634912152")
+	)
+	(wire
+		(pts
 			(xy 76.835 196.85) (xy 76.835 198.755)
 		)
 		(stroke
@@ -12090,7 +11991,7 @@
 	)
 	(wire
 		(pts
-			(xy 184.785 50.165) (xy 184.785 27.305)
+			(xy 184.785 27.305) (xy 184.785 50.165)
 		)
 		(stroke
 			(width 0)
@@ -12699,7 +12600,7 @@
 		(uuid "08de5397-44d5-42bb-9be9-57e2e1329c89")
 	)
 	(label "A14"
-		(at 450.85 138.43 180)
+		(at 450.85 140.97 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -13009,7 +12910,7 @@
 		(uuid "23734f81-e64f-4838-b132-55f1a357d66c")
 	)
 	(label "A13"
-		(at 450.85 158.75 180)
+		(at 450.85 161.29 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -13758,6 +13659,16 @@
 		)
 		(uuid "735c9cca-2559-49cb-97e7-cc36e2e92bd9")
 	)
+	(label "~{IRQ}"
+		(at 57.15 126.365 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "73c472ef-bf75-4d3d-8dae-df87eb90ebde")
+	)
 	(label "DEV"
 		(at 151.13 43.18 0)
 		(effects
@@ -13769,7 +13680,7 @@
 		(uuid "775b5f5c-1247-4090-99fc-5f891d730166")
 	)
 	(label "A15"
-		(at 450.85 140.97 180)
+		(at 450.85 138.43 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -15746,70 +15657,6 @@
 		)
 	)
 	(symbol
-		(lib_id "power:+3.3V")
-		(at 161.925 167.005 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "00000000-0000-0000-0000-00005ee9dcdf")
-		(property "Reference" "#PWR046"
-			(at 161.925 170.815 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "+3.3V"
-			(at 162.306 162.6108 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 161.925 167.005 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 161.925 167.005 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 161.925 167.005 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "a1df2dc5-1295-4f4b-ac60-7e37a1d2c7e9")
-		)
-		(instances
-			(project ""
-				(path "/51d32fb8-d7b9-46d0-92bb-8d66d4a10b37"
-					(reference "#PWR046")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:CP1")
 		(at 76.835 182.245 0)
 		(unit 1)
@@ -16030,71 +15877,6 @@
 			(project ""
 				(path "/51d32fb8-d7b9-46d0-92bb-8d66d4a10b37"
 					(reference "J5")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:+3.3V")
-		(at 206.375 169.545 0)
-		(mirror y)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "00000000-0000-0000-0000-000062f4338d")
-		(property "Reference" "#PWR047"
-			(at 206.375 173.355 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "+3.3V"
-			(at 205.994 165.1508 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 206.375 169.545 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 206.375 169.545 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 206.375 169.545 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "3ec0421f-ef94-44f2-970a-d60a2dd87eb2")
-		)
-		(instances
-			(project ""
-				(path "/51d32fb8-d7b9-46d0-92bb-8d66d4a10b37"
-					(reference "#PWR047")
 					(unit 1)
 				)
 			)
@@ -18758,6 +18540,72 @@
 		)
 	)
 	(symbol
+		(lib_id "power:+3V3")
+		(at 206.375 169.545 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "24e5147c-8eb4-451b-b976-6fdc13349e50")
+		(property "Reference" "#PWR013"
+			(at 206.375 173.355 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 206.375 164.465 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 206.375 169.545 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 206.375 169.545 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+3V3\""
+			(at 206.375 169.545 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "fe944feb-73c4-4bb9-9ead-1c1dc3bbccb6")
+		)
+		(instances
+			(project "1551-III-Pico"
+				(path "/51d32fb8-d7b9-46d0-92bb-8d66d4a10b37"
+					(reference "#PWR013")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:R")
 		(at 60.96 116.205 270)
 		(unit 1)
@@ -20086,6 +19934,72 @@
 			(project "1551-III-Pico"
 				(path "/51d32fb8-d7b9-46d0-92bb-8d66d4a10b37"
 					(reference "#PWR084")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 122.555 80.645 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "46ab9e9f-8fa3-45d8-aea1-e5200b58a35d")
+		(property "Reference" "#PWR012"
+			(at 122.555 84.455 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 122.555 75.565 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 122.555 80.645 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 122.555 80.645 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+3V3\""
+			(at 122.555 80.645 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "73fb1c90-09f2-40cf-9abc-10997d2e7c25")
+		)
+		(instances
+			(project "1551-III-Pico"
+				(path "/51d32fb8-d7b9-46d0-92bb-8d66d4a10b37"
+					(reference "#PWR012")
 					(unit 1)
 				)
 			)
@@ -21855,70 +21769,6 @@
 		)
 	)
 	(symbol
-		(lib_id "power:+3.3V")
-		(at 122.555 80.645 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "65d3ec60-042c-4ba3-9802-50b1908a2f1e")
-		(property "Reference" "#PWR017"
-			(at 122.555 84.455 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "+3.3V"
-			(at 122.936 76.2508 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 122.555 80.645 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 122.555 80.645 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 122.555 80.645 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "5c4688d8-a7c1-46ba-a408-afafd50e3713")
-		)
-		(instances
-			(project "Pi1551-III Module-rotated"
-				(path "/51d32fb8-d7b9-46d0-92bb-8d66d4a10b37"
-					(reference "#PWR017")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:R")
 		(at 131.445 86.995 0)
 		(unit 1)
@@ -23282,6 +23132,138 @@
 		)
 	)
 	(symbol
+		(lib_id "power:+3V3")
+		(at 231.775 169.545 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "98778da6-3de9-4929-b98e-eb0708c65668")
+		(property "Reference" "#PWR018"
+			(at 231.775 173.355 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 231.775 164.465 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 231.775 169.545 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 231.775 169.545 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+3V3\""
+			(at 231.775 169.545 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "8a6fbbf0-aea4-479c-a486-ea75a37254a6")
+		)
+		(instances
+			(project "1551-III-Pico"
+				(path "/51d32fb8-d7b9-46d0-92bb-8d66d4a10b37"
+					(reference "#PWR018")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 161.925 167.005 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "992edab6-5c8e-42c8-a38f-e863eaf98505")
+		(property "Reference" "#PWR017"
+			(at 161.925 170.815 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 161.925 161.925 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 161.925 167.005 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 161.925 167.005 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+3V3\""
+			(at 161.925 167.005 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "a2d21b1b-7a1a-409c-94fd-8e091a789a71")
+		)
+		(instances
+			(project "1551-III-Pico"
+				(path "/51d32fb8-d7b9-46d0-92bb-8d66d4a10b37"
+					(reference "#PWR017")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:R")
 		(at 122.555 86.995 0)
 		(unit 1)
@@ -24564,71 +24546,6 @@
 		)
 	)
 	(symbol
-		(lib_id "power:+3.3V")
-		(at 231.775 170.18 0)
-		(mirror y)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "ac257434-72c0-4423-9198-de39dcd27170")
-		(property "Reference" "#PWR095"
-			(at 231.775 173.99 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "+3.3V"
-			(at 231.394 165.7858 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 231.775 170.18 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 231.775 170.18 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 231.775 170.18 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "08bdb6d7-24b6-4358-8610-1736ce82e91d")
-		)
-		(instances
-			(project "1551-III-Pico"
-				(path "/51d32fb8-d7b9-46d0-92bb-8d66d4a10b37"
-					(reference "#PWR095")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "power:+3V3")
 		(at 59.055 54.61 90)
 		(mirror x)
@@ -25366,6 +25283,102 @@
 			(project "1551-III-Pico"
 				(path "/51d32fb8-d7b9-46d0-92bb-8d66d4a10b37"
 					(reference "#PWR034")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 60.96 126.365 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "bdb7435a-946b-4938-a2bb-27bd29b11962")
+		(property "Reference" "R21"
+			(at 59.69 123.825 90)
+			(effects
+				(font
+					(size 0.762 0.762)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "3.3K"
+			(at 59.69 126.365 90)
+			(effects
+				(font
+					(size 0.762 0.762)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 60.96 124.587 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://jlcpcb.com/api/file/downloadByFileSystemAccessId/8579706691952099328"
+			(at 60.96 126.365 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 60.96 126.365 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB Part #" "C26010"
+			(at 60.96 126.365 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MFR.Part #" "0805W8F3301T5E"
+			(at 60.96 126.365 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB URL" "https://jlcpcb.com/partdetail/26753-0805W8F3301T5E/C26010"
+			(at 60.96 126.365 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "d330d022-9528-42f0-ae9e-3fd969f1d9ac")
+		)
+		(pin "2"
+			(uuid "dd528be1-00c0-4931-a9be-99e829010e83")
+		)
+		(instances
+			(project "1551-III-Pico"
+				(path "/51d32fb8-d7b9-46d0-92bb-8d66d4a10b37"
+					(reference "R21")
 					(unit 1)
 				)
 			)
