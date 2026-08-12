@@ -53,7 +53,7 @@ module Fake6523(
 assign _xrw = !(!_writereal & phi2);
 
 reg [7:0]data_out;
-reg [2:0] rs_r;
+//reg [2:0] rs_r;
 wire clock = !_cs;
 wire [7:0] data_ddr_a;
 wire [7:0] data_ddr_b;
@@ -66,19 +66,19 @@ wire we_port_a;
 wire we_port_b;
 wire we_port_c;
 
-assign we_ddr_a = !_cs & !_xrw & (rs_r == 3'd3);
-assign we_ddr_b = !_cs & !_xrw & (rs_r == 3'd4);
-assign we_ddr_c = !_cs & !_xrw & (rs_r == 3'd5);
-assign we_port_a = !_cs & !_xrw & (rs_r == 3'd0);
-assign we_port_b = !_cs & !_xrw & (rs_r == 3'd1);
-assign we_port_c = !_cs & !_xrw & (rs_r == 3'd2);
+//assign we_ddr_a = !_cs & !_xrw & (rs_r == 3'd3);
+//assign we_ddr_b = !_cs & !_xrw & (rs_r == 3'd4);
+//assign we_ddr_c = !_cs & !_xrw & (rs_r == 3'd5);
+//assign we_port_a = !_cs & !_xrw & (rs_r == 3'd0);
+//assign we_port_b = !_cs & !_xrw & (rs_r == 3'd1);
+//assign we_port_c = !_cs & !_xrw & (rs_r == 3'd2);
 
-//assign we_ddr_a = !_cs & !_xrw & (rs == 3'd3);
-//assign we_ddr_b = !_cs & !_xrw & (rs == 3'd4);
-//assign we_ddr_c = !_cs & !_xrw & (rs == 3'd5);
-//assign we_port_a = !_cs & !_xrw & (rs == 3'd0);
-//assign we_port_b = !_cs & !_xrw & (rs == 3'd1);
-//assign we_port_c = !_cs & !_xrw & (rs == 3'd2);
+assign we_ddr_a = !_cs & !_xrw & (rs == 3'd3);
+assign we_ddr_b = !_cs & !_xrw & (rs == 3'd4);
+assign we_ddr_c = !_cs & !_xrw & (rs == 3'd5);
+assign we_port_a = !_cs & !_xrw & (rs == 3'd0);
+assign we_port_b = !_cs & !_xrw & (rs == 3'd1);
+assign we_port_c = !_cs & !_xrw & (rs == 3'd2);
 
 ioport         ioport_a(
 								.clock(clock), 
@@ -115,9 +115,9 @@ assign data =  (!_cs & _xrw ? data_out : 8'bz);
 
 always @(posedge clock)
 begin
-   rs_r = rs;
-	case(rs_r)
-//	case (rs)
+//   rs_r = rs;
+//	case(rs_r)
+	case (rs)
       0: data_out = port_a;
       1: data_out = port_b;
       2: data_out = port_c;
