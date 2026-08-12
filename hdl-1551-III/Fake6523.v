@@ -20,11 +20,16 @@
 //////////////////////////////////////////////////////////////////////////////////
 module Fake6523(
                 input _reset,
-                input _cs,
-					 
+                input a13,
+                input a14,
+                input a15,
+
 					 input wire byte_ready_3v3,
 					 output reg byte_latched,
 					 output _xrw,
+					 output _ramsel,
+					 output _ramoe,
+					 output _romsel,
 					 input _writereal,
 					 input phi2,
 					 
@@ -35,6 +40,11 @@ module Fake6523(
                 inout [7:0]port_c
 
                );
+
+wire _cs = a15 | ~a14;          // TPI selected at $4000-$7fff
+assign _ramsel = a14 | (a15 & a13);
+assign _ramoe = _ramsel | ~_writereal;
+assign _romsel = ~(a15 & (a14 | a13));
 
     always @(negedge byte_ready_3v3 or negedge _cs or negedge _reset) begin
 	if (!_reset) begin

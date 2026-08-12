@@ -39,7 +39,13 @@ NET "rs<2>"  LOC = "P43"  ;     // A2
 NET "byte_ready_3v3" LOC = "P19";
 NET "byte_latched" LOC = "P20";
 
-NET "_cs"  LOC = "P39"  ;       // TPI /CS to clear byte_latched/byte_ready
+NET "a13"  LOC = "P61"  ;       // CPU A13
+NET "a14"  LOC = "P39"  ;       // CPU A14; replaces external TPI /CS input
+NET "a15"  LOC = "P62"  ;       // CPU A15
+
+NET "_ramsel" LOC = "P58";      // /RAMSEL, FB2 free output macrocell
+NET "_ramoe" LOC = "P42";       // /RAMOE, test fit on free FB3 I/O pin
+NET "_romsel" LOC = "P59";      // /ROMSEL, FB2 free output macrocell
 
 NET "_writereal" LOC = "P24";   // R/W from CPU
 //NET "phi0" LOC = "P31";
