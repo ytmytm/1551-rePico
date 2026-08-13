@@ -1,5 +1,7 @@
 fabrication-toolkit-options.json
 production/
+*-backups/
+__pycache__/
 *.dsn
 *.rules
 *.ses
