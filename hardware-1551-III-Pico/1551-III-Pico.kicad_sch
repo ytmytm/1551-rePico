@@ -6,7 +6,7 @@
 	(paper "A2")
 	(title_block
 		(title "1551-III-Pico")
-		(date "2026-08-01")
+		(date "2026-08-16")
 		(rev "2")
 	)
 	(lib_symbols
@@ -8026,17 +8026,6 @@
 		)
 		(uuid "03e2981f-e597-425d-8162-76e2371b8cf5")
 	)
-	(text "input GPIO: encoder pins\ninputs: 3x encoder, 2x DS0/DS1, 1x SD card switch (6 of 8)\npower: 5V, musi być HCT\npackage: same as cpu replacer thingy\n\nCP=clock z pico\nQ7=data do pico (przez level shift)\n~{PL}=load strobe z pico\n~{CE}->GND\nDS->GND (serial input)"
-		(exclude_from_sim no)
-		(at 230.759 272.542 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "0b399603-c9ba-4a0a-8659-f44e67d80bd9")
-	)
 	(text "J1:\n- switch chooses ROM\n  from 32K half of 27C512\n  closed = bottom half\n  open = top half\n"
 		(exclude_from_sim no)
 		(at 405.003 107.696 0)
@@ -8080,17 +8069,6 @@
 			(justify left)
 		)
 		(uuid "30bf6c3c-5a2c-434f-a407-b697c057fa74")
-	)
-	(text "REVIEW each part:\n- front panel connector signals\n- all JLCPCB parts, TSSOP"
-		(exclude_from_sim no)
-		(at 9.906 -45.72 0)
-		(effects
-			(font
-				(size 3.81 3.81)
-			)
-			(justify left)
-		)
-		(uuid "41c9508b-3999-4c89-9640-a13ef8bc5c5a")
 	)
 	(text "ACT_3V3 - converted and inverted ACT\n(the other side of LED is connected to GND)"
 		(exclude_from_sim no)
@@ -19561,7 +19539,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "74HCT165"
+		(property "Value" "74LS165"
 			(at 223.7583 251.46 0)
 			(effects
 				(font
@@ -19579,7 +19557,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/74HC_HCT165.pdf"
+		(property "Datasheet" "https://www.lcsc.com/datasheet/C7742.pdf"
 			(at 221.615 271.78 0)
 			(effects
 				(font
@@ -19597,7 +19575,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Part #" "C42403065"
+		(property "JLCPCB Part #" "C7742"
 			(at 221.615 271.78 0)
 			(effects
 				(font
@@ -19606,7 +19584,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB URL" "https://www.lcsc.com/product-detail/C42403065.html"
+		(property "JLCPCB URL" "https://www.lcsc.com/product-detail/C7742.html"
 			(at 221.615 271.78 0)
 			(effects
 				(font
@@ -19615,7 +19593,7 @@
 				(hide yes)
 			)
 		)
-		(property "MFR.Part #" "SN74LS165ADR(LX)"
+		(property "MFR.Part #" "SN74LS165ADR"
 			(at 221.615 271.78 0)
 			(effects
 				(font
