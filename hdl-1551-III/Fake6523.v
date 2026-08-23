@@ -41,10 +41,11 @@ module Fake6523(
 
                );
 
-wire _cs = a15 | ~a14;          // TPI selected at $4000-$7fff
-assign _ramsel = a14 | (a15 & a13);
-assign _ramoe = _ramsel | ~_writereal;
-assign _romsel = ~(a15 & (a14 | a13));
+wire _cs = a15 | ~a14 | ~phi2;  // TPI at $4000-$7fff during PHI2
+assign _ramsel = a14 | (a15 & a13) | ~phi2;
+assign _ramoe = _ramsel;        // /OE follows /CS (also PHI2-qualified)
+// assign _ramoe = _ramsel | ~_writereal; // qualified also with write
+assign _romsel = ~(a15 & (a14 | a13) & phi2);
 
     always @(negedge byte_ready_3v3 or negedge _cs or negedge _reset) begin
 	if (!_reset) begin

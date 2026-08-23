@@ -43,9 +43,9 @@ NET "a13"  LOC = "P61"  ;       // CPU A13
 NET "a14"  LOC = "P39"  ;       // CPU A14; replaces external TPI /CS input
 NET "a15"  LOC = "P62"  ;       // CPU A15
 
-NET "_ramsel" LOC = "P58";      // /RAMSEL, FB2 free output macrocell
-NET "_ramoe" LOC = "P42";       // /RAMOE, test fit on free FB3 I/O pin
-NET "_romsel" LOC = "P59";      // /ROMSEL, FB2 free output macrocell
+NET "_ramsel" LOC = "P58";      // /RAMSEL (TEMP: address decode OR ~PHI2)
+NET "_ramoe" LOC = "P42";       // /RAMOE (follows /RAMSEL)
+NET "_romsel" LOC = "P59";      // /ROMSEL (TEMP: address decode AND PHI2)
 
 NET "_writereal" LOC = "P24";   // R/W from CPU
 //NET "phi0" LOC = "P31";

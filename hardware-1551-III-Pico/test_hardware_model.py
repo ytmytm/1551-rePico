@@ -48,19 +48,27 @@ class Decode:
 
     @property
     def ram_sel_n(self) -> int:
-        return self.a14 | (self.a15 & self.a13)
+        # TEMP: address decode OR ~PHI2 (inactive in PHI1).
+        addr = self.a14 | (self.a15 & self.a13)
+        return 1 if not self.phi2 else addr
 
     @property
     def ram_oe_n(self) -> int:
-        return self.ram_sel_n | (0 if self.rw else 1)
+        # /OE follows /CS (also PHI2-qualified via _ramsel).
+        return self.ram_sel_n
 
     @property
     def rom_sel_n(self) -> int:
+        # TEMP: address decode AND PHI2.
+        if not self.phi2:
+            return 1
         return 0 if (self.a15 and (self.a14 or self.a13)) else 1
 
     @property
     def tpi_cs_n(self) -> int:
-        return self.a15 | (0 if self.a14 else 1)
+        # TEMP: address decode OR ~PHI2 (inactive in PHI1).
+        addr = self.a15 | (0 if self.a14 else 1)
+        return 1 if not self.phi2 else addr
 
     @property
     def xrw_n(self) -> int:
@@ -82,7 +90,8 @@ class Decode:
         if not self.rw:
             return {"CPU"}
         drivers: set[str] = set()
-        if self.ram_sel_n == 0 and self.ram_oe_n == 0:
+        # TEMP: /OE==/CS; still treat /WE as forcing SRAM outputs off.
+        if self.ram_sel_n == 0 and self.ram_oe_n == 0 and self.xrw_n == 1:
             drivers.add("RAM")
         if self.rom_sel_n == 0:
             drivers.add("ROM")
@@ -169,13 +178,14 @@ def parse_pcb_footprint_pads(path: Path) -> dict[tuple[str, str], str]:
 
 class AddressDecodeTest(unittest.TestCase):
     def test_whole_address_space_selects_exactly_one_device(self) -> None:
+        # During PHI2; PHI1 leaves RAM/ROM deselected.
         expected_ranges = {
             "RAM": [(0x0000, 0x3FFF), (0x8000, 0x9FFF)],
             "TPI": [(0x4000, 0x7FFF)],
             "ROM": [(0xA000, 0xFFFF)],
         }
         for address in range(0x10000):
-            decode = Decode(address)
+            decode = Decode(address, phi2=1)
             self.assertEqual(len(decode.selected_devices), 1, f"${address:04x}")
             selected = next(iter(decode.selected_devices))
             self.assertTrue(
@@ -197,14 +207,22 @@ class AddressDecodeTest(unittest.TestCase):
             0xFFFF: "ROM",
         }
         for address, expected in cases.items():
-            self.assertEqual(Decode(address).selected_devices, {expected})
+            self.assertEqual(Decode(address, phi2=1).selected_devices, {expected})
 
-    def test_ram_output_enable_only_on_ram_reads(self) -> None:
+    def test_ram_and_rom_inactive_during_phi1(self) -> None:
+        for address in range(0x10000):
+            decode = Decode(address, rw=1, phi2=0)
+            self.assertEqual(decode.ram_sel_n, 1, f"${address:04x}")
+            self.assertEqual(decode.rom_sel_n, 1, f"${address:04x}")
+            self.assertEqual(decode.tpi_cs_n, 1, f"${address:04x}")
+            self.assertEqual(decode.selected_devices, set())
+
+    def test_ram_output_enable_tracks_ram_select(self) -> None:
         for address in range(0x10000):
             read = Decode(address, rw=1, phi2=1)
             write = Decode(address, rw=0, phi2=1)
             self.assertEqual(read.ram_oe_n == 0, read.selected_devices == {"RAM"})
-            self.assertEqual(write.ram_oe_n, 1)
+            self.assertEqual(write.ram_oe_n == 0, write.selected_devices == {"RAM"})
 
     def test_xrw_is_general_phi2_qualified_write(self) -> None:
         self.assertEqual(Decode(0x0000, rw=0, phi2=0).xrw_n, 1)
@@ -216,12 +234,15 @@ class AddressDecodeTest(unittest.TestCase):
         for address in range(0x10000):
             drivers = Decode(address, rw=1, phi2=1).cpu_data_drivers
             self.assertEqual(len(drivers), 1, f"${address:04x}: {drivers}")
+            # PHI1: RAM/ROM/TPI all inactive.
+            phi1 = Decode(address, rw=1, phi2=0).cpu_data_drivers
+            self.assertEqual(phi1, set(), f"${address:04x} PHI1: {phi1}")
 
     def test_ram_write_happens_only_in_ram_ranges(self) -> None:
         for address in range(0x10000):
             decode = Decode(address, rw=0, phi2=1)
             self.assertEqual(decode.ram_write_enabled, decode.selected_devices == {"RAM"})
-
+            self.assertFalse(Decode(address, rw=0, phi2=0).ram_write_enabled)
 
 class ShiftRegisterTest(unittest.TestCase):
     def test_u19_outputs_d7_first_msb_first(self) -> None:

@@ -130,3 +130,14 @@ Pico1551-III readiness:
 confirm that UI would work with Pi1551-III front panel connected
     - act will be inverted (active low)
     - need correct OLED type driver
+
+[2026-08-23]
+Soldered Pico1551-III prototype. It doesn't work (would be surprised if it does).
+There is some kind of RAM problem - with RAM chip inserted there seems to be bus
+contention. Without RAM we get blinking activity LED.
+Almost forgot that ROM needs to be 2*32K images coming from 1551-RAMBOard.
+Spent whole evening chasing the problem. The solution turned out to be to qualify
+all chip select signals with Phi2.
+
+So the next step is confirm again that it works and then we can test shift register
+with the front panel.
