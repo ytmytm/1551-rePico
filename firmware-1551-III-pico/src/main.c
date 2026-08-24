@@ -34,6 +34,7 @@
 #include "rw_routines.h"
 #include "menu_image.h"
 #include "c64_selector.h"
+#include "shift165.h"
 #if !defined(REPICO1551)
 #include "c64_intro.h"
 #endif
@@ -67,6 +68,9 @@ static const int8_t rotary_transition[16] = {
 };
 static uint8_t rotary_prev_ab = 0;
 static int8_t rotary_accum = 0;
+static uint8_t shift165_prev_value = 0;
+static bool shift165_sw4_down = false;
+static bool shift165_sw5_down = false;
 
 // ---------------------------------------------------------------
 
@@ -102,30 +106,6 @@ static void wait_button_click(void)
     }
 }
 
-static void rotary_on_edge(void)
-{
-    // Full quadrature decode on A/B. Sampling only A-fall+B (old approach) is
-    // direction-stable with a long block, but with a short filter it accepts the
-    // opposite half-cycle and reverses. Count a detent after ROTARY_DETENT_STEPS.
-    uint8_t curr = (uint8_t)((gpio_get(GPIO_BT1) ? 2u : 0u) | (gpio_get(GPIO_BT2) ? 1u : 0u));
-    int8_t step = rotary_transition[(rotary_prev_ab << 2) | curr];
-    rotary_prev_ab = curr;
-    if (step == 0)
-        return;
-
-    rotary_accum = (int8_t)(rotary_accum + step);
-    if (rotary_accum >= ROTARY_DETENT_STEPS)
-    {
-        rotary_accum = (int8_t)(rotary_accum - ROTARY_DETENT_STEPS);
-        rotary_delta++;
-    }
-    else if (rotary_accum <= -ROTARY_DETENT_STEPS)
-    {
-        rotary_accum = (int8_t)(rotary_accum + ROTARY_DETENT_STEPS);
-        rotary_delta--;
-    }
-}
-
 void gpio_callback(uint gpio, uint32_t events)
 {
     (void)events;
@@ -140,57 +120,94 @@ void gpio_callback(uint gpio, uint32_t events)
         }
         last_int = time_us_64();
     }
-    else if ((GPIO_BT1 == gpio) || (GPIO_BT2 == gpio))
+}
+
+static void poll_shift_inputs(void)
+{
+    uint8_t value = shift165_poll();
+    uint8_t changed = (uint8_t)(value ^ shift165_prev_value);
+
+    if (0 != (changed & ((1u << SHIFT165_BIT_ROT_CLK) | (1u << SHIFT165_BIT_ROT_DT))))
     {
-        rotary_on_edge();
+        uint8_t curr = 0;
+        if (0 != (value & (1u << SHIFT165_BIT_ROT_CLK)))
+            curr |= 2u;
+        if (0 != (value & (1u << SHIFT165_BIT_ROT_DT)))
+            curr |= 1u;
+
+        int8_t step = rotary_transition[(rotary_prev_ab << 2) | curr];
+        rotary_prev_ab = curr;
+        if (0 != step)
+        {
+            rotary_accum = (int8_t)(rotary_accum + step);
+            if (rotary_accum >= ROTARY_DETENT_STEPS)
+            {
+                rotary_accum = (int8_t)(rotary_accum - ROTARY_DETENT_STEPS);
+                rotary_delta++;
+            }
+            else if (rotary_accum <= -ROTARY_DETENT_STEPS)
+            {
+                rotary_accum = (int8_t)(rotary_accum + ROTARY_DETENT_STEPS);
+                rotary_delta--;
+            }
+        }
     }
-    else if (GPIO_BT3 == gpio)
+
+    if (0 != (changed & (1u << SHIFT165_BIT_ROT_SW)))
     {
-        // Pushbutton: level-based edge after debounce. Avoids release bounce
-        // producing a second KEY2_DOWN/KEY2_UP pair.
         static bool button_down = false;
         static uint64_t last_button_us;
         uint64_t now = time_us_64();
-        if ((now - last_button_us) < BUTTON_DEBOUNCE_US)
-            return;
-
-        bool pressed = !gpio_get(GPIO_BT3); // active low with pull-up
-        if (pressed == button_down)
-            return;
-
-        button_down = pressed;
-        last_button_us = now;
-
-        if (pressed)
+        if ((now - last_button_us) >= BUTTON_DEBOUNCE_US)
         {
-            key2_down_time = now;
-            key2_long_consumed = false;
-            key_push(KEY2_DOWN);
-        }
-        else
-        {
-            uint64_t down_time = key2_down_time;
-            if (down_time > now)
+            bool pressed = (0 == (value & (1u << SHIFT165_BIT_ROT_SW)));
+            if (pressed != button_down)
             {
-                down_time -= (now + 1);
-                now = (uint64_t)-1;
-            }
+                button_down = pressed;
+                last_button_us = now;
 
-            // If next-image already ran when the bar filled, ignore release
-            if (key2_long_consumed)
-            {
-                /* no key event */
-            }
-            else if ((now - down_time) > TIMEOUT2_KEY2)
-                key_push(KEY2_TIMEOUT2);
-            else if ((now - down_time) > TIMEOUT1_KEY2)
-                key_push(KEY2_TIMEOUT1);
-            else
-                key_push(KEY2_UP);
+                if (pressed)
+                {
+                    key2_down_time = now;
+                    key2_long_consumed = false;
+                    key_push(KEY2_DOWN);
+                }
+                else
+                {
+                    uint64_t down_time = key2_down_time;
+                    if (down_time > now)
+                    {
+                        down_time -= (now + 1);
+                        now = (uint64_t)-1;
+                    }
 
-            key2_down_time = now;
+                    if (!key2_long_consumed)
+                    {
+                        if ((now - down_time) > TIMEOUT2_KEY2)
+                            key_push(KEY2_TIMEOUT2);
+                        else if ((now - down_time) > TIMEOUT1_KEY2)
+                            key_push(KEY2_TIMEOUT1);
+                        else
+                            key_push(KEY2_UP);
+                    }
+
+                    key2_down_time = now;
+                }
+            }
         }
     }
+
+    bool sw4_pressed = (0 == (value & (1u << SHIFT165_BIT_SW4_BACK)));
+    if (sw4_pressed && !shift165_sw4_down)
+        key_push(KEY2_TIMEOUT1);
+    shift165_sw4_down = sw4_pressed;
+
+    bool sw5_pressed = (0 == (value & (1u << SHIFT165_BIT_SW5_INSERT)));
+    if (sw5_pressed && !shift165_sw5_down)
+        send_disk_change();
+    shift165_sw5_down = sw5_pressed;
+
+    shift165_prev_value = value;
 }
 
 // ---------------------------------------------------------------
@@ -261,6 +278,9 @@ int main()
 
 FRESULT mount_sdcard(void)
 {
+    if (!shift165_sd_card_present())
+        return FR_NOT_READY;
+
     char mount_path[] = {"/"};
     BYTE mount_option = 1; /* 0=Do not mount (delayed mount), 1=Mount immediately */
 
@@ -420,23 +440,18 @@ void check_stepper_signals(void)
 
 void init_key_inputs(void)
 {
-    gpio_init(GPIO_BT1);
-    gpio_init(GPIO_BT2);
-    gpio_init(GPIO_BT3);
-    gpio_set_dir(GPIO_BT1, GPIO_IN);
-    gpio_set_dir(GPIO_BT2, GPIO_IN);
-    gpio_set_dir(GPIO_BT3, GPIO_IN);
-    gpio_set_pulls(GPIO_BT1, true, false);
-    gpio_set_pulls(GPIO_BT2, true, false);
-    gpio_set_pulls(GPIO_BT3, true, false);
+    shift165_init();
 
-    rotary_prev_ab = (uint8_t)((gpio_get(GPIO_BT1) ? 2u : 0u) | (gpio_get(GPIO_BT2) ? 1u : 0u));
+    shift165_prev_value = shift165_last_byte();
+    rotary_prev_ab = 0;
+    if (0 != (shift165_prev_value & (1u << SHIFT165_BIT_ROT_CLK)))
+        rotary_prev_ab |= 2u;
+    if (0 != (shift165_prev_value & (1u << SHIFT165_BIT_ROT_DT)))
+        rotary_prev_ab |= 1u;
     rotary_accum = 0;
     rotary_delta = 0;
-
-    gpio_set_irq_enabled_with_callback(GPIO_BT1, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &gpio_callback);
-    gpio_set_irq_enabled(GPIO_BT2, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true);
-    gpio_set_irq_enabled(GPIO_BT3, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true);
+    shift165_sw4_down = (0 == (shift165_prev_value & (1u << SHIFT165_BIT_SW4_BACK)));
+    shift165_sw5_down = (0 == (shift165_prev_value & (1u << SHIFT165_BIT_SW5_INSERT)));
 }
 
 uint8_t get_key_from_buffer(void)
@@ -538,6 +553,7 @@ void update_gui(void)
     static bool key2_pressed = false;
     static uint32_t wait_counter0 = 0;
     bool new_motor_status;
+    poll_shift_inputs();
     uint8_t key_code = get_key_from_buffer();
     char byte_str[8];
 
@@ -1763,7 +1779,7 @@ void init_stepper(void)
     akt_half_track = selected_track;
 
     // Pin Change Interrupt für beide STPx PIN's aktivieren
-    gpio_set_irq_enabled(GPIO_STP0, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true);
+    gpio_set_irq_enabled_with_callback(GPIO_STP0, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &gpio_callback);
     gpio_set_irq_enabled(GPIO_STP1, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true);
 }
 

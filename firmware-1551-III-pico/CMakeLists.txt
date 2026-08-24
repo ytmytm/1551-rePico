@@ -28,7 +28,7 @@ set(PICO_BOARD pico2 CACHE STRING "Board type")
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
 
-project(1541-rePico C CXX ASM)
+project(1551-III-Pico C CXX ASM)
 
 option(REPICO1551 "Build for 1551-rePico hardware" ON)
 
@@ -45,35 +45,35 @@ endif()
 
 file(GLOB_RECURSE FIRMWARE_SOURCES CONFIGURE_DEPENDS "src/*.c")
 
-add_executable(1541-rePico ${FIRMWARE_SOURCES})
+add_executable(1551-III-Pico ${FIRMWARE_SOURCES})
 
-add_dependencies(1541-rePico GenSelector)
+add_dependencies(1551-III-Pico GenSelector)
 if(NOT REPICO1551)
-    add_dependencies(1541-rePico GenIntro)
+    add_dependencies(1551-III-Pico GenIntro)
 endif()
 
 if(REPICO1551)
-    target_compile_definitions(1541-rePico PRIVATE REPICO1551=1)
-    pico_set_program_name(1541-rePico "1551-rePico")
+    target_compile_definitions(1551-III-Pico PRIVATE REPICO1551=1)
+    pico_set_program_name(1551-III-Pico "1551-III-Pico")
 else()
-    target_compile_definitions(1541-rePico PRIVATE REPICO1541=1 REPICO1551=0)
-    pico_set_program_name(1541-rePico "1541-rePico")
+    target_compile_definitions(1551-III-Pico PRIVATE REPICO1541=1 REPICO1551=0)
+    pico_set_program_name(1551-III-Pico "1541-rePico")
 endif()
 
-pico_set_program_version(1541-rePico "0.1")
+pico_set_program_version(1551-III-Pico "0.1")
 
 # Modify the below lines to enable/disable output over UART/USB
-pico_enable_stdio_uart(1541-rePico 0)
-pico_enable_stdio_usb(1541-rePico 1)
+pico_enable_stdio_uart(1551-III-Pico 0)
+pico_enable_stdio_usb(1551-III-Pico 1)
 
-target_include_directories(1541-rePico PRIVATE
+target_include_directories(1551-III-Pico PRIVATE
         ${PROJECT_SOURCE_DIR}/include
         ${CMAKE_CURRENT_LIST_DIR}
 )
 
 add_subdirectory(no-OS-FatFS-SD-SDIO-SPI-RPi-Pico/src build)
 
-target_link_libraries(1541-rePico
+target_link_libraries(1551-III-Pico
         pico_stdlib
         pico_multicore
         hardware_i2c
@@ -88,4 +88,4 @@ target_link_libraries(1541-rePico
         no-OS-FatFS-SD-SDIO-SPI-RPi-Pico
 )
 
-pico_add_extra_outputs(1541-rePico)
+pico_add_extra_outputs(1551-III-Pico)

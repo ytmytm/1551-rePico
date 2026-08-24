@@ -1,6 +1,6 @@
 /* routines for OLED display */
 //
-// access OLED display controller SSD1306 via I2C 
+// access OLED display controller SH1106 via I2C (Pi1551-III front panel)
 //
 // implementation: F00K42
 // last change: 19/09/2021
@@ -87,19 +87,39 @@ const uint8_t OLED_customchars[][8] = {
 
 #define num_of_customchars  count_of(OLED_customchars)
 
-////////////////////////////////////////////////////////////////////////////////
-// lowlevel routines to access SSD1306 display controller
+/* SH1106 exposes 132 columns; visible 128x64 window starts at column 2. */
+#define SH1106_COLUMN_OFFSET 2u
 
-void ssd1306_command( const uint8_t data )
+static void oled_command( const uint8_t data )
 {
     uint8_t buffer[]={SSD1306_I2C_COMMAND, data};
     i2c_write_blocking(I2C_PORT, DEV_I2C_ADDR, buffer, count_of(buffer), false);
 }
 
-void ssd1306_data( const uint8_t data )
+static void oled_i2c_data( const uint8_t data )
 {
     uint8_t buffer[]={SSD1306_I2C_DATA, data};
     i2c_write_blocking(I2C_PORT, DEV_I2C_ADDR, buffer, count_of(buffer), false);
+}
+
+static void oled_set_column( const uint8_t pixel_col )
+{
+    const uint8_t col = (uint8_t)(pixel_col + SH1106_COLUMN_OFFSET);
+    oled_command(SSD1306_COLUMN_START_L | (col & 0x0fu));
+    oled_command(SSD1306_COLUMN_START_H | ((col >> 4) & 0x0fu));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// lowlevel routines to access SH1106 display controller
+
+void ssd1306_command( const uint8_t data )
+{
+    oled_command(data);
+}
+
+void ssd1306_data( const uint8_t data )
+{
+    oled_i2c_data(data);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -107,25 +127,27 @@ void ssd1306_data( const uint8_t data )
 // see datasheet SSD1306 - p.64
 void oled_setup( void )
 {
-    ssd1306_command(SSD1306_DISPLAYOFF);
-    ssd1306_command(SSD1306_MULTIPLEX); 
-    ssd1306_command(0x3F);
-    ssd1306_command(SSD1306_DISPLAY_OFFSET);    
-    ssd1306_command(0x00);                          // no offset
-    ssd1306_command(SSD1306_DSP_STARTLINE | 0x00);  // line 0
-    ssd1306_command(SSD1306_SEG_REMAP_127);         // flip horizontal
-    ssd1306_command(SSD1306_COM_LITTLEENDIAN);      // rotate screen 180
-    ssd1306_command(SSD1306_COM_PINS);
-    ssd1306_command(0x02);              // 02 = every 2nd Line 4 rows (2nd Line at Row 4..8) ... 12 = every Line (8 rows)
-    ssd1306_command(SSD1306_SETCONTRAST);
-    ssd1306_command(0x7F);
-    ssd1306_command(SSD1306_ALLON_RESUME);
-    ssd1306_command(SSD1306_NORMALDISPLAY);
-    ssd1306_command(SSD1306_CLOCK_DIV);
-    ssd1306_command(0x80);
-    ssd1306_command(SSD1306_CHARGEPUMP);
-    ssd1306_command(0x14);                          // using internal VCC
-    ssd1306_command(SSD1306_DISPLAYON);             // switch on Display
+    oled_command(SSD1306_DISPLAYOFF);
+    oled_command(SSD1306_CLOCK_DIV);
+    oled_command(0x80);
+    oled_command(SSD1306_MULTIPLEX);
+    oled_command(0x3F);
+    oled_command(SSD1306_DISPLAY_OFFSET);
+    oled_command(0x00);
+    oled_command(SSD1306_DSP_STARTLINE | 0x00);
+    oled_command(SSD1306_SEG_REMAP_127);
+    oled_command(SSD1306_COM_LITTLEENDIAN);
+    oled_command(SSD1306_COM_PINS);
+    oled_command(0x12);
+    oled_command(SSD1306_SETCONTRAST);
+    oled_command(0x7F);
+    oled_command(SSD1306_PRECHARGE);
+    oled_command(0xF1);
+    oled_command(SSD1306_VCOMH_DESELECT);
+    oled_command(0x40);
+    oled_command(SSD1306_ALLON_RESUME);
+    oled_command(SSD1306_NORMALDISPLAY);
+    oled_command(SSD1306_DISPLAYON);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -147,9 +169,8 @@ void oled_clear( void )
 // place display cursor top left
 void oled_home( void )
 {
-    ssd1306_command(SSD1306_PAGE_START | 7);
-    ssd1306_command(SSD1306_COLUMN_START_L );
-    ssd1306_command(SSD1306_COLUMN_START_H );
+    oled_command(SSD1306_PAGE_START | 7);
+    oled_set_column(0);
     oled_cursor_x = 0;
     oled_cursor_y = 0;
 }
@@ -158,9 +179,8 @@ void oled_home( void )
 // set cursor position
 void oled_setcursor( const uint8_t spalte, const uint8_t zeile )
 {
-    ssd1306_command(SSD1306_PAGE_START | (7-zeile));
-    ssd1306_command(SSD1306_COLUMN_START_L |  ((FONT_WIDTH*spalte)     & 0x0f));
-    ssd1306_command(SSD1306_COLUMN_START_H | (((FONT_WIDTH*spalte)>>4) & 0x0f));
+    oled_command(SSD1306_PAGE_START | (7-zeile));
+    oled_set_column((uint8_t)(FONT_WIDTH * spalte));
     oled_cursor_x = spalte;
     oled_cursor_y = zeile;
 }
@@ -188,9 +208,8 @@ void oled_data( const uint8_t data )
 
     if (oled_bright)
     {
-        ssd1306_command(SSD1306_PAGE_START | (3-oled_cursor_y));
-        ssd1306_command(SSD1306_COLUMN_START_L |  ((FONT_WIDTH*oled_cursor_x)     & 0x0f));
-        ssd1306_command(SSD1306_COLUMN_START_H | (((FONT_WIDTH*oled_cursor_x)>>4) & 0x0f));
+        oled_command(SSD1306_PAGE_START | (3-oled_cursor_y));
+        oled_set_column((uint8_t)(FONT_WIDTH * oled_cursor_x));
 
         i2c_write_blocking(I2C_PORT, DEV_I2C_ADDR, buffer, count_of(buffer), false);
     }

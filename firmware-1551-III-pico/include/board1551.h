@@ -1,8 +1,9 @@
 /**********************************
- * header - 1551-rePico board support
+ * header - 1551-III-Pico board support
  *
- * GPIO0: 2 MHz PHI0 (50% PWM), isolated from /PHI0 by JP2 until bridged
- * GPIO3: DEVNUM on TCBM cable (default jumpers JP5/JP6), or IRQ experiment
+ * GPIO0: 2 MHz PHI0 (50% PWM)
+ * GPIO3: 100 Hz IRQ PWM (JP5/JP6 in IRQ layout)
+ * Front panel: SH1106 OLED + 74HCT165 on GPIO26..28 (JP1..JP3 shift-register mode)
 ***********************************/
 #ifndef BOARD1551_H
 #define BOARD1551_H

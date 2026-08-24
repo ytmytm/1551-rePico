@@ -42,9 +42,9 @@
 #define I2C_SDA     20
 #define I2C_SCL     21
 
-// 3 für den Drück-Dreh-Schalter
-#define GPIO_BT1    27
-#define GPIO_BT2    26
-#define GPIO_BT3    28
+// Pi1551-III front panel via 74HCT165 (JP1..JP3 bridged 1-2)
+#define GPIO_SERIAL_LOAD  26  // /PL
+#define GPIO_SERIAL_CLK   27  // CP
+#define GPIO_SERIAL_DT    28  // Q7
 
 #define GPIO_BRDY   22
