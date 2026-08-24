@@ -8,6 +8,9 @@
 
 extern uint8_t DEV_I2C_ADDR;
 
+uint8_t display_row_count = LCD_ROWS;
+uint8_t display_col_count = LCD_COLS;
+
 uint8_t display_init(void)
 {
     my_i2c_init();
@@ -28,6 +31,8 @@ uint8_t display_init(void)
     if ((OLED_I2C_ADDR_0 == DEV_I2C_ADDR) ||
         (OLED_I2C_ADDR_1 == DEV_I2C_ADDR))
     {
+        display_row_count = 8u;
+        display_col_count = 16u;
         // OLED attached via I2C
         display_setup       = &oled_setup;
         display_clear       = &oled_clear;
@@ -39,6 +44,8 @@ uint8_t display_init(void)
         display_string      = &oled_string;
         display_setbright   = &oled_setbright;
     } else {
+        display_row_count = LCD_ROWS;
+        display_col_count = LCD_COLS;
         // -> we may have an LCD attached
         display_setup       = &lcd_setup;
         display_clear       = &lcd_clear;

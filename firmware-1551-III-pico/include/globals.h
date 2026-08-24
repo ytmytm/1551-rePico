@@ -11,11 +11,12 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "pico/stdlib.h"
+#include "display.h"
 
 
 /////
-#define LCD_LINE_COUNT  (LCD_ROWS)
-#define LCD_LINE_SIZE   (LCD_COLS)
+#define LCD_LINE_COUNT  display_row_count
+#define LCD_LINE_SIZE   display_col_count
 
 // Spur auf dem der Lesekopf beim Start/Reset stehen soll
 // Track 17 --> Directory (Tracks 0..41 !)

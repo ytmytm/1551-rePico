@@ -37,6 +37,11 @@ _EXTERN_ void (*display_print)( const char* char_array, const uint8_t array_offs
 _EXTERN_ void (*display_generatechar)(const uint8_t, const uint8_t*);
 _EXTERN_ void (*display_setbright)( bool bright_on );
 
+/* Set in display_init(): OLED 128x64 -> 16x8, HD44780 -> 16x4 */
+#define DISPLAY_LINE_MAX 8u
+extern uint8_t display_row_count;
+extern uint8_t display_col_count;
+
 // detect the display type & set it up
 uint8_t display_init(void);
 

@@ -206,14 +206,6 @@ void oled_data( const uint8_t data )
 
     i2c_write_blocking(I2C_PORT, DEV_I2C_ADDR, buffer, count_of(buffer), false);
 
-    if (oled_bright)
-    {
-        oled_command(SSD1306_PAGE_START | (3-oled_cursor_y));
-        oled_set_column((uint8_t)(FONT_WIDTH * oled_cursor_x));
-
-        i2c_write_blocking(I2C_PORT, DEV_I2C_ADDR, buffer, count_of(buffer), false);
-    }
-
     ++oled_cursor_x;
     oled_setcursor(oled_cursor_x, oled_cursor_y);
 }
@@ -252,5 +244,8 @@ void oled_generatechar( const uint8_t code, const uint8_t *data )
 // set "bright" mode or "light" mode for 128x64 display
 void oled_setbright( bool bright_on )
 {
-    oled_bright = bright_on;
+    /* 128x64 SH1106: use contrast only; SSD1306-style page mirroring would duplicate the UI. */
+    oled_bright = false;
+    oled_command(SSD1306_SETCONTRAST);
+    oled_command(bright_on ? 0xCF : 0x7F);
 }
