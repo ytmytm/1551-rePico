@@ -141,3 +141,9 @@ all chip select signals with Phi2.
 
 So the next step is confirm again that it works and then we can test shift register
 with the front panel.
+
+[2026-08-24]
+It works, so I have mounted the front panel.
+Agent implemented SH1106 OLED support (it was SSD1306) and shift register handler.
+Density chosen by CPU (via DS0/DS0 lines) is an option, currently off - track density hardcoded by track number.
+'Back' button is universal back and 'Insert' goes to load image menu and adds disk images to the roster.
