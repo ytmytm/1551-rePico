@@ -112,9 +112,14 @@ FILINFO     fb_dir_entry[DISPLAY_LINE_MAX];
 //
 // Button bounce filter (us). Rotary uses a quadrature state machine (no ms block).
 #define BUTTON_DEBOUNCE_US      (30000u)
+#define PANEL_BUTTON_DEBOUNCE_US (50000u)
 #define KEY_QUEUE_SIZE          (8)
-// KY-040: 4 gray-code transitions per detent click
+#if REPICO1551
+/* Pi1551-III panel encoder: 2 valid quadrature edges per detent */
+#define ROTARY_DETENT_STEPS     (2)
+#else
 #define ROTARY_DETENT_STEPS     (4)
+#endif
 // timer_t key_longpress_timer;
 
 volatile uint16_t akt_track_pos = 0;

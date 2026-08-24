@@ -72,6 +72,119 @@ static int8_t rotary_accum = 0;
 static uint8_t shift165_prev_value = 0;
 static bool shift165_sw4_down = false;
 static bool shift165_sw5_down = false;
+static bool modal_wait_active = false;
+static bool service_lock_navigation = false;
+static uint8_t last_cpu_density_zone = 0xFFu;
+
+static void poll_shift_inputs(void);
+
+static uint8_t speed_zone_for_track(uint8_t track_nr, uint8_t shift_value)
+{
+    if (settings_get_density_from_cpu())
+        return shift165_density_zone_from_byte(shift_value);
+    if (track_nr >= MAX_TRACKS)
+        track_nr = (uint8_t)(MAX_TRACKS - 1u);
+    return d64_track_zone[track_nr];
+}
+
+static void density_restart_bytetimer_if_active(void)
+{
+    if (is_image_mount && send_byte_ready)
+    {
+        stop_bytetimer();
+        start_bytetimer(akt_half_track);
+    }
+}
+
+static void poll_shift_density_lines(uint8_t value)
+{
+    if (!settings_get_density_from_cpu())
+        return;
+
+    uint8_t zone = shift165_density_zone_from_byte(value);
+    if (zone == last_cpu_density_zone)
+        return;
+
+    last_cpu_density_zone = zone;
+    density_restart_bytetimer_if_active();
+}
+
+static bool rotary_button_held(void)
+{
+    return 0 == (shift165_last_byte() & (1u << SHIFT165_BIT_ROT_SW));
+}
+
+static void filebrowser_insert_image(void);
+
+/* Pi1551-III: 74HCT165 is polled on core 0; stepper stays GPIO-IRQ driven.
+ * GCR byte feed uses hardware repeating_timer (~26–32 µs ISR), same core — no core1. */
+static void service_tick(void)
+{
+    poll_shift_inputs();
+    check_stepper_signals();
+}
+
+static void sleep_ms_service(uint32_t ms)
+{
+    absolute_time_t until = make_timeout_time_ms(ms);
+    while (!time_reached(until))
+        service_tick();
+}
+
+static bool service_key_dismiss(void)
+{
+    uint8_t k = get_key_from_buffer();
+    return (KEY2_DOWN == k) || (KEY2_TIMEOUT1 == k) || (KEY2_UP == k);
+}
+
+static void panel_back(void)
+{
+    if (service_lock_navigation)
+        return;
+
+    switch (current_gui_mode)
+    {
+    case GUI_MENU_MODE:
+        check_menu_events(menu_update(KEY2_TIMEOUT1));
+        break;
+    case GUI_FILE_BROWSER:
+        set_gui_mode(GUI_MENU_MODE);
+        break;
+    case GUI_INFO_MODE:
+        set_gui_mode(GUI_MENU_MODE);
+        break;
+    case GUI_SELECTOR:
+        unmount_image();
+        set_gui_mode(GUI_MENU_MODE);
+        break;
+    default:
+        break;
+    }
+}
+
+static void panel_insert(void)
+{
+    if (GUI_FILE_BROWSER == current_gui_mode)
+    {
+        filebrowser_insert_image();
+        return;
+    }
+
+    FRESULT fr = mount_sdcard();
+    display_clear();
+    display_home();
+    if (FR_OK == fr)
+    {
+        set_gui_mode(GUI_FILE_BROWSER);
+    }
+    else
+    {
+        display_string("f_mount error:");
+        display_data(fr + 'A');
+        show_fs_error(fr);
+        set_gui_mode(GUI_MENU_MODE);
+    }
+}
 
 // ---------------------------------------------------------------
 
@@ -85,26 +198,32 @@ static void key_push(uint8_t key)
     }
 }
 
-static void wait_key(uint8_t want)
-{
-    while (get_key_from_buffer() != want)
-    {
-    }
-}
-
-/* Wait for a full click and drain the queue so KEY2_UP does not re-select the menu item. */
 static void wait_button_click(void)
 {
-    wait_key(KEY2_DOWN);
+    modal_wait_active = true;
     for (;;)
     {
+        service_tick();
+
         uint8_t k = get_key_from_buffer();
-        if ((KEY2_UP == k) || (KEY2_TIMEOUT1 == k) || (KEY2_TIMEOUT2 == k))
+        if (KEY2_TIMEOUT1 == k)
             break;
+
+        if (KEY2_DOWN == k)
+        {
+            for (;;)
+            {
+                service_tick();
+                k = get_key_from_buffer();
+                if ((KEY2_UP == k) || (KEY2_TIMEOUT1 == k) || (KEY2_TIMEOUT2 == k))
+                    break;
+            }
+            break;
+        }
     }
     while (NO_KEY != get_key_from_buffer())
-    {
-    }
+        service_tick();
+    modal_wait_active = false;
 }
 
 void gpio_callback(uint gpio, uint32_t events)
@@ -140,6 +259,7 @@ static void poll_shift_inputs(void)
         rotary_prev_ab = curr;
         if (0 != step)
         {
+            step = (int8_t)(-step); /* Pi1551-III front-panel encoder wiring */
             rotary_accum = (int8_t)(rotary_accum + step);
             if (rotary_accum >= ROTARY_DETENT_STEPS)
             {
@@ -198,15 +318,46 @@ static void poll_shift_inputs(void)
         }
     }
 
-    bool sw4_pressed = (0 == (value & (1u << SHIFT165_BIT_SW4_BACK)));
-    if (sw4_pressed && !shift165_sw4_down)
-        key_push(KEY2_TIMEOUT1);
-    shift165_sw4_down = sw4_pressed;
+    if (0 != (changed & (1u << SHIFT165_BIT_SW4_BACK)))
+    {
+        static uint64_t last_sw4_us;
+        uint64_t now = time_us_64();
+        bool sw4_pressed = (0 == (value & (1u << SHIFT165_BIT_SW4_BACK)));
+        if ((now - last_sw4_us) >= PANEL_BUTTON_DEBOUNCE_US)
+        {
+            if (sw4_pressed != shift165_sw4_down)
+            {
+                shift165_sw4_down = sw4_pressed;
+                last_sw4_us = now;
+                if (sw4_pressed)
+                {
+                    if (modal_wait_active)
+                        key_push(KEY2_TIMEOUT1);
+                    else
+                        panel_back();
+                }
+            }
+        }
+    }
 
-    bool sw5_pressed = (0 == (value & (1u << SHIFT165_BIT_SW5_INSERT)));
-    if (sw5_pressed && !shift165_sw5_down)
-        send_disk_change();
-    shift165_sw5_down = sw5_pressed;
+    if (0 != (changed & (1u << SHIFT165_BIT_SW5_INSERT)))
+    {
+        static uint64_t last_sw5_us;
+        uint64_t now = time_us_64();
+        bool sw5_pressed = (0 == (value & (1u << SHIFT165_BIT_SW5_INSERT)));
+        if ((now - last_sw5_us) >= PANEL_BUTTON_DEBOUNCE_US)
+        {
+            if (sw5_pressed != shift165_sw5_down)
+            {
+                shift165_sw5_down = sw5_pressed;
+                last_sw5_us = now;
+                if (sw5_pressed)
+                    panel_insert();
+            }
+        }
+    }
+
+    poll_shift_density_lines(value);
 
     shift165_prev_value = value;
 }
@@ -260,9 +411,10 @@ int main()
     menu_set_entry_var1(&settings_menu, M_Z0_TIMER, settings_get_zone0_timer());
     menu_set_entry_var1(&settings_menu, M_Z0_GAP, settings_get_zone0_gap());
     menu_set_entry_var1(&settings_menu, M_REV_ROTARY, settings_get_rotary_reversed() ? 1u : 0u);
+    menu_set_entry_var1(&settings_menu, M_DENSITY_CPU, settings_get_density_from_cpu() ? 1u : 0u);
     // ----
 
-    sleep_ms(START_MESSAGE_TIME);
+    sleep_ms_service(START_MESSAGE_TIME);
 
     display_clear();
     display_home();
@@ -270,7 +422,7 @@ int main()
     set_gui_mode(GUI_SELECTOR);
 
     while (true) {
-        check_stepper_signals();
+        service_tick();
         update_gui();
     }
 }
@@ -347,28 +499,37 @@ FRESULT umount_sdcard(void)
 
 void show_fs_error(FRESULT error_code)
 {
-    // display_string("f_mount error:");
-    // display_data(error_code+'A');
-    const char* error_txt=FRESULT_str(error_code);
-    size_t err_str_len=strlen(error_txt);
-    uint8_t err_str_offset=0;
-    bool pressed = false;
-    do
+    const char *error_txt = FRESULT_str(error_code);
+    size_t err_str_len = strlen(error_txt);
+    uint8_t err_str_offset = 0;
+    bool dismissed = false;
+
+    modal_wait_active = true;
+    while (!dismissed && ((err_str_offset + 15u) < err_str_len))
     {
         display_setcursor(0, 1);
         display_print(error_txt, err_str_offset++, 16);
-        sleep_ms(333);
-        if (get_key_from_buffer() == KEY2_DOWN)
-            pressed = true;
+        absolute_time_t until = make_timeout_time_ms(333);
+        while (!time_reached(until))
+        {
+            if (service_key_dismiss())
+            {
+                dismissed = true;
+                break;
+            }
+            service_tick();
+        }
     }
-    while (!pressed && ((err_str_offset+15)<err_str_len));
-
-    while (!pressed)
+    while (!dismissed)
     {
-        if (get_key_from_buffer() == KEY2_DOWN)
-            pressed = true;
+        if (service_key_dismiss())
+            dismissed = true;
+        else
+            service_tick();
     }
-    return;
+    while (NO_KEY != get_key_from_buffer())
+        service_tick();
+    modal_wait_active = false;
 }
 /////////////////////////////////////////////////////////////////////
 
@@ -453,6 +614,7 @@ void init_key_inputs(void)
     rotary_delta = 0;
     shift165_sw4_down = (0 == (shift165_prev_value & (1u << SHIFT165_BIT_SW4_BACK)));
     shift165_sw5_down = (0 == (shift165_prev_value & (1u << SHIFT165_BIT_SW5_INSERT)));
+    last_cpu_density_zone = shift165_density_zone_from_byte(shift165_prev_value);
 }
 
 uint8_t get_key_from_buffer(void)
@@ -502,7 +664,7 @@ void show_longpress(void)
     if (shown_time_steps != time_steps)
     {
         shown_time_steps = time_steps;
-        display_setcursor(0,2);
+        display_setcursor(0, (uint8_t)(display_row_count - 1u));
         for(int i=0; i<LCD_LINE_SIZE; i++)
         {
             if(i<time_steps)
@@ -514,11 +676,8 @@ void show_longpress(void)
 }
 
 // Advance to next loadable image in current_path (skips dirs / bad files).
-static void load_next_image(void)
+static void load_adjacent_image(int16_t step)
 {
-    FILINFO next_dir_entry;
-
-    // Image is in RAM; FatFS may still need a live mount for directory scan
     if (FR_OK != mount_sdcard())
     {
         set_gui_mode(GUI_INFO_MODE);
@@ -528,60 +687,97 @@ static void load_next_image(void)
     (void)dir_list_refresh(current_path);
     fb_dir_entry_count = dir_list_count();
 
-    for (uint16_t idx = (uint16_t)(selected_image_nr + 1u); idx < fb_dir_entry_count; ++idx)
+    int16_t idx;
+    if (0xFFFFu == selected_image_nr)
     {
-        if (!dir_list_get(idx, &next_dir_entry))
-            break;
-
-        if (next_dir_entry.fattrib & AM_DIR)
-            continue;
-
-        if (TYPE_VALID == open_dir_entry(next_dir_entry))
-        {
-            selected_image_nr = idx;
-            set_gui_mode(GUI_INFO_MODE);
-            return;
-        }
+        idx = (step > 0) ? 0 : (int16_t)fb_dir_entry_count - 1;
+    }
+    else
+    {
+        idx = (int16_t)selected_image_nr + step;
     }
 
-    set_gui_mode(GUI_INFO_MODE); // clear long-press bar even if nothing loaded
+    while ((idx >= 0) && (idx < (int16_t)fb_dir_entry_count))
+    {
+        FILINFO entry;
+        if (!dir_list_get((uint16_t)idx, &entry))
+            break;
+
+        if (0 == (entry.fattrib & AM_DIR))
+        {
+            if (TYPE_VALID == open_dir_entry(entry))
+            {
+                selected_image_nr = (uint16_t)idx;
+                infomode_update();
+                return;
+            }
+        }
+        idx = (int16_t)(idx + step);
+    }
+}
+
+static void load_next_image(void)
+{
+    load_adjacent_image(1);
+    set_gui_mode(GUI_INFO_MODE);
 }
 
 void update_gui(void)
 {
     static uint8_t shown_half_track = 255;
     static bool shown_motor_status = false;
-    static bool key2_pressed = false;
     static uint32_t wait_counter0 = 0;
     bool new_motor_status;
-    poll_shift_inputs();
-    uint8_t key_code = get_key_from_buffer();
+    uint8_t key_code = NO_KEY;
     char byte_str[8];
+
+    if ((GUI_INFO_MODE != current_gui_mode) && (GUI_FILE_BROWSER != current_gui_mode)
+        && (GUI_MENU_MODE != current_gui_mode))
+        key_code = get_key_from_buffer();
 
     switch (current_gui_mode)
     {
     case GUI_INFO_MODE:
-
-        if(KEY2_UP == key_code)
+    {
+        uint8_t k;
+        while (NO_KEY != (k = get_key_from_buffer()))
         {
-            key2_pressed = false;
-            set_gui_mode(GUI_MENU_MODE);
-        } else if(KEY2_TIMEOUT2 == key_code)
-        {
-            key2_pressed = false;
-            key2_long_consumed = true;
-            load_next_image();
-        } else if(KEY2_TIMEOUT1 == key_code)
-        {
-            key2_pressed = false;
-        } else if(KEY2_DOWN == key_code)
-        {
-            key2_pressed = true;
+            if (KEY0_DOWN == k)
+            {
+                load_adjacent_image(-1);
+                continue;
+            }
+            if (KEY1_DOWN == k)
+            {
+                load_adjacent_image(1);
+                continue;
+            }
+            key_code = k;
         }
-        if (key2_pressed)
+
+        if (NO_KEY != key_code)
+        {
+            if(KEY2_UP == key_code)
+            {
+                if (!key2_long_consumed)
+                    set_gui_mode(GUI_MENU_MODE);
+                key2_long_consumed = false;
+            } else if(KEY2_TIMEOUT2 == key_code)
+            {
+                if (!key2_long_consumed)
+                {
+                    key2_long_consumed = true;
+                    load_next_image();
+                }
+            } else if(KEY2_DOWN == key_code)
+            {
+                key2_long_consumed = false;
+            }
+        }
+
+        if (rotary_button_held())
         {
             show_longpress();
-            // Act when the bar completes — do not wait for button release
             if (!key2_long_consumed)
             {
                 uint64_t now = time_us_64();
@@ -594,49 +790,49 @@ void update_gui(void)
                 if ((now - down) > TIMEOUT2_KEY2)
                 {
                     key2_long_consumed = true;
-                    key2_pressed = false;
                     load_next_image();
                 }
             }
         }
+        else
+        {
+            key2_long_consumed = false;
+        }
 
-        if(shown_half_track != akt_half_track)
+        if (shown_half_track != akt_half_track)
         {
             shown_half_track = akt_half_track;
             display_setcursor(disp_trackno_p);
-            (void)dez2out((shown_half_track>>1)+1, 2, byte_str);
+            (void)dez2out((shown_half_track >> 1) + 1, 2, byte_str);
             display_data(byte_str[0]);
             display_data(byte_str[1]);
         }
 
         new_motor_status = get_motor_status();
-        if(shown_motor_status != new_motor_status)
+        if (shown_motor_status != new_motor_status)
         {
             shown_motor_status = new_motor_status;
             display_setcursor(disp_motortxt_p);
-            if(shown_motor_status)
+            if (shown_motor_status)
                 display_string(disp_motor_on_s);
             else
                 display_string(disp_motor_off_s);
         }
 
-        if((is_image_mount) && (gui_current_line_offset > 0))
+        if ((is_image_mount) && (gui_current_line_offset > 0))
         {
-            //// Filename Scrolling
-
             ++wait_counter0;
 
-            if(300000 == wait_counter0)
+            if (300000 == wait_counter0)
             {
                 wait_counter0 = 0;
 
-                if(0 == gui_line_scroll_end_begin_wait)
+                if (0 == gui_line_scroll_end_begin_wait)
                 {
-                    // Es darf gescrollt werden
-                    if(!gui_line_scroll_direction)
+                    if (!gui_line_scroll_direction)
                     {
                         ++gui_line_scroll_pos;
-                        if(gui_line_scroll_pos >= gui_current_line_offset)
+                        if (gui_line_scroll_pos >= gui_current_line_offset)
                         {
                             gui_line_scroll_end_begin_wait = 6;
                             gui_line_scroll_direction = 1;
@@ -645,7 +841,7 @@ void update_gui(void)
                     else
                     {
                         --gui_line_scroll_pos;
-                        if(gui_line_scroll_pos == 0)
+                        if (gui_line_scroll_pos == 0)
                         {
                             gui_line_scroll_end_begin_wait = 6;
                             gui_line_scroll_direction = 0;
@@ -653,21 +849,36 @@ void update_gui(void)
                     }
 
                     display_setcursor(disp_scrollfilename_p);
-                    display_print(image_filename,gui_line_scroll_pos,LCD_LINE_SIZE);
-                } else {
+                    display_print(image_filename, gui_line_scroll_pos, LCD_LINE_SIZE);
+                }
+                else
+                {
                     --gui_line_scroll_end_begin_wait;
                 }
             }
         }
         break;
+    }
 
     case GUI_MENU_MODE:
-        check_menu_events(menu_update(key_code));
+    {
+        uint8_t k;
+        while (NO_KEY != (k = get_key_from_buffer()))
+        {
+            check_menu_events(menu_update(k));
+        }
         break;
+    }
 
     case GUI_FILE_BROWSER:
-        filebrowser_update(key_code);
+    {
+        uint8_t k;
+        while (NO_KEY != (k = get_key_from_buffer()))
+        {
+            filebrowser_update(k);
+        }
         break;
+    }
 
     case GUI_SELECTOR:
         if(KEY2_UP == key_code)
@@ -788,7 +999,7 @@ void check_menu_events(const uint16_t menu_event)
                             display_string("failed 4 writing");
                         }
                         f_close(&fd);
-                        sleep_ms(3000);
+                        sleep_ms_service(3000);
                         display_clear();
                         display_home();
                         if (FR_OK == f_open(&fd, product_save_d64_name_s, FA_CREATE_ALWAYS|FA_WRITE))
@@ -814,7 +1025,7 @@ void check_menu_events(const uint16_t menu_event)
                             display_string("failed 4 writing");
                         }
                         f_close(&fd);
-                        sleep_ms(3000);
+                        sleep_ms_service(3000);
                         umount_sdcard();
                         menu_refresh();
                     }
@@ -834,13 +1045,13 @@ void check_menu_events(const uint16_t menu_event)
                         {
                             display_setcursor(i,0);
                             display_data(display_cursor_char);
-                            sleep_ms(50);
+                            sleep_ms_service(50);
                         }
                         for(uint8_t i=0; i<LCD_LINE_SIZE; i++)
                         {
                             display_setcursor(i,0);
                             display_data(' ');
-                            sleep_ms(50);
+                            sleep_ms_service(50);
                         }
                         is_image_mount = true;
                         set_gui_mode(GUI_INFO_MODE);
@@ -862,6 +1073,7 @@ void check_menu_events(const uint16_t menu_event)
                     menu_set_entry_var1(&settings_menu, M_Z0_TIMER, settings_get_zone0_timer());
                     menu_set_entry_var1(&settings_menu, M_Z0_GAP, settings_get_zone0_gap());
                     menu_set_entry_var1(&settings_menu, M_REV_ROTARY, settings_get_rotary_reversed() ? 1u : 0u);
+                    menu_set_entry_var1(&settings_menu, M_DENSITY_CPU, settings_get_density_from_cpu() ? 1u : 0u);
                     menu_refresh();
                     break;
 
@@ -880,6 +1092,13 @@ void check_menu_events(const uint16_t menu_event)
                     menu_refresh();
                     break;
 
+                case M_DENSITY_CPU:
+                    settings_set_density_from_cpu(0 != menu_get_entry_var1(&settings_menu, M_DENSITY_CPU));
+                    last_cpu_density_zone = shift165_density_zone();
+                    density_restart_bytetimer_if_active();
+                    menu_refresh();
+                    break;
+
                 case M_LOAD_SETTINGS:
                     display_clear();
                     display_home();
@@ -888,11 +1107,14 @@ void check_menu_events(const uint16_t menu_event)
                         menu_set_entry_var1(&settings_menu, M_Z0_TIMER, settings_get_zone0_timer());
                         menu_set_entry_var1(&settings_menu, M_Z0_GAP, settings_get_zone0_gap());
                         menu_set_entry_var1(&settings_menu, M_REV_ROTARY, settings_get_rotary_reversed() ? 1u : 0u);
+                        menu_set_entry_var1(&settings_menu, M_DENSITY_CPU, settings_get_density_from_cpu() ? 1u : 0u);
+                        last_cpu_density_zone = shift165_density_zone();
+                        density_restart_bytetimer_if_active();
                         display_string("Loaded");
                     } else {
                         display_string("No save");
                     }
-                    sleep_ms(800);
+                    sleep_ms_service(800);
                     menu_refresh();
                     break;
 
@@ -903,7 +1125,7 @@ void check_menu_events(const uint16_t menu_event)
                         display_string("Saved");
                     else
                         display_string("Save fail");
-                    sleep_ms(800);
+                    sleep_ms_service(800);
                     menu_refresh();
                     break;
 
@@ -911,7 +1133,7 @@ void check_menu_events(const uint16_t menu_event)
                     display_clear();
                     display_home();
                     display_string("Restarting...");
-                    sleep_ms(300);
+                    sleep_ms_service(300);
                     watchdog_reboot(0, 0, 0);
                     while (true) { }
                     break;
@@ -1018,23 +1240,30 @@ void handle_selector_image(void)
                     for(uint8_t i=0; i<LCD_LINE_SIZE; i++)
                     {
                         display_data(display_cursor_char);
-                        sleep_ms(250/LCD_LINE_SIZE);
+                        sleep_ms_service(250 / LCD_LINE_SIZE);
                     }
                     display_setcursor(disp_scrollfilename_p);
                     for(uint8_t i=0; i<LCD_LINE_SIZE; i++)
                     {
                         display_data(' ');
-                        sleep_ms(250/LCD_LINE_SIZE);
+                        sleep_ms_service(250 / LCD_LINE_SIZE);
                     }
 
-                    (void)dir_list_refresh(current_path);
-                    if (!dir_list_get(selected_image_nr, &hsi_dir_entry))
+                    if (1 < strlen(current_path))
                     {
-                        fr = FR_NO_FILE;
+                        --selected_image_nr;
                     }
-                    else
+                    if (0 == selected_image_nr)
                     {
+                        strcpy(hsi_dir_entry.fname, "..");
+                        hsi_dir_entry.fattrib = AM_DIR;
                         fr = FR_OK;
+                    } else {
+                        (void)dir_list_refresh(current_path);
+                        if (!dir_list_get(selected_image_nr, &hsi_dir_entry))
+                            fr = FR_NO_FILE;
+                        else
+                            fr = FR_OK;
                     }
 
                     if((0 != hsi_dir_entry.fname[0]) && (FR_OK == fr))
@@ -1060,6 +1289,7 @@ void handle_selector_image(void)
 
 void insert_menu_image(char* menu_path)
 {
+    service_lock_navigation = true;
     FRESULT fr = mount_sdcard();
     if (FR_OK == fr)
     {
@@ -1090,6 +1320,7 @@ void insert_menu_image(char* menu_path)
             uint8_t prev_sector = 0;
             do
             {
+                service_tick();
                 buffer_left = buffer_to_track(file_buffer_pointer, buffer_size, file_track, &prev_sector);
                 if (buffer_left>0)
                 {
@@ -1108,6 +1339,7 @@ void insert_menu_image(char* menu_path)
             memset(d64_sector_puffer, 0, sizeof(d64_sector_puffer));
             for(uint8_t track_nr=SCRATCH_TRACK; track_nr<num_max_tracks; ++track_nr)
             {
+                service_tick();
                 convert_d64track2gcr(track_nr, id1, id2);
             }
 
@@ -1119,6 +1351,7 @@ void insert_menu_image(char* menu_path)
             prev_sector = 0;
             do
             {
+                service_tick();
                 buffer_left = buffer_to_track(file_buffer_pointer, buffer_size, file_track, &prev_sector);
                 if (buffer_left>0)
                 {
@@ -1143,6 +1376,7 @@ void insert_menu_image(char* menu_path)
             prev_sector = 0;
             do
             {
+                service_tick();
                 buffer_left = buffer_to_track(file_buffer_pointer, buffer_size, file_track, &prev_sector);
                 if (buffer_left>0)
                 {
@@ -1188,7 +1422,9 @@ void insert_menu_image(char* menu_path)
 
             menu_set_entry_var1(&image_menu, M_WP_IMAGE, floppy_wp);
         }
+        service_lock_navigation = false;
     } else {
+        service_lock_navigation = false;
         display_clear();
         display_home();
         display_string("f_mount error:");
@@ -1248,6 +1484,169 @@ void infomode_update(void)
 
 /////////////////////////////////////////////////////////////////////
 
+static uint8_t fb_shown_window_pos = 0xff;
+static uint8_t fb_cursor_shown = 0xff;
+
+static void filebrowser_clear_row(uint8_t row)
+{
+    display_setcursor(0, row);
+    for (uint8_t c = 0; c < LCD_LINE_SIZE; c++)
+        display_data(' ');
+}
+
+static void filebrowser_paint_row(uint8_t screen_row)
+{
+    display_setcursor(1, screen_row);
+    for (uint8_t c = 1; c < LCD_LINE_SIZE; c++)
+        display_data(' ');
+
+    display_setcursor(1, screen_row);
+    if (fb_dir_entry[screen_row].fattrib & AM_DIR)
+        display_data(display_dir_char);
+
+    display_setcursor(2, screen_row);
+    display_print(fb_dir_entry[screen_row].fname, 0, LCD_LINE_SIZE - 3);
+}
+
+static void filebrowser_paint_scroll_hints(void)
+{
+    display_setcursor(LCD_LINE_SIZE - 1, 0);
+    display_data(fb_window_pos > 0 ? display_more_top_char : ' ');
+    display_setcursor(LCD_LINE_SIZE - 1, LCD_LINE_COUNT - 1);
+    display_data((fb_window_pos + LCD_LINE_COUNT) < fb_dir_entry_count ? display_more_down_char : ' ');
+}
+
+static void filebrowser_load_visible(void)
+{
+    uint8_t shown = 0;
+    while ((shown < LCD_LINE_COUNT) && ((fb_window_pos + shown) < fb_dir_entry_count))
+    {
+        if (!dir_list_get((uint16_t)(fb_window_pos + shown), &fb_dir_entry[shown]))
+            break;
+        ++shown;
+    }
+    for (uint8_t j = shown; j < LCD_LINE_COUNT; j++)
+    {
+        fb_dir_entry[j].fname[0] = 0;
+        fb_dir_entry[j].fattrib = 0;
+    }
+}
+
+static void filebrowser_reset_filename_scroll(void)
+{
+    int8_t var = (int8_t)strlen(fb_dir_entry[fb_cursor_pos].fname) - (LCD_LINE_SIZE - 3);
+    if (var < 0)
+        fb_current_line_offset = 0;
+    else
+        fb_current_line_offset = (uint8_t)var;
+
+    fb_line_scroll_pos = 0;
+    fb_line_scroll_direction = 0;
+    fb_line_scroll_end_begin_wait = 6;
+}
+
+static void filebrowser_repaint_visible(void)
+{
+    filebrowser_load_visible();
+
+    for (uint8_t j = 0; j < LCD_LINE_COUNT; j++)
+    {
+        if (fb_dir_entry[j].fname[0] != 0)
+            filebrowser_paint_row(j);
+        else
+            filebrowser_clear_row(j);
+    }
+
+    filebrowser_paint_scroll_hints();
+
+    if (fb_cursor_shown < LCD_LINE_COUNT)
+    {
+        display_setcursor(0, fb_cursor_shown);
+        display_data(' ');
+    }
+    display_setcursor(0, fb_cursor_pos);
+    display_data(display_pointer_char);
+
+    fb_shown_window_pos = fb_window_pos;
+    fb_cursor_shown = fb_cursor_pos;
+    filebrowser_reset_filename_scroll();
+}
+
+static bool filebrowser_step(int8_t dir)
+{
+    uint8_t old_window = fb_window_pos;
+    uint8_t old_cursor = fb_cursor_pos;
+
+    if (dir < 0)
+    {
+        if (fb_cursor_pos > 0)
+            --fb_cursor_pos;
+        else if (fb_window_pos > 0)
+            --fb_window_pos;
+        else
+            return false;
+    }
+    else
+    {
+        if ((fb_cursor_pos < (LCD_LINE_COUNT - 1)) && ((fb_window_pos + fb_cursor_pos) < (fb_dir_entry_count - 1)))
+            ++fb_cursor_pos;
+        else if (fb_window_pos < (fb_dir_entry_count - LCD_LINE_COUNT))
+            ++fb_window_pos;
+        else
+            return false;
+    }
+
+    return (old_window != fb_window_pos) || (old_cursor != fb_cursor_pos);
+}
+
+static void filebrowser_move(int8_t dir)
+{
+    if (!filebrowser_step(dir))
+        return;
+
+    if (fb_window_pos != fb_shown_window_pos)
+    {
+        filebrowser_repaint_visible();
+        return;
+    }
+
+    if (fb_cursor_shown < LCD_LINE_COUNT)
+    {
+        display_setcursor(0, fb_cursor_shown);
+        display_data(' ');
+        filebrowser_paint_row(fb_cursor_shown);
+    }
+    display_setcursor(0, fb_cursor_pos);
+    display_data(display_pointer_char);
+    fb_cursor_shown = fb_cursor_pos;
+    filebrowser_reset_filename_scroll();
+}
+
+static void filebrowser_insert_image(void)
+{
+    FILINFO *entry = &fb_dir_entry[fb_cursor_pos];
+
+    if (entry->fattrib & AM_DIR)
+        return;
+
+    uint8_t result = open_dir_entry(*entry);
+    if (TYPE_VALID != result)
+    {
+        display_clear();
+        display_setcursor(disp_unsupportedimg_p);
+        display_string(disp_unsupportedimg_s);
+        sleep_ms_service(800);
+        filebrowser_refresh();
+        return;
+    }
+
+    selected_image_nr = (uint16_t)(fb_window_pos + fb_cursor_pos);
+    filebrowser_refresh();
+    display_setcursor(0, (uint8_t)(display_row_count - 1u));
+    display_string("+ ");
+    display_print(image_filename, 0, (uint8_t)(LCD_LINE_SIZE - 2u));
+}
+
 void filebrowser_update(uint8_t key_code)
 {
     static uint32_t fbup_wait_counter0 = 0;
@@ -1255,34 +1654,10 @@ void filebrowser_update(uint8_t key_code)
     switch (key_code)
     {
     case KEY0_DOWN:
-        if(fb_cursor_pos > 0)
-        {
-            --fb_cursor_pos;
-            filebrowser_refresh();
-        }
-        else
-        {
-            if(fb_window_pos > 0)
-            {
-                --fb_window_pos;
-                filebrowser_refresh();
-            }
-        }
+        filebrowser_move(-1);
         break;
     case KEY1_DOWN:
-        if((fb_cursor_pos < (LCD_LINE_COUNT-1)) && (fb_cursor_pos < (fb_dir_entry_count-1)))
-        {
-            ++fb_cursor_pos;
-            filebrowser_refresh();
-        }
-        else
-        {
-            if(fb_window_pos < (fb_dir_entry_count - LCD_LINE_COUNT))
-            {
-                ++fb_window_pos;
-                filebrowser_refresh();
-            }
-        }
+        filebrowser_move(1);
         break;
     case KEY2_UP:
         //fn open dir_entry...
@@ -1295,12 +1670,12 @@ void filebrowser_update(uint8_t key_code)
                 display_clear();
                 display_setcursor(disp_unsupportedimg_p);
                 display_string(disp_unsupportedimg_s);
-                sleep_ms(1000);
+                sleep_ms_service(1000);
             }
             is_image_mount=false;
             filebrowser_refresh();
         } else {
-            selected_image_nr = fb_window_pos+fb_cursor_pos+1;
+            selected_image_nr = (uint16_t)(fb_window_pos + fb_cursor_pos);
             set_gui_mode(GUI_INFO_MODE);
         }
         break;
@@ -1462,53 +1837,9 @@ void filebrowser_refresh(void)
     (void)dir_list_refresh(current_path);
     fb_dir_entry_count = dir_list_count();
 
-    uint8_t i = 0;
-    while ((i < LCD_LINE_COUNT) && ((fb_window_pos + i) < fb_dir_entry_count))
-    {
-        if (!dir_list_get((uint16_t)(fb_window_pos + i), &fb_dir_entry[i]))
-            break;
-        ++i;
-    }
-
-    for (uint8_t j=0; j<i; j++)
-    {
-        display_setcursor(1,j);
-        if(fb_dir_entry[j].fattrib & AM_DIR)
-        {
-            display_data(display_dir_char);
-        } else {
-            display_data(' ');
-        }
-
-        display_print(fb_dir_entry[j].fname, 0, LCD_LINE_SIZE-3);
-    }
-
-    display_setcursor(0, fb_cursor_pos);
-    display_data(display_pointer_char);
-
-
-    if(fb_window_pos > 0)
-    {
-        display_setcursor(LCD_LINE_SIZE-1,0);
-        display_data(display_more_top_char);
-    }
-
-    if((fb_window_pos + LCD_LINE_COUNT) < fb_dir_entry_count)
-    {
-        display_setcursor(LCD_LINE_SIZE-1, LCD_LINE_COUNT-1);
-        display_data(display_more_down_char);
-    }
-
-    // Für Scrollenden Filename
-    int8_t var = (int8_t)strlen(fb_dir_entry[fb_cursor_pos].fname) - (LCD_LINE_SIZE-3);
-    if(var < 0)
-        fb_current_line_offset = 0;
-    else
-        fb_current_line_offset = var;
-
-    fb_line_scroll_pos = 0;
-    fb_line_scroll_direction = 0;
-    fb_line_scroll_end_begin_wait = 6;
+    fb_shown_window_pos = 0xff;
+    fb_cursor_shown = 0xff;
+    filebrowser_repaint_visible();
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -1602,11 +1933,11 @@ void send_disk_change(void)
     const uint32_t hold_ms = 50;
 
     clear_wps();            // protected while old disk ejects
-    sleep_ms(hold_ms);
+    sleep_ms_service(hold_ms);
     set_wps();              // no disk / notch open
-    sleep_ms(hold_ms);
+    sleep_ms_service(hold_ms);
     clear_wps();            // protected while new disk inserts
-    sleep_ms(hold_ms);
+    sleep_ms_service(hold_ms);
     if (!floppy_wp) {
         set_wps();          // final: writable
     }
@@ -1822,7 +2153,8 @@ void init_bytetimer(void)
 
 void start_bytetimer(uint8_t half_track)
 {
-    (void) add_repeating_timer_us(-bytetimer_values[d64_track_zone[half_track>>1]], repeating_timer_callback, NULL, &bytetimer);
+    uint8_t zone = speed_zone_for_track((uint8_t)(half_track >> 1), shift165_last_byte());
+    (void) add_repeating_timer_us(-bytetimer_values[zone], repeating_timer_callback, NULL, &bytetimer);
 }
 
 /////////////////////////////////////////////////////////////////////
