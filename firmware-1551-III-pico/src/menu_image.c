@@ -9,6 +9,7 @@
 #include "rw_routines.h"
 #include "globals.h"
 #include "gcr.h"
+#include "dir_list.h"
 #include "ctype.h"
 
 #define MAX_DIR_ENTRIES (128)
@@ -85,6 +86,7 @@ void generate_directory_entry(const uint8_t* filename, const uint8_t filetype, c
 
 size_t generate_menu_file(DIR* dir_obj, const uint8_t* dir_path, const uint8_t dest_track)
 {
+    (void)dir_obj;
     FILINFO     fb_dir_menu_entry;
 
     uint8_t*    P;
@@ -124,13 +126,12 @@ size_t generate_menu_file(DIR* dir_obj, const uint8_t* dir_path, const uint8_t d
         *P++ = 0;
     }
 
-    do
+    (void)dir_list_refresh((const char *)dir_path);
+    const uint16_t list_start = (1u < dirname_len) ? 1u : 0u;
+    for (uint16_t li = list_start; li < dir_list_count(); ++li)
     {
-        FRESULT fr = f_readdir(dir_obj, &fb_dir_menu_entry);
-        if((0 == fb_dir_menu_entry.fname[0]) || (FR_OK != fr))
-        {
+        if (!dir_list_get(li, &fb_dir_menu_entry))
             break;
-        }
 
         if(fb_dir_menu_entry.fattrib & AM_DIR)
         {
@@ -178,7 +179,6 @@ size_t generate_menu_file(DIR* dir_obj, const uint8_t* dir_path, const uint8_t d
         }
         while (0 != c);
     }
-    while(true);
 
     return (size_t)(P-file_sector_P);
 }

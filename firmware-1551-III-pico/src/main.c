@@ -35,6 +35,7 @@
 #include "menu_image.h"
 #include "c64_selector.h"
 #include "shift165.h"
+#include "dir_list.h"
 #if !defined(REPICO1551)
 #include "c64_intro.h"
 #endif
@@ -524,20 +525,20 @@ static void load_next_image(void)
         return;
     }
 
-    while (selected_image_nr < fb_dir_entry_count)
-    {
-        seek_to_dir_entry(selected_image_nr, current_path);
-        FRESULT fr = f_readdir(&dir_object, &next_dir_entry);
-        if ((0 == next_dir_entry.fname[0]) || (FR_OK != fr))
-            break;
+    (void)dir_list_refresh(current_path);
+    fb_dir_entry_count = dir_list_count();
 
-        ++selected_image_nr;
+    for (uint16_t idx = (uint16_t)(selected_image_nr + 1u); idx < fb_dir_entry_count; ++idx)
+    {
+        if (!dir_list_get(idx, &next_dir_entry))
+            break;
 
         if (next_dir_entry.fattrib & AM_DIR)
             continue;
 
         if (TYPE_VALID == open_dir_entry(next_dir_entry))
         {
+            selected_image_nr = idx;
             set_gui_mode(GUI_INFO_MODE);
             return;
         }
@@ -1026,20 +1027,14 @@ void handle_selector_image(void)
                         sleep_ms(250/LCD_LINE_SIZE);
                     }
 
-                    if (1 < strlen(current_path))
+                    (void)dir_list_refresh(current_path);
+                    if (!dir_list_get(selected_image_nr, &hsi_dir_entry))
                     {
-                        --selected_image_nr;
+                        fr = FR_NO_FILE;
                     }
-                    if (0 == selected_image_nr)
+                    else
                     {
-                        // first entry selected, which is ".." in this case
-                        // create a fake dir-entry and open it afterwards
-                        strcpy(hsi_dir_entry.fname, "..");
-                        hsi_dir_entry.fattrib = AM_DIR;
                         fr = FR_OK;
-                    } else {
-                        seek_to_dir_entry(selected_image_nr-1, current_path);
-                        fr = f_readdir(&dir_object, &hsi_dir_entry);
                     }
 
                     if((0 != hsi_dir_entry.fname[0]) && (FR_OK == fr))
@@ -1464,24 +1459,14 @@ void filebrowser_refresh(void)
 {
     display_clear();
 
-    seek_to_dir_entry(fb_window_pos, current_path);
+    (void)dir_list_refresh(current_path);
+    fb_dir_entry_count = dir_list_count();
 
-    uint8_t i=0;
-
-    if ((1 < strlen(current_path)) && (0 == fb_window_pos))
+    uint8_t i = 0;
+    while ((i < LCD_LINE_COUNT) && ((fb_window_pos + i) < fb_dir_entry_count))
     {
-        strcpy(fb_dir_entry[0].fname, "..");
-        fb_dir_entry[0].fattrib = AM_DIR;
-        ++i;
-    }
-
-    while((i<LCD_LINE_COUNT) && ((fb_window_pos + i) < fb_dir_entry_count))
-    {
-        FRESULT fr = f_readdir(&dir_object, &(fb_dir_entry[i]));
-        if((0 == fb_dir_entry[i].fname[0]) || (FR_OK != fr))
-        {
+        if (!dir_list_get((uint16_t)(fb_window_pos + i), &fb_dir_entry[i]))
             break;
-        }
         ++i;
     }
 
@@ -1530,55 +1515,9 @@ void filebrowser_refresh(void)
 
 uint16_t get_dir_entry_count(const char* entrycount_path)
 {
-    uint16_t entry_count = 0;
-
-    f_closedir(&dir_object);
-
-    char pattern[] = {"*"};
-
-    dir_object.pat = pattern;           /* Save pointer to pattern string */
-    if (FR_OK == f_opendir(&dir_object, entrycount_path))  /* Open the target directory */
-    {
-        FILINFO gdec_dir_entry;
-        while(FR_OK == f_readdir(&dir_object, &gdec_dir_entry))
-        {
-            if(0 == gdec_dir_entry.fname[0])
-            {
-                break;
-            }
-            ++entry_count;
-        }
-    }
-    if (1 < strlen(entrycount_path)) { ++entry_count; }
-    return entry_count;
-}
-
-/////////////////////////////////////////////////////////////////////
-
-uint16_t seek_to_dir_entry(uint16_t entry_num, const char* seek_path)
-{
-    f_closedir(&dir_object);
-
-    char pattern[] = {"*"};
-    // if we are in a subfolder and not the first entry (="..") was selected, decrease the seek index by 1
-    if ((1 < strlen(seek_path)) && (0 < entry_num)) { --entry_num; }
-
-    dir_object.pat = pattern;           /* Save pointer to pattern string */
-    if(FR_OK == f_opendir(&dir_object, seek_path))  /* Open the target directory */
-    {
-        f_readdir(&dir_object, 0);  // rewind the directory
-        while (0 < entry_num)
-        {
-            FILINFO seek_dir_entry;
-            FRESULT fr = f_readdir(&dir_object, &seek_dir_entry);
-            if((FR_OK != fr) || (0 == seek_dir_entry.fname[0]))
-            {
-                break;
-            }
-            --entry_num;
-        }
-    }
-    return entry_num;
+    if (FR_OK != dir_list_refresh(entrycount_path))
+        return 0;
+    return dir_list_count();
 }
 
 /////////////////////////////////////////////////////////////////////

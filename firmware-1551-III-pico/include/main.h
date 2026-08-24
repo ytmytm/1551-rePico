@@ -33,7 +33,6 @@ void handle_selector_image(void);
 void insert_menu_image(char* menu_path);
 
 uint16_t get_dir_entry_count(const char* entrycount_path);
-uint16_t seek_to_dir_entry(uint16_t entry_num, const char* seek_path);
 
 void show_start_message(void);
 void show_sdcard_info_message(void);
@@ -108,7 +107,7 @@ void start_stepper_timer(void);
 FATFS       fs;             // filesystem handle - only created once
 DIR         dir_object;
 FIL         fd;             // file descriptor for every open file
-FILINFO     fb_dir_entry[LCD_LINE_COUNT];
+FILINFO     fb_dir_entry[DISPLAY_LINE_MAX];
 //
 //
 // Button bounce filter (us). Rotary uses a quadrature state machine (no ms block).
