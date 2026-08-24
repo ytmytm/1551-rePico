@@ -3,6 +3,12 @@ firmware/build/
 firmware/include/selector.h
 firmware/include/c64_selector.h
 firmware/include/c64_intro.h
+firmware-1551-III-pico/build/
+firmware-1551-III-pico/include/selector.h
+firmware-1551-III-pico/include/c64_selector.h
+firmware-1551-III-pico/include/c64_intro.h
+firmware-1551-III-pico/no-OS-FatFS-SD-SDIO-SPI-RPi-Pico/
+firmware-1551-III-pico/buildtools/bitfire/
 analysis-reports/*
 build-analysis/*
 .DS_Store
