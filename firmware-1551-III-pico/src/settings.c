@@ -34,6 +34,7 @@ typedef struct __attribute__((packed)) {
 static uint8_t zone0_timer_us;
 static uint8_t zone0_gap;
 static bool rotary_reversed;
+static bool density_from_cpu;
 
 /* Emulation hooks from main.c (avoid including main.h — it defines globals) */
 extern bool is_image_mount;
@@ -98,6 +99,7 @@ void settings_init_defaults(void)
     zone0_gap = 12;
 #endif
     rotary_reversed = false;
+    density_from_cpu = false;
     bytetimer_values[0] = zone0_timer_us;
     d64_sector_gap[0] = zone0_gap;
 }
@@ -137,6 +139,7 @@ bool settings_save_to_flash(void)
     blob.zone0_timer_us = zone0_timer_us;
     blob.zone0_gap = zone0_gap;
     blob.rotary_reversed = rotary_reversed ? 1u : 0u;
+    blob.reserved = density_from_cpu ? 1u : 0u;
     blob.crc16 = crc16_ccitt((const uint8_t *)&blob, sizeof(blob) - sizeof(blob.crc16));
 
     uint8_t page[FLASH_PAGE_SIZE];
@@ -183,6 +186,7 @@ bool settings_load_from_flash(void)
     zone0_timer_us = blob->zone0_timer_us;
     zone0_gap = blob->zone0_gap;
     rotary_reversed = (0 != blob->rotary_reversed);
+    density_from_cpu = (0 != blob->reserved);
     settings_apply(old_gap != zone0_gap);
     return true;
 }
@@ -190,6 +194,7 @@ bool settings_load_from_flash(void)
 uint8_t settings_get_zone0_timer(void) { return zone0_timer_us; }
 uint8_t settings_get_zone0_gap(void) { return zone0_gap; }
 bool settings_get_rotary_reversed(void) { return rotary_reversed; }
+bool settings_get_density_from_cpu(void) { return density_from_cpu; }
 
 void settings_set_zone0_timer(uint8_t us)
 {
@@ -214,4 +219,9 @@ void settings_set_zone0_gap(uint8_t gap)
 void settings_set_rotary_reversed(bool reversed)
 {
     rotary_reversed = reversed;
+}
+
+void settings_set_density_from_cpu(bool from_cpu)
+{
+    density_from_cpu = from_cpu;
 }
