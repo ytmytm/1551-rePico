@@ -147,3 +147,5 @@ It works, so I have mounted the front panel.
 Agent implemented SH1106 OLED support (it was SSD1306) and shift register handler.
 Density chosen by CPU (via DS0/DS0 lines) is an option, currently off - track density hardcoded by track number.
 'Back' button is universal back and 'Insert' goes to load image menu and adds disk images to the roster.
+
+Needs testing + decision what to do with SD switch info - some kind of reload?
