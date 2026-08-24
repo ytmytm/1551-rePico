@@ -63,3 +63,16 @@ bool shift165_sd_card_present(void)
     /* SD_CD is pulled up; socket pulls low when a card is inserted. */
     return !shift165_line_high(SHIFT165_BIT_SD_CD);
 }
+
+uint8_t shift165_density_zone_from_byte(uint8_t value)
+{
+    /* Matches 1551 ROM: zone index << 5 onto CPU port bits 5 (DS0) and 6 (DS1). */
+    bool ds0 = 0 != (value & (1u << SHIFT165_BIT_DS0));
+    bool ds1 = 0 != (value & (1u << SHIFT165_BIT_DS1));
+    return (uint8_t)((ds0 ? 1u : 0u) | (ds1 ? 2u : 0u));
+}
+
+uint8_t shift165_density_zone(void)
+{
+    return shift165_density_zone_from_byte(shift165_value);
+}

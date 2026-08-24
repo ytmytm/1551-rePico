@@ -26,4 +26,8 @@ uint8_t shift165_last_byte(void);
 bool shift165_line_high(uint8_t bit_index);
 bool shift165_sd_card_present(void);
 
+/* 1551 FDC port DS0/DS1 (bits 5/6) -> speed zone 0..3 */
+uint8_t shift165_density_zone_from_byte(uint8_t value);
+uint8_t shift165_density_zone(void);
+
 #endif
