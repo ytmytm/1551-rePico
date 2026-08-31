@@ -149,3 +149,9 @@ Density chosen by CPU (via DS0/DS0 lines) is an option, currently off - track de
 'Back' button is universal back and 'Insert' goes to load image menu and adds disk images to the roster.
 
 Needs testing + decision what to do with SD switch info - some kind of reload?
+
+[2026-08-31]
+Experimental firmware branch feature/core-split-ui-gcr: UI + 74HCT165 input on core 1,
+GCR byte feed + stepper/floppy GPIO on core 0. Inter-core lock-free SPSC mailboxes
+(ipc.h/ipc.c) for timer, WPS, disk change, and shift165 density byte — aims to
+reduce GCR jitter vs single-core main loop. Not merged; flash from that branch to test.
