@@ -155,3 +155,30 @@ Experimental firmware branch feature/core-split-ui-gcr: UI + 74HCT165 input on c
 GCR byte feed + stepper/floppy GPIO on core 0. Inter-core lock-free SPSC mailboxes
 (ipc.h/ipc.c) for timer, WPS, disk change, and shift165 density byte — aims to
 reduce GCR jitter vs single-core main loop. Not merged; flash from that branch to test.
+
+Added WPS triggering on disk change, but GEOS doesn't recognize that 1B is different than
+1A or 2A. Only Close+Open in Desktop refreshes that. Strange.
+
+Removed zone0 settings, we don't need it anymore. Brought back values from 1541 upstream.
+
+Hardware:
+
+Too dim ACT LED:
+- remove R27 (3.3K)
+- move R23 to R27 footprint (470R)
+- short R23 pads (0R)
+Should be much brighter, comparable to PWR
+
+Software:
+
+'Corruption' game loader doesn't work either way (track 26 and higher) - seems
+like deja vu from Pi1551.
+Hypaload fastloader (the one from VDC, Carrion collections) also doesn't work.
+Neither bitfire (qm_prepl, Carrion 121) - but these fail also on Pi1551, so it may
+be because of 6502/plus4 and its fake 6502 (could be 65C02).
+Need to test again with 6510 or on Plus/4
+Should check against 1551 mainboard to see if it worked there?
+(if yes with mostly the same firmware (firmware1551 but with fake shift register reads for the same delays)
+ then problem is with HDL?)
+
+Check again without BYTE_READY holding for 1us (05f386b7eac3de0d193d53cfa9fdd593fe222a62)
