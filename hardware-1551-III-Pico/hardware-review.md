@@ -135,6 +135,13 @@ Uwaga produkcyjna: symbol/wartosc mowi `74HCT165`, ale pola JLC/MFR w schemacie 
 - [x] Sprawdzic pola BOM/JLC dla `U19`: HCT zgodnie ze schematem/notatka albo swiadomie LS i opisane w BOM. Aktualnie nadal `SN74LS165ADR(LX)` / `C42403065`. (LS/HCT bez roznicy)
 - [x] Przejrzec wygenerowany BOM/position files po ostatnich zmianach, szczegolnie usuniecie `U12/U15` i dodanie netow CPLD `/RAMSEL`, `/RAMOE`, `/ROMSEL`.
 - [x] Dodac i uruchomic test/symulator `hardware-1551-III-Pico/test_hardware_model.py`.
-- [ ] Dopisac w firmware obsluge `74HCT165`.
+- [x] Dopisac w firmware obsluge `74HCT165`.
 - [ ] Opisac w montazu ustawienie `JP1..JP3` dla obecnego firmware i dla przyszlego trybu shift-register.
 - [ ] Uaktualnic `hardware-1551-III-Pico/README.md`, jezeli ma byc uzywany jako instrukcja/BOM dla tej rewizji.
+
+[2026-08-31]
+Too dim ACT LED:
+- remove R27 (3.3K)
+- move R23 to R27 footprint (470R)
+- short R23 pads (0R)
+Should be much brighter, comparable to PWR
