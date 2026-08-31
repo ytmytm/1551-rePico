@@ -408,8 +408,6 @@ int main()
     menu_set_root(&main_menu);
     main_menu.lcd_cursor_pos = 1; /* skip ".." — land on Disk Menu */
     settings_boot_load();
-    menu_set_entry_var1(&settings_menu, M_Z0_TIMER, settings_get_zone0_timer());
-    menu_set_entry_var1(&settings_menu, M_Z0_GAP, settings_get_zone0_gap());
     menu_set_entry_var1(&settings_menu, M_REV_ROTARY, settings_get_rotary_reversed() ? 1u : 0u);
     menu_set_entry_var1(&settings_menu, M_DENSITY_CPU, settings_get_density_from_cpu() ? 1u : 0u);
     // ----
@@ -1070,20 +1068,8 @@ void check_menu_events(const uint16_t menu_event)
 
                 /// Settings Menü
                 case M_SETTINGS:
-                    menu_set_entry_var1(&settings_menu, M_Z0_TIMER, settings_get_zone0_timer());
-                    menu_set_entry_var1(&settings_menu, M_Z0_GAP, settings_get_zone0_gap());
                     menu_set_entry_var1(&settings_menu, M_REV_ROTARY, settings_get_rotary_reversed() ? 1u : 0u);
                     menu_set_entry_var1(&settings_menu, M_DENSITY_CPU, settings_get_density_from_cpu() ? 1u : 0u);
-                    menu_refresh();
-                    break;
-
-                case M_Z0_TIMER:
-                    settings_set_zone0_timer(menu_get_entry_var1(&settings_menu, M_Z0_TIMER));
-                    menu_refresh();
-                    break;
-
-                case M_Z0_GAP:
-                    settings_set_zone0_gap(menu_get_entry_var1(&settings_menu, M_Z0_GAP));
                     menu_refresh();
                     break;
 
@@ -1104,8 +1090,6 @@ void check_menu_events(const uint16_t menu_event)
                     display_home();
                     if (settings_load_from_flash())
                     {
-                        menu_set_entry_var1(&settings_menu, M_Z0_TIMER, settings_get_zone0_timer());
-                        menu_set_entry_var1(&settings_menu, M_Z0_GAP, settings_get_zone0_gap());
                         menu_set_entry_var1(&settings_menu, M_REV_ROTARY, settings_get_rotary_reversed() ? 1u : 0u);
                         menu_set_entry_var1(&settings_menu, M_DENSITY_CPU, settings_get_density_from_cpu() ? 1u : 0u);
                         last_cpu_density_zone = shift165_density_zone();
