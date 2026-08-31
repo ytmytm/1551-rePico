@@ -69,9 +69,9 @@ extern uint8_t id2;    // - these need to change to .. signal a disk-change or a
 
 enum {UNDEF_IMAGE, G64_IMAGE, D64_IMAGE, PRG_IMAGE, SELECTOR_IMAGE};
 
-extern int64_t bytetimer_values[NUM_SPEEDZONES];
+extern const int64_t bytetimer_values[NUM_SPEEDZONES];
 
-extern uint8_t d64_sector_gap[NUM_SPEEDZONES];
+extern const uint8_t d64_sector_gap[NUM_SPEEDZONES];
 
 #define HEADER_GAP_BYTES (9)
 

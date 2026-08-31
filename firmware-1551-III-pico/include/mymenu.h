@@ -1,11 +1,10 @@
 /* mymenu definition */
-// last change: 18/07/2026
+// last change: 31/08/2026
 
 #ifndef MYMENUE_H
 #define MYMENUE_H
 
 #include "menu.h"
-#include "settings.h"
 
 MENU_STRUCT main_menu;
 MENU_STRUCT image_menu;
@@ -14,7 +13,7 @@ MENU_STRUCT info_menu;
 
 enum  MENU_IDS{M_BACK, M_IMAGE, M_SETTINGS, M_INFO, \
                M_BACK_IMAGE, M_MENU_IMAGE, M_LOAD_IMAGE, M_SAVE_IMAGE, M_UNLOAD_IMAGE, M_RELOAD_DISK, M_WP_IMAGE, M_NEW_IMAGE, \
-               M_BACK_SETTINGS, M_Z0_TIMER, M_Z0_GAP, M_REV_ROTARY, M_DENSITY_CPU, M_LOAD_SETTINGS, M_SAVE_SETTINGS, M_RESTART, \
+               M_BACK_SETTINGS, M_REV_ROTARY, M_DENSITY_CPU, M_LOAD_SETTINGS, M_SAVE_SETTINGS, M_RESTART, \
                M_BACK_INFO, M_VERSION_INFO, M_SDCARD_INFO};
 
 /// Hauptmenü
@@ -34,8 +33,6 @@ MENU_ENTRY image_menu_entrys[] = {{"..",           M_BACK_IMAGE,ENTRY_TO_PARENT}
 /// Settings Menü
 MENU_ENTRY settings_menu_entrys[] = {
     {"..",            M_BACK_SETTINGS, ENTRY_TO_PARENT},
-    {"Z0 timer",      M_Z0_TIMER, ENTRY_8BIT_DEC, 28, 0, ZONE0_TIMER_MIN, ZONE0_TIMER_MAX},
-    {"Z0 gap",        M_Z0_GAP,   ENTRY_8BIT_DEC, 21, 0, ZONE0_GAP_MIN, ZONE0_GAP_MAX},
     {"Rev rotary",    M_REV_ROTARY, ENTRY_ONOFF, 0},
     {"Dens CPU",      M_DENSITY_CPU, ENTRY_ONOFF, 0},
     {"Load settings", M_LOAD_SETTINGS},

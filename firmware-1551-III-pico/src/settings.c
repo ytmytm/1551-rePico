@@ -1,13 +1,11 @@
 /**********************************
- * user settings (zone0 timing, rotary, flash)
+ * user settings (rotary, flash)
  *
  * Author: 1551-rePico
- * Last change: 2026/07/18
+ * Last change: 2026/08/31
  ***********************************/
 
 #include "settings.h"
-#include "globals.h"
-#include "rw_routines.h"
 #include "hardware/flash.h"
 #include "hardware/sync.h"
 #include <string.h>
@@ -24,25 +22,15 @@
 typedef struct __attribute__((packed)) {
     uint8_t magic[4];
     uint8_t version;
-    uint8_t zone0_timer_us;
-    uint8_t zone0_gap;
+    uint8_t zone0_timer_us;   /* legacy v1 field, ignored */
+    uint8_t zone0_gap;        /* legacy v1 field, ignored */
     uint8_t rotary_reversed;
     uint8_t reserved;
     uint16_t crc16;
 } settings_blob_t;
 
-static uint8_t zone0_timer_us;
-static uint8_t zone0_gap;
 static bool rotary_reversed;
 static bool density_from_cpu;
-
-/* Emulation hooks from main.c (avoid including main.h — it defines globals) */
-extern bool is_image_mount;
-extern uint8_t akt_image_type;
-extern volatile uint8_t akt_half_track;
-extern volatile bool send_byte_ready;
-extern void start_bytetimer(uint8_t half_track);
-extern void stop_bytetimer(void);
 
 static uint16_t crc16_ccitt(const uint8_t *data, size_t len)
 {
@@ -61,64 +49,10 @@ static uint16_t crc16_ccitt(const uint8_t *data, size_t len)
     return crc;
 }
 
-static bool bounds_ok(uint8_t timer, uint8_t gap)
-{
-    return (timer >= ZONE0_TIMER_MIN) && (timer <= ZONE0_TIMER_MAX)
-        && (gap >= ZONE0_GAP_MIN) && (gap <= ZONE0_GAP_MAX);
-}
-
-static void rebuild_zone0_gcr(void)
-{
-    if (!is_image_mount)
-        return;
-    if ((G64_IMAGE == akt_image_type) || (UNDEF_IMAGE == akt_image_type))
-        return;
-
-    stop_bytetimer();
-    send_byte_ready = false;
-
-    for (uint8_t track_nr = 0; track_nr < MAX_TRACKS; ++track_nr)
-    {
-        if (0 != d64_track_zone[track_nr])
-            continue;
-        convert_gcr2d64track(track_nr);
-        convert_d64track2gcr(track_nr, id1, id2);
-    }
-
-    send_byte_ready = true;
-    start_bytetimer(akt_half_track);
-}
-
 void settings_init_defaults(void)
 {
-#if REPICO1551
-    zone0_timer_us = 28;
-    zone0_gap = 21;
-#else
-    zone0_timer_us = 26;
-    zone0_gap = 12;
-#endif
     rotary_reversed = false;
     density_from_cpu = false;
-    bytetimer_values[0] = zone0_timer_us;
-    d64_sector_gap[0] = zone0_gap;
-}
-
-void settings_apply(bool gap_changed)
-{
-    bytetimer_values[0] = zone0_timer_us;
-    d64_sector_gap[0] = zone0_gap;
-
-    if (is_image_mount)
-    {
-        if (gap_changed)
-            rebuild_zone0_gcr();
-        else
-        {
-            stop_bytetimer();
-            start_bytetimer(akt_half_track);
-        }
-    }
 }
 
 void settings_boot_load(void)
@@ -136,8 +70,6 @@ bool settings_save_to_flash(void)
     blob.magic[2] = SETTINGS_MAGIC2;
     blob.magic[3] = SETTINGS_MAGIC3;
     blob.version = SETTINGS_VERSION;
-    blob.zone0_timer_us = zone0_timer_us;
-    blob.zone0_gap = zone0_gap;
     blob.rotary_reversed = rotary_reversed ? 1u : 0u;
     blob.reserved = density_from_cpu ? 1u : 0u;
     blob.crc16 = crc16_ccitt((const uint8_t *)&blob, sizeof(blob) - sizeof(blob.crc16));
@@ -146,17 +78,10 @@ bool settings_save_to_flash(void)
     memset(page, 0xFFu, sizeof(page));
     memcpy(page, &blob, sizeof(blob));
 
-    bool was_mount = is_image_mount;
-    if (was_mount)
-        stop_bytetimer();
-
     uint32_t ints = save_and_disable_interrupts();
     flash_range_erase(SETTINGS_FLASH_OFFSET, FLASH_SECTOR_SIZE);
     flash_range_program(SETTINGS_FLASH_OFFSET, page, FLASH_PAGE_SIZE);
     restore_interrupts(ints);
-
-    if (was_mount)
-        start_bytetimer(akt_half_track);
 
     const settings_blob_t *stored =
         (const settings_blob_t *)(XIP_BASE + SETTINGS_FLASH_OFFSET);
@@ -179,42 +104,14 @@ bool settings_load_from_flash(void)
     uint16_t crc = crc16_ccitt((const uint8_t *)blob, sizeof(*blob) - sizeof(blob->crc16));
     if (crc != blob->crc16)
         return false;
-    if (!bounds_ok(blob->zone0_timer_us, blob->zone0_gap))
-        return false;
 
-    uint8_t old_gap = zone0_gap;
-    zone0_timer_us = blob->zone0_timer_us;
-    zone0_gap = blob->zone0_gap;
     rotary_reversed = (0 != blob->rotary_reversed);
     density_from_cpu = (0 != blob->reserved);
-    settings_apply(old_gap != zone0_gap);
     return true;
 }
 
-uint8_t settings_get_zone0_timer(void) { return zone0_timer_us; }
-uint8_t settings_get_zone0_gap(void) { return zone0_gap; }
 bool settings_get_rotary_reversed(void) { return rotary_reversed; }
 bool settings_get_density_from_cpu(void) { return density_from_cpu; }
-
-void settings_set_zone0_timer(uint8_t us)
-{
-    if (us < ZONE0_TIMER_MIN) us = ZONE0_TIMER_MIN;
-    if (us > ZONE0_TIMER_MAX) us = ZONE0_TIMER_MAX;
-    if (us == zone0_timer_us)
-        return;
-    zone0_timer_us = us;
-    settings_apply(false);
-}
-
-void settings_set_zone0_gap(uint8_t gap)
-{
-    if (gap < ZONE0_GAP_MIN) gap = ZONE0_GAP_MIN;
-    if (gap > ZONE0_GAP_MAX) gap = ZONE0_GAP_MAX;
-    if (gap == zone0_gap)
-        return;
-    zone0_gap = gap;
-    settings_apply(true);
-}
 
 void settings_set_rotary_reversed(bool reversed)
 {

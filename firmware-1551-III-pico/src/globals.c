@@ -50,15 +50,9 @@ uint8_t id2 = 0;    // - these need to change to .. signal a disk-change or afte
 //Zone 3: 8000000/32 = 250000 Hz    (ByteReady 31250 Hz)
 
 //Höhere Werte verlangsammen die Bitrate (=us delay-values between bytes)
-// 1551: zone 0 at 28µs + gap 21 (required for reliable DOS/GEOS/fastloaders;
-// see doc/1551-zone0-gcr-timing.md — gap-only or timer-only each leave some titles failing)
-#if REPICO1551
-int64_t bytetimer_values[NUM_SPEEDZONES] = {28, 28, 30, 32};
-uint8_t d64_sector_gap[NUM_SPEEDZONES] = {21, 21, 16, 13};
-#else
-int64_t bytetimer_values[NUM_SPEEDZONES] = {26, 28, 30, 32};
-uint8_t d64_sector_gap[NUM_SPEEDZONES] = {12, 21, 16, 13};
-#endif
+// Pi1551-III: same speed-zone tables as 1541-rePico upstream (#else in firmware/globals.c).
+const int64_t bytetimer_values[NUM_SPEEDZONES] = {26, 28, 30, 32};
+const uint8_t d64_sector_gap[NUM_SPEEDZONES] = {12, 21, 16, 13};
 
 bool block_data_changes = false;
 
