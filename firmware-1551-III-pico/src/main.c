@@ -51,6 +51,7 @@
 #define SHIFT165_POLL_INTERVAL_US 1000u
 #define DENSITY_STABLE_POLLS 3u
 #define DISK_CHANGE_HOLD_MS 111u   /* ~333 ms for full eject/insert/final cycle */
+#define BYTE_READY_LOW_HOLD_US 1u
 
 volatile int16_t rotary_delta = 0;
 
@@ -2263,7 +2264,9 @@ bool repeating_timer_callback(__unused struct repeating_timer *t)
                     // BYTE_READY pulse: CPLD latches on falling edge; no hold needed on 1551.
                     // 1541 VIA/gate-array path still needs a short low time.
                     clear_byte_ready();
-#if !REPICO1551
+#if REPICO1551
+                    sleep_us(BYTE_READY_LOW_HOLD_US);
+#else
                     sleep_us(3);
 #endif
                     set_byte_ready();
@@ -2288,7 +2291,9 @@ bool repeating_timer_callback(__unused struct repeating_timer *t)
                 if(send_byte_ready)
                 {
                     clear_byte_ready();
-#if !REPICO1551
+#if REPICO1551
+                    sleep_us(BYTE_READY_LOW_HOLD_US);
+#else
                     sleep_us(3);
 #endif
                     set_byte_ready();
