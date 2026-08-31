@@ -55,7 +55,7 @@ void close_disk_image(FIL* fd);
 void unmount_image(void);
 
 void init_writeprot(void);
-void send_disk_change(void);
+void send_disk_change(bool simulate_eject, bool simulate_insert);
 
 bool repeating_timer_callback(__unused struct repeating_timer *t);
 void init_bytetimer(void);

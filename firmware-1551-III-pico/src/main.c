@@ -50,6 +50,7 @@
 #define START_MESSAGE_TIME 1500
 #define SHIFT165_POLL_INTERVAL_US 1000u
 #define DENSITY_STABLE_POLLS 3u
+#define DISK_CHANGE_HOLD_MS 111u   /* ~333 ms for full eject/insert/final cycle */
 
 volatile int16_t rotary_delta = 0;
 
@@ -1063,20 +1064,7 @@ void check_menu_events(const uint16_t menu_event)
                 case M_RELOAD_DISK:
                     if (is_image_mount)
                     {
-                        is_image_mount = false;
-                        for(uint8_t i=0; i<LCD_LINE_SIZE; i++)
-                        {
-                            display_setcursor(i,0);
-                            display_data(display_cursor_char);
-                            sleep_ms_service(50);
-                        }
-                        for(uint8_t i=0; i<LCD_LINE_SIZE; i++)
-                        {
-                            display_setcursor(i,0);
-                            display_data(' ');
-                            sleep_ms_service(50);
-                        }
-                        is_image_mount = true;
+                        send_disk_change(true, true);
                         set_gui_mode(GUI_INFO_MODE);
                     }
                     break;
@@ -1328,6 +1316,8 @@ void insert_menu_image(char* menu_path)
 
         if(FR_OK == fr)
         {
+            bool had_disk = is_image_mount;
+
             stop_bytetimer();
             send_byte_ready = false;         // disable VIA transfer
 
@@ -1442,7 +1432,7 @@ void insert_menu_image(char* menu_path)
 
             disable_write_protection();      // we need to be able to receive the answer of menu-selector as "write"
 
-            send_disk_change();
+            send_disk_change(had_disk, true);
 
             start_bytetimer(akt_half_track);    // start the track-spinning
 
@@ -1803,6 +1793,8 @@ uint8_t open_dir_entry(FILINFO od_file_entry)
         return TYPE_DIR;
     }
 
+    bool had_disk = is_image_mount;
+
     akt_image_type = open_disk_image(&fd, &od_file_entry);
 
     if(UNDEF_IMAGE == akt_image_type)
@@ -1833,7 +1825,7 @@ uint8_t open_dir_entry(FILINFO od_file_entry)
             disable_write_protection();
         }
 
-        send_disk_change();
+        send_disk_change(had_disk, true);
 
         start_bytetimer(akt_half_track);    // start the track-spinning
 
@@ -1951,23 +1943,36 @@ void init_writeprot(void)
 
 /////////////////////////////////////////////////////////////////////
 
-void send_disk_change(void)
+void send_disk_change(bool simulate_eject, bool simulate_insert)
 {
     // 1551 IRQ (~every 16650 cycles @ 2 MHz ≈ 8 ms) samples $01 bit4 in L_FA41.
-    // Hold each level long enough for several IRQ samples (Pi1541-style eject/insert).
-    // clear_wps/set_wps are board-mapped so clear=protected (0), set=writable (1) at the CPU.
-    const uint32_t hold_ms = 50;
+    // Optical WP sensor: eject = notch open (writable), disk entering = blocked (protected).
+    const uint32_t hold_ms = DISK_CHANGE_HOLD_MS;
 
-    clear_wps();            // protected while old disk ejects
-    sleep_ms_service(hold_ms);
-    set_wps();              // no disk / notch open
-    sleep_ms_service(hold_ms);
-    clear_wps();            // protected while new disk inserts
-    sleep_ms_service(hold_ms);
-    if (!floppy_wp) {
-        set_wps();          // final: writable
+    if (simulate_eject)
+    {
+        set_wps();              /* eject: barrier open / not protected */
+        sleep_ms_service(hold_ms);
     }
-    // else leave protected
+
+    if (simulate_insert)
+    {
+        clear_wps();
+        sleep_ms_service(hold_ms);
+        if (!floppy_wp)
+        {
+            set_wps();
+        }
+        else
+        {
+            clear_wps();
+        }
+        sleep_ms_service(hold_ms);
+    }
+    else if (simulate_eject)
+    {
+        set_wps();              /* empty drive: sensor open / not protected */
+    }
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -1980,7 +1985,7 @@ void unmount_image(void)
     num_max_tracks = 0;
     enable_write_protection();
     menu_set_entry_var1(&image_menu, M_WP_IMAGE, 1);
-    send_disk_change();
+    send_disk_change(true, false);
 }
 
 /////////////////////////////////////////////////////////////////////
