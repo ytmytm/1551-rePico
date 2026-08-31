@@ -48,6 +48,8 @@
 
 
 #define START_MESSAGE_TIME 1500
+#define SHIFT165_POLL_INTERVAL_US 1000u
+#define DENSITY_STABLE_POLLS 3u
 
 volatile int16_t rotary_delta = 0;
 
@@ -75,6 +77,8 @@ static bool shift165_sw5_down = false;
 static bool modal_wait_active = false;
 static bool service_lock_navigation = false;
 static uint8_t last_cpu_density_zone = 0xFFu;
+static uint8_t cpu_density_candidate = 0xFFu;
+static uint8_t cpu_density_stable_polls = 0u;
 
 static void poll_shift_inputs(void);
 
@@ -99,10 +103,25 @@ static void density_restart_bytetimer_if_active(void)
 static void poll_shift_density_lines(uint8_t value)
 {
     if (!settings_get_density_from_cpu())
+    {
+        last_cpu_density_zone = 0xFFu;
+        cpu_density_candidate = 0xFFu;
+        cpu_density_stable_polls = 0u;
         return;
+    }
 
     uint8_t zone = shift165_density_zone_from_byte(value);
-    if (zone == last_cpu_density_zone)
+    if (zone != cpu_density_candidate)
+    {
+        cpu_density_candidate = zone;
+        cpu_density_stable_polls = 1u;
+        return;
+    }
+
+    if (cpu_density_stable_polls < DENSITY_STABLE_POLLS)
+        ++cpu_density_stable_polls;
+    if ((cpu_density_stable_polls < DENSITY_STABLE_POLLS) ||
+        (zone == last_cpu_density_zone))
         return;
 
     last_cpu_density_zone = zone;
@@ -244,6 +263,12 @@ void gpio_callback(uint gpio, uint32_t events)
 
 static void poll_shift_inputs(void)
 {
+    static uint32_t last_poll_us;
+    uint32_t now_us = time_us_32();
+    if ((uint32_t)(now_us - last_poll_us) < SHIFT165_POLL_INTERVAL_US)
+        return;
+    last_poll_us = now_us;
+
     uint8_t value = shift165_poll();
     uint8_t changed = (uint8_t)(value ^ shift165_prev_value);
 
@@ -1079,11 +1104,21 @@ void check_menu_events(const uint16_t menu_event)
                     break;
 
                 case M_DENSITY_CPU:
-                    settings_set_density_from_cpu(0 != menu_get_entry_var1(&settings_menu, M_DENSITY_CPU));
-                    last_cpu_density_zone = shift165_density_zone();
+                {
+                    bool from_cpu = (0 != menu_get_entry_var1(&settings_menu, M_DENSITY_CPU));
+                    settings_set_density_from_cpu(from_cpu);
+                    if (from_cpu)
+                        last_cpu_density_zone = shift165_density_zone_from_byte(shift165_last_byte());
+                    else
+                    {
+                        last_cpu_density_zone = 0xFFu;
+                        cpu_density_candidate = 0xFFu;
+                        cpu_density_stable_polls = 0u;
+                    }
                     density_restart_bytetimer_if_active();
                     menu_refresh();
                     break;
+                }
 
                 case M_LOAD_SETTINGS:
                     display_clear();
@@ -1092,7 +1127,14 @@ void check_menu_events(const uint16_t menu_event)
                     {
                         menu_set_entry_var1(&settings_menu, M_REV_ROTARY, settings_get_rotary_reversed() ? 1u : 0u);
                         menu_set_entry_var1(&settings_menu, M_DENSITY_CPU, settings_get_density_from_cpu() ? 1u : 0u);
-                        last_cpu_density_zone = shift165_density_zone();
+                        if (settings_get_density_from_cpu())
+                            last_cpu_density_zone = shift165_density_zone_from_byte(shift165_last_byte());
+                        else
+                        {
+                            last_cpu_density_zone = 0xFFu;
+                            cpu_density_candidate = 0xFFu;
+                            cpu_density_stable_polls = 0u;
+                        }
                         density_restart_bytetimer_if_active();
                         display_string("Loaded");
                     } else {
