@@ -176,6 +176,7 @@ Too dim ACT LED:
 Should be much brighter, comparable to PWR
 
 Software:
+- handle SD card CS switch bit change - eject/reload SD card
 - disk image is not saved automatically
 - when disk is saved it doesn't replace the original one
 - UI is somewhat inconsistent (longpress not needed with front planel)
