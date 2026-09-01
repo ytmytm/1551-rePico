@@ -161,8 +161,14 @@ Added WPS triggering on disk change, but GEOS doesn't recognize that 1B is diffe
 
 Removed zone0 settings, we don't need it anymore. Brought back values from 1541 upstream.
 
-Hardware:
+[2026-09-01]
+Tested on stock Plus/4. Demos (biffire: Carrion 121, qm_prepl; hypaload: vdc, carrion)
+do work without issues - it's all about 6502/Plus4 faulty Hannes and 65C02 there.
+No need to go back to 1551 mainboard.
 
+Can be published and released.
+
+Hardware:
 Too dim ACT LED:
 - remove R27 (3.3K)
 - move R23 to R27 footprint (470R)
@@ -170,15 +176,10 @@ Too dim ACT LED:
 Should be much brighter, comparable to PWR
 
 Software:
-
-'Corruption' game loader doesn't work either way (track 26 and higher) - seems
-like deja vu from Pi1551.
-Hypaload fastloader (the one from VDC, Carrion collections) also doesn't work.
-Neither bitfire (qm_prepl, Carrion 121) - but these fail also on Pi1551, so it may
-be because of 6502/plus4 and its fake 6502 (could be 65C02).
-Need to test again with 6510 or on Plus/4
-Should check against 1551 mainboard to see if it worked there?
-(if yes with mostly the same firmware (firmware1551 but with fake shift register reads for the same delays)
- then problem is with HDL?)
-
-Check again without BYTE_READY holding for 1us (05f386b7eac3de0d193d53cfa9fdd593fe222a62)
+- disk image is not saved automatically
+- when disk is saved it doesn't replace the original one
+- UI is somewhat inconsistent (longpress not needed with front planel)
+  but with menus still better than Pi1551
+- 16x8 is plenty of space, most of it unused outside menu
+- still don't understand why disk switch from GEOS's disks
+  1A->1B or 2A->1B are not recognized by 1A->2A is
