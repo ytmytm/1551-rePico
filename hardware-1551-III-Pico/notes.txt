@@ -168,12 +168,13 @@ No need to go back to 1551 mainboard.
 
 Can be published and released.
 
-Hardware:
-Too dim ACT LED:
+[2026-09-12]
+Confirmed dim ACT LED fix for the 1.0 board:
 - remove R27 (3.3K)
 - move R23 to R27 footprint (470R)
 - short R23 pads (0R)
-Should be much brighter, comparable to PWR
+
+Applied in KiCad, regenerated files for v1.1 (revison 2b on SCH/PCB).
 
 Software:
 - handle SD card CS switch bit change - eject/reload SD card
