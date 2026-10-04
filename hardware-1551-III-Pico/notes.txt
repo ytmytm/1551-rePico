@@ -176,6 +176,14 @@ Confirmed dim ACT LED fix for the 1.0 board:
 
 Applied in KiCad, regenerated files for v1.1 (revison 2b on SCH/PCB).
 
+[2026-10-02]
+Confirmed that it works with MOS CPU Replacer configured for 6510T both electrically
+and mechanically.
+https://github.com/monotech/MOS_CPU_Replacer
+
+Need to add SD card switch support as the last main point before the first release.
+Link back to this project from tcbm2sd repo (ecosystem part)
+
 Software:
 - handle SD card CS switch bit change - eject/reload SD card
 - disk image is not saved automatically
