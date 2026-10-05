@@ -47,6 +47,27 @@ Compared to an original Commodore 1551 drive, the roles split like this:
 
 Host link is unchanged in concept: the assembled drive talks **TCBM** over a ribbon to **[plus4-tcbm2sd](https://github.com/ytmytm/plus4-tcbm2sd)**.
 
+## How this project evolved
+
+This is not a changelog — just enough background to see what is inherited and what is new.
+
+**Starting point.** Firmware GCR packing, SD image I/O, and much of the menu/OLED skeleton come from [1541-rePico](https://github.com/fook42/1541-rePico) (itself from [1541-rebuild](https://github.com/ThKattanek/1541-rebuild)). The goal here was a **1551** for Plus/4 / C16 / C116 that still fits the **[Pi1551-III](https://github.com/ytmytm/Pi1551-III)** case and talks to the host through **[plus4-tcbm2sd](https://github.com/ytmytm/plus4-tcbm2sd)** — so the Pi 3 “Module-rotated” board had to become a Pico + real 6510T path instead.
+
+**Daughterboard bring-up** (now under `experimental/`). First hardware was a plug-over board on a stock 1551 mainboard: reuse CPU / TPI / RAM / ROM, let the Pico replace the analog floppy path, and put [Fake6523](https://github.com/ZXByteman/Fake6523) in the CPLD for the TPI side. That phase proved TCBM and GCR on real silicon, shook out pin maps, and showed several things that later became design rules: Phi0 and the 100 Hz IRQ can come from the Pico (the gate array is optional), `XR/~W` can be made in the CPLD, chip-selects must be PHI2-qualified or RAM contends on the bus, and `byte_latched` is the classic floppy byte-ready latch cleared by any TPI access. Zone 0 also needed slower byte timing / larger gaps than the 1541 defaults. Once the motherboard was only a carrier for RAM/ROM, a self-contained board was clearly the next step.
+
+**1551-III-Pico.** Address decode moved into the CPLD (no more discrete `'139` / `'00`), with a [1551-RAMBOard](https://github.com/ytmytm/1551-RAMBOard)-style map and 64K DOS images. The PCB mates with the Pi1551-III front panel (SH1106 OLED + 74HCT165 — needed because Phi0/IRQ ate GPIOs). Firmware forked into `firmware-1551-III-pico/` (panel UI, density helpers, WPS on virtual disk change, SD card-detect hotplug, Plus/4 selector bits). Upstream 1541-rePico is no longer merged as a whole; only occasional hand cherry-picks. The early daughterboard tree stayed only as archaeology.
+
+**Rough split today**
+
+| Mostly from 1541-rePico | Mostly new for 1551 / this board |
+|-------------------------|----------------------------------|
+| GCR encode/decode, track buffers, D64/G64 image path | Hardware: KiCad III board, CPLD glue + Fake6523 ports, RAMBOard decode |
+| FatFs / SD driver wiring, much of the menu framework | Pico as Phi0 + 100 Hz IRQ source; '165 front-panel inputs |
+| Build/flash with pico-sdk / picotool | TCBM / Plus/4 host path via tcbm2sd; Parobek + patched DOS ROMs |
+| | Zone-0 timing, byte-ready latch model, SD hotplug, III-specific pinout |
+
+Released product paths are `firmware-1551-III-pico/`, `hardware-1551-III-Pico/`, `hdl-1551-III/`, and `roms/`.
+
 ## How to build and flash (1551-III-Pico)
 
 ### 1. Clone this repo (with submodules)
