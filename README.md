@@ -38,11 +38,12 @@ Compared to an original Commodore 1551 drive, the roles split like this:
 
 **Pico2** responsibilities:
 
-- Front-panel **UI**: OLED, rotary encoder, Back/Insert buttons (via 74HCT165 shift register, same panel as Pi1551-III)
+- **2 MHz Phi0** clock for the 6502 side and **100 Hz IRQ** (PWM) — these take dedicated GPIOs that a stock 1551 gate-array / discrete clock would otherwise free up
+- Front-panel **UI**: OLED (I2C), plus rotary encoder, Back/Insert, SD card-detect, and DS0/DS1 via a **74HCT165** shift register (same panel as Pi1551-III). The '165 exists because after clock, IRQ, floppy bus, SPI SD, and I2C there were not enough GPIOs left for every panel/input line directly
 - **SD card**: FatFs images (D64/G64/PRG), directory browser / Load Selector, **card-detect hotplug** (eject/remount + rebuild selector list; sockets without a CD switch still work)
 - Floppy **datastream**: GCR byte stream to/from the “head”, **BYTE_READY** / related timing
 - **Stepper** lines and **density** (DS0/DS1 from the CPU when that option is enabled)
-- **Write-protect / disk-change** sensing toward the 1551 firmware (WPS), activity LED, and the 2 MHz **Phi0** clock for the 6502 side
+- **Write-protect / disk-change** sensing toward the 1551 firmware (WPS) and activity LED
 
 Host link is unchanged in concept: the assembled drive talks **TCBM** over a ribbon to **[plus4-tcbm2sd](https://github.com/ytmytm/plus4-tcbm2sd)**.
 
