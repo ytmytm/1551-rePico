@@ -17,6 +17,7 @@ In short: same case and front panel as Pi1551-III; swap the Pi 3 mainboard for t
 | `firmware-1551-III-pico/` | **Supported** firmware |
 | `hardware-1551-III-Pico/` | **Supported** KiCad mainboard (replaces Pi1551-III Module-rotated) |
 | `hdl-1551-III/` | **Supported** CPLD (`Fake6523`) for III board |
+| `roms/` | **Supported** 1551 DOS images for the 27C512 (see [`roms/README.md`](roms/README.md)) |
 | `no-OS-FatFS-SD-SDIO-SPI-RPi-Pico/` | Shared FatFs/SD submodule |
 | `experimental/` | **Archival only** — early plug-over-1551-mainboard daughterboard + old 1541-derived firmware (see `experimental/README.md`) |
 
@@ -30,7 +31,7 @@ Compared to an original Commodore 1551 drive, the roles split like this:
 |------------|------------|
 | **6510T** CPU | Same **6510T**, or a [MOS CPU Replacer](https://github.com/monotech/MOS_CPU_Replacer) in that socket |
 | ~2 KB SRAM | **32 KB** SRAM (`KM62256`) with a **1551-RAMBoard-style** map: `$0000–$3FFF` + `$8000–$9FFF` (extra RAM window; decode in the CPLD) |
-| ~16 KB ROM | **64 KB** EPROM (`27C512`): two **32 KB** DOS images, selected by jumper **J2** |
+| ~16 KB ROM | **64 KB** EPROM (`27C512`): two **32 KB** DOS images, selected by jumper **J2** — burn a [1551-RAMBOard](https://github.com/ytmytm/1551-RAMBOard) 64K image from [`roms/`](roms/) |
 | Device #8 / #9 (hardware strap) | Jumper / strap for **device 8 or 9** (same idea as stock) |
 | **6523** TPI (Tri-Port Interface) + discrete address decode | **XC9572XL CPLD** (`hdl-1551-III/` Fake6523): TPI replacement **and** RAM/ROM chip-select decode |
 | Analog floppy + mech | **Pico2** emulates the analog path and runs the UI |
@@ -132,11 +133,20 @@ picotool load -t uf2 1551-III-Pico.uf2 -x -f
 
 #### Main PCB
 
-KiCad project: [`hardware-1551-III-Pico/`](hardware-1551-III-Pico/). Schematic PDF: [`plots/1551-III-Pico.pdf`](hardware-1551-III-Pico/plots/1551-III-Pico.pdf). Gerber files for manufacturing: [`plots/`](hardware-1551-III-Pico/plots/).
+KiCad project: [`hardware-1551-III-Pico/`](hardware-1551-III-Pico/) (see also its [`README.md`](hardware-1551-III-Pico/README.md)).
+
+- Schematic PDF: [`plots/1551-III-Pico.pdf`](hardware-1551-III-Pico/plots/1551-III-Pico.pdf)
+- Gerbers / drills: [`plots/`](hardware-1551-III-Pico/plots/)
+- Fab pack for ordering (activity-LED resistor revision): [`production/1551-III_Pico_2b.zip`](hardware-1551-III-Pico/production/1551-III_Pico_2b.zip)
+- BOM / pick-and-place: [`production/bom.csv`](hardware-1551-III-Pico/production/bom.csv), [`positions.csv`](hardware-1551-III-Pico/production/positions.csv), [`designators.csv`](hardware-1551-III-Pico/production/designators.csv)
 
 #### CPLD
 
 Program [`hdl-1551-III/Fake6523.jed`](hdl-1551-III/Fake6523.jed) into the XC9572XL. The `.jed` was built with [Xilinx ISE 14.7](https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/vivado-design-tools/archive-ise.html) (sources/project live in `hdl-1551-III/`). Rebuild and JTAG flash steps (a Raspberry Pi 3 and jumper wires are enough — no dedicated programmer) are documented in [plus4-tcbm2sd → CPLD firmware](https://github.com/ytmytm/plus4-tcbm2sd/blob/main/HardwareFirmware.md#cpld-firmware); the procedure is the same for this board.
+
+#### DOS ROM (27C512)
+
+Program a 64K image from [`roms/`](roms/) (see [`roms/README.md`](roms/README.md)). Images and the RAM-expansion / fastloader patch come from **[1551-RAMBOard](https://github.com/ytmytm/1551-RAMBOard)**; jumper **J2** selects the active 32K half (use the patched upper bank).
 
 #### Front panel / mechanical
 
@@ -145,6 +155,11 @@ Faceplates and mechanical assembly: follow **[Pi1551-III](https://github.com/ytm
 #### Host adapter
 
 **[plus4-tcbm2sd](https://github.com/ytmytm/plus4-tcbm2sd)** + ribbon cable.
+
+#### Load Selector / host software (TODO)
+
+`firmware-1551-III-pico/SoftwareC16/db12b.prg` is a Plus/4 directory browser binary kept for a future on-device Load Selector path. **For now** we use the **DirectoryBrowser** shipped with **[Parobek](https://github.com/ytmytm/plus4-parobek)** (utility ROM for C16/116/Plus4). Parobek is the recommended host ROM anyway: it autodetects the [1551-RAMBOard](https://github.com/ytmytm/1551-RAMBOard) DOS patch and provides a fastloader that uses the extra RAM / track cache.
+
 ---
 
 # Upstream 1541-rePico notes (historical)
