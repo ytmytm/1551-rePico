@@ -52,6 +52,13 @@
 #define DENSITY_STABLE_POLLS 3u
 #define DISK_CHANGE_HOLD_MS 111u   /* ~333 ms for full eject/insert/final cycle */
 #define BYTE_READY_LOW_HOLD_US 1u
+#define SD_CD_DEBOUNCE_US 100000u  /* 100 ms — match tcbm2sd PIN_SD_CD_CHANGE_THR_MS */
+
+enum {
+    SD_CD_PEND_NONE = 0,
+    SD_CD_PEND_EJECTED = 1,
+    SD_CD_PEND_INSERTED = 2
+};
 
 volatile int16_t rotary_delta = 0;
 
@@ -78,11 +85,15 @@ static bool shift165_sw4_down = false;
 static bool shift165_sw5_down = false;
 static bool modal_wait_active = false;
 static bool service_lock_navigation = false;
+static bool sd_cd_last_present = false;
+static uint8_t sd_cd_pending = SD_CD_PEND_NONE;
+static bool sd_cd_busy = false;
 static uint8_t last_cpu_density_zone = 0xFFu;
 static uint8_t cpu_density_candidate = 0xFFu;
 static uint8_t cpu_density_stable_polls = 0u;
 
 static void poll_shift_inputs(void);
+static void sdcard_handle_cd_pending(void);
 
 static uint8_t speed_zone_for_track(uint8_t track_nr, uint8_t shift_value)
 {
@@ -384,6 +395,23 @@ static void poll_shift_inputs(void)
         }
     }
 
+    if (0 != (changed & (1u << SHIFT165_BIT_SD_CD)))
+    {
+        static uint64_t last_sd_cd_us;
+        uint64_t now = time_us_64();
+        if ((now - last_sd_cd_us) >= SD_CD_DEBOUNCE_US)
+        {
+            bool present = (0 == (value & (1u << SHIFT165_BIT_SD_CD)));
+            if (present != sd_cd_last_present)
+            {
+                sd_cd_last_present = present;
+                last_sd_cd_us = now;
+                /* Queue only — FatFs / image work runs outside service_tick. */
+                sd_cd_pending = present ? SD_CD_PEND_INSERTED : SD_CD_PEND_EJECTED;
+            }
+        }
+    }
+
     poll_shift_density_lines(value);
 
     shift165_prev_value = value;
@@ -448,17 +476,107 @@ int main()
 
     while (true) {
         service_tick();
+        sdcard_handle_cd_pending();
         update_gui();
     }
 }
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 
+static void sdcard_reset_browser_to_root(void)
+{
+    current_path[0] = '/';
+    current_path[1] = 0;
+    fb_cursor_pos = 0;
+    fb_window_pos = 0;
+    fb_dir_entry_count = 0;
+}
+
+static void sdcard_on_ejected(void)
+{
+    /* Stop host-facing GCR feed before tearing down image / FS. */
+    stop_bytetimer();
+    send_byte_ready = false;
+    track_is_written = false; /* discard unsaved track writes — no auto-save */
+
+    if (is_image_mount)
+    {
+        /* D64/G64/PRG or virtual selector: notify Plus/4 via WPS disk-change. */
+        unmount_image();
+    }
+    else
+    {
+        close_disk_image(&fd);
+    }
+
+    (void)f_closedir(&dir_object);
+    (void)umount_sdcard();
+    sdcard_reset_browser_to_root();
+
+    display_clear();
+    display_home();
+    display_string("SD card removed");
+    sleep_ms_service(800);
+    set_gui_mode(GUI_MENU_MODE);
+}
+
+static void sdcard_on_inserted(void)
+{
+    /* CD closes before contacts fully seat; give the card power/SPI settle time. */
+    sleep_ms_service(250);
+
+    FRESULT fr = FR_DISK_ERR;
+    for (uint8_t attempt = 0; attempt < 4u; ++attempt)
+    {
+        fr = mount_sdcard();
+        if (FR_OK == fr)
+            break;
+        sleep_ms_service(200);
+    }
+
+    display_clear();
+    display_home();
+    if (FR_OK == fr)
+    {
+        sdcard_reset_browser_to_root();
+        /* Rebuild selector DATAFILE listing from the new card root. */
+        set_gui_mode(GUI_SELECTOR);
+    }
+    else
+    {
+        display_string("f_mount error:");
+        display_data(fr + 'A');
+        show_fs_error(fr);
+        set_gui_mode(GUI_MENU_MODE);
+    }
+}
+
+static void sdcard_handle_cd_pending(void)
+{
+    uint8_t pending;
+
+    if (sd_cd_busy)
+        return;
+
+    pending = sd_cd_pending;
+    if (SD_CD_PEND_NONE == pending)
+        return;
+
+    sd_cd_pending = SD_CD_PEND_NONE;
+    sd_cd_busy = true;
+
+    if (SD_CD_PEND_EJECTED == pending)
+        sdcard_on_ejected();
+    else if (SD_CD_PEND_INSERTED == pending)
+        sdcard_on_inserted();
+
+    sd_cd_busy = false;
+}
+
 FRESULT mount_sdcard(void)
 {
-    if (!shift165_sd_card_present())
-        return FR_NOT_READY;
-
+    /* Do not gate on CD: sockets without a mechanical switch leave /SD_CD
+     * pulled high forever. Hotplug still reacts to edges when the switch exists. */
     char mount_path[] = {"/"};
     BYTE mount_option = 1; /* 0=Do not mount (delayed mount), 1=Mount immediately */
 
@@ -518,8 +636,20 @@ FRESULT mount_sdcard(void)
 FRESULT umount_sdcard(void)
 {
     char mount_path[] = {""};
+    FRESULT fr = f_unmount(mount_path);
 
-    return f_unmount(mount_path);
+    /* FatFs unmount alone leaves the SPI card layer "initialized". On the next
+     * f_mount, sd_card_spi_init() then skips sd_init_medium() and sector I/O
+     * fails with FR_DISK_ERR. Force re-init (same as no-OS-FatFS command_line). */
+    sd_card_t *card = sd_get_by_num(0);
+    if (NULL != card)
+    {
+        card->state.m_Status |= STA_NOINIT;
+        card->state.card_type = SDCARD_NONE;
+        card->state.sectors = 0;
+    }
+
+    return fr;
 }
 
 void show_fs_error(FRESULT error_code)
@@ -639,6 +769,8 @@ void init_key_inputs(void)
     rotary_delta = 0;
     shift165_sw4_down = (0 == (shift165_prev_value & (1u << SHIFT165_BIT_SW4_BACK)));
     shift165_sw5_down = (0 == (shift165_prev_value & (1u << SHIFT165_BIT_SW5_INSERT)));
+    sd_cd_last_present = (0 == (shift165_prev_value & (1u << SHIFT165_BIT_SD_CD)));
+    sd_cd_pending = SD_CD_PEND_NONE;
     last_cpu_density_zone = shift165_density_zone_from_byte(shift165_prev_value);
 }
 
