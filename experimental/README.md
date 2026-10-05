@@ -34,3 +34,5 @@ There was never a separate top-level `firmware-1551` tree. The early 1551 work l
 ## Status
 
 Frozen for history. Expect bitrot (tooling, pin maps, docs). Prefer III sources for anything you intend to ship or support.
+
+`hardware1551/FABRICATION_CHECK_REPORT.md` and similar notes describe the **daughterboard** jumper map and bring-up checklist; they do **not** apply to `hardware-1551-III-Pico/`.

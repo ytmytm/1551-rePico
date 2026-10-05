@@ -19,6 +19,7 @@ In short: same case and front panel as Pi1551-III; swap the Pi 3 mainboard for t
 | `hdl-1551-III/` | **Supported** CPLD (`Fake6523`) for III board |
 | `roms/` | **Supported** 1551 DOS images for the 27C512 (see [`roms/README.md`](roms/README.md)) |
 | `no-OS-FatFS-SD-SDIO-SPI-RPi-Pico/` | Shared FatFs/SD submodule |
+| `tools/` | Optional host helper (`conv_x64` D64↔G64); see [`tools/README.md`](tools/README.md) |
 | `experimental/` | **Archival only** — early plug-over-1551-mainboard daughterboard + old 1541-derived firmware (see `experimental/README.md`) |
 
 Upstream 1541-rePico is not merged further; useful changes may be cherry-picked into `firmware-1551-III-pico` by hand.
@@ -394,10 +395,10 @@ t.b.d.
 
 ## supported disk formats ##
 
-currently [D64](/doc/D64.TXT) and [G64](/doc/G64.TXT) are supported as for reading and writing.  
+currently [D64](doc/D64.TXT) and [G64](doc/G64.TXT) are supported as for reading and writing.  
 as bonus, **PRG** files can be loaded by an on-the-fly routine that creates a valid D64 image out of it.
 
-additionaly a small tool [conv_x64](/tools) is provided that allows easy conversion from one to the other on you linux-pc.
+additionaly a small tool [conv_x64](tools/) is provided that allows easy conversion from one to the other on you linux-pc.
 
 ## Links ##
 

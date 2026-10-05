@@ -11,7 +11,7 @@ Host connection is a ribbon cable to **[plus4-tcbm2sd](https://github.com/ytmytm
 | KiCad project | this folder (`1551-III-Pico.kicad_pro`) |
 | Schematic PDF | [`plots/1551-III-Pico.pdf`](plots/1551-III-Pico.pdf) |
 | Gerbers / drills | [`plots/`](plots/) |
-| JLCPCB-style fab pack (activity-LED resistor revision) | [`production/1551-III_Pico_2b.zip`](production/1551-III_Pico_2b.zip) |
+| JLCPCB-style fab pack | [`production/1551-III_Pico_2b.zip`](production/1551-III_Pico_2b.zip) |
 | BOM / positions | [`production/bom.csv`](production/bom.csv), [`production/positions.csv`](production/positions.csv), [`production/designators.csv`](production/designators.csv) |
 
 ## Related firmware / CPLD / ROMs

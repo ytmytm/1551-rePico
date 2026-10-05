@@ -1,27 +1,27 @@
-# conv_x64 #
+# conv_x64
 
-small tool to convert d64/g64 in d64/g64 image format
+Small host tool to convert between D64 and G64 image formats (round-trip through the same GCR structures the firmware uses).
 
-## main purpose ##
+## Main purpose
 
-testing of read/write functions from 1541-rePico
+Originally for testing read/write paths in [1541-rePico](https://github.com/fook42/1541-rePico). Still useful here for checking D64/G64 images before putting them on an SD card for **1551-III-Pico** — the GCR layer is shared.
 
-## usage ##
+The supported product firmware lives in `../firmware-1551-III-pico/`; this tool is optional and not required to build or flash the drive.
 
-```conv_x64 <file_in> <file_out>```
+## Usage
 
-will determine extension of file_in (.d64 or .g64)
-read the contents and convert it internally to GCR/G64 structures
+```text
+conv_x64 <file_in> <file_out>
+```
 
-will determine extension of file_out (.d64 or .g64)
-write out the G64 structures either as D64 or G64 file
+Extension of `file_in` (`.d64` or `.g64`) selects the reader; extension of `file_out` selects the writer.
 
-## how to build ##
+## How to build
 
-```gcc -fcommon -o conv_x64 conv_x64.c gcr.c rw_tracks.c```
+```bash
+gcc -fcommon -o conv_x64 conv_x64.c gcr.c rw_tracks.c
+```
 
-please ignore the warnings/infos.. its just type conversion
-
+Ignore the type-conversion warnings.
 
 2026/02/14 - fook42
-
