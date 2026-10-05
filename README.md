@@ -65,7 +65,9 @@ git submodule update --init --recursive
 For the supported firmware you need at least `no-OS-FatFS-SD-SDIO-SPI-RPi-Pico/`.  
 (`experimental/firmware/buildtools/bitfire` is only for the archival 1541 tree.)
 
-### 2. Host packages (Linux / Debian-like)
+### 2. Host packages
+
+**Linux (Debian-like):**
 
 ```bash
 sudo apt install cmake ninja-build libusb-1.0-0-dev build-essential \
@@ -73,7 +75,14 @@ sudo apt install cmake ninja-build libusb-1.0-0-dev build-essential \
   libnewlib-arm-none-eabi libstdc++-arm-none-eabi-newlib
 ```
 
-(`xxd` embeds `SoftwareC16/db12b.prg` as the Load Selector. ACME/dali are **not** required for 1551-III.)
+**macOS (Homebrew):**
+
+```bash
+brew install cmake ninja libusb pkg-config python3
+brew install --cask gcc-arm-embedded
+```
+
+`xxd` is usually already available on macOS (Xcode Command Line Tools). If `cmake` cannot find the Arm embedded toolchain, ensure `arm-none-eabi-gcc` is on your `PATH` (the `gcc-arm-embedded` cask installs it under `/Applications` or as linked brew binaries).
 
 ### 3. Raspberry Pi Pico SDK
 
