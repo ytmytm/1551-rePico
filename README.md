@@ -1,13 +1,21 @@
 # 1551-rePico
 
-Commodore **1551** disk-drive replacement based on Raspberry Pi Pico(2), derived from [1541-rePico](https://github.com/fook42/1541-rePico) / [1541-rebuild](https://github.com/ThKattanek/1541-rebuild).
+Commodore **1551** disk-drive replacement for Plus/4 / C16 / C116, based on Raspberry Pi Pico(2). Firmware and GCR/SD logic are derived from [1541-rePico](https://github.com/fook42/1541-rePico) / [1541-rebuild](https://github.com/ThKattanek/1541-rebuild).
+
+## Relation to Pi1551-III
+
+This project reuses the **mechanical stack** from [Pi1551-III](https://github.com/ytmytm/Pi1551-III): front panel, top/bottom faceplates, and the same overall assembly. For BOM, Gerbers, cabling notes, and build instructions for those parts, follow the Pi1551-III repository.
+
+What this repo replaces is **only the main horizontal module** — the board Pi1551-III calls **Pi1551-III Module-rotated** (Raspberry Pi 3 + TCBM interface). Here that role is filled by `hardware-1551-III-Pico/`: a Pico2 + **6510T** (or [MOS CPU Replacer](https://github.com/monotech/MOS_CPU_Replacer)) + CPLD + RAM + ROM board that still mates with the Pi1551-III panel and covers over **tcbm2sd**.
+
+In short: same case and front panel as Pi1551-III; swap the Pi 3 mainboard for the Pico/6510T board in this repo.
 
 ## Repository layout (release)
 
 | Path | Role |
 |------|------|
 | `firmware-1551-III-pico/` | **Supported** firmware |
-| `hardware-1551-III-Pico/` | **Supported** KiCad hardware |
+| `hardware-1551-III-Pico/` | **Supported** KiCad mainboard (replaces Pi1551-III Module-rotated) |
 | `hdl-1551-III/` | **Supported** CPLD (`Fake6523`) for III board |
 | `no-OS-FatFS-SD-SDIO-SPI-RPi-Pico/` | Shared FatFs/SD submodule |
 | `experimental/` | **Archival only** — early plug-over-1551-mainboard daughterboard + old 1541-derived firmware (see `experimental/README.md`) |
