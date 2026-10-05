@@ -5,56 +5,60 @@ on:
       - main
   pull_request:
 
-jobs:  
+jobs:
   build:
     name: Build
     runs-on: ubuntu-24.04
-    
+
     permissions:
       contents: read
       packages: write
       attestations: write
-      id-token: write 
+      id-token: write
 
-    steps:    
-
+    steps:
       - name: Checkout code
         uses: actions/checkout@v5
         with:
           submodules: recursive
-        
 
-      - name: login to GHCR
+      - name: Login to GHCR
         uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Create devcontainer      
+      - name: Create / cache devcontainer
         uses: devcontainers/ci@v0.3
         with:
           configFile: .devcontainer/.devcontainer.json
-          imageName: ghcr.io/${{ github.repository_owner }}/repico_devcontainer
-          cacheFrom: ghcr.io/${{ github.repository_owner }}/repico_devcontainer
+          imageName: ghcr.io/${{ github.repository_owner }}/1551-repico_devcontainer
+          cacheFrom: ghcr.io/${{ github.repository_owner }}/1551-repico_devcontainer
           push: always
 
       - name: Build 1551-III-Pico
         uses: devcontainers/ci@v0.3
         with:
           configFile: .devcontainer/.devcontainer.json
-          imageName: ghcr.io/${{ github.repository_owner }}/repico_devcontainer
+          imageName: ghcr.io/${{ github.repository_owner }}/1551-repico_devcontainer
+          # Workspace is already the repo root inside the container (repo name may vary).
           runCmd: |
-            cd /workspaces/1541-rePico
-            mkdir -p build
-            cd build
-            cmake -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE --no-warn-unused-cli -S /workspaces/1541-rePico/firmware-1551-III-pico -B /workspaces/1541-rePico/build -G Ninja
-            cmake --build . --config Release
+            set -eux
+            pwd
+            test -d firmware-1551-III-pico
+            cmake -DCMAKE_BUILD_TYPE=Release \
+                  -DCMAKE_EXPORT_COMPILE_COMMANDS=TRUE \
+                  -S firmware-1551-III-pico \
+                  -B build \
+                  -G Ninja
+            cmake --build build --config Release
+            ls -la build/1551-III-Pico.uf2 build/1551-III-Pico.elf
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: 1551-III-Pico-binaries 
+          name: 1551-III-Pico-binaries
           path: |
             build/1551-III-Pico.uf2
             build/1551-III-Pico.elf

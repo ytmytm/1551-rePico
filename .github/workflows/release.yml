@@ -1,5 +1,9 @@
 name: Release
 
+# Publishes firmware binaries onto a GitHub Release when you create/publish a tag release.
+# Builds here (does not rely on a prior Build workflow artifact), so a release always gets
+# matching uf2/elf for that tag — or fails visibly instead of shipping an empty release.
+
 on:
   release:
     types: [published]
@@ -8,74 +12,97 @@ jobs:
   release:
     name: Prepare Release
     runs-on: ubuntu-24.04
-    
+
     permissions:
       contents: write
-      
+      packages: write
+      id-token: write
+
     steps:
-      - name: Checkout code
+      - name: Checkout release tag
         uses: actions/checkout@v5
         with:
+          ref: ${{ github.event.release.tag_name }}
           fetch-depth: 0
-          
+          submodules: recursive
+
+      - name: Login to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create / cache devcontainer
+        uses: devcontainers/ci@v0.3
+        with:
+          configFile: .devcontainer/.devcontainer.json
+          imageName: ghcr.io/${{ github.repository_owner }}/1551-repico_devcontainer
+          cacheFrom: ghcr.io/${{ github.repository_owner }}/1551-repico_devcontainer
+          push: never
+
+      - name: Build 1551-III-Pico
+        uses: devcontainers/ci@v0.3
+        with:
+          configFile: .devcontainer/.devcontainer.json
+          imageName: ghcr.io/${{ github.repository_owner }}/1551-repico_devcontainer
+          runCmd: |
+            set -eux
+            test -d firmware-1551-III-pico
+            cmake -DCMAKE_BUILD_TYPE=Release \
+                  -S firmware-1551-III-pico \
+                  -B build \
+                  -G Ninja
+            cmake --build build --config Release
+            ls -la build/1551-III-Pico.uf2 build/1551-III-Pico.elf
+
       - name: Generate Changelog
         id: changelog
         run: |
-          RELEASE_TAG=${{ github.ref_name }}
-          PREVIOUS_TAG=$(git describe --tags --abbrev=0 $RELEASE_TAG^ 2>/dev/null || echo "")
-          
+          set -euo pipefail
+          RELEASE_TAG="${{ github.event.release.tag_name }}"
+          PREVIOUS_TAG="$(git describe --tags --abbrev=0 "${RELEASE_TAG}^" 2>/dev/null || true)"
+
           if [ -z "$PREVIOUS_TAG" ]; then
-            # Kein vorheriger Tag - zeige alle Commits
-            CHANGELOG=$(git log --pretty=format:"- %h: %s" --no-merges 2>/dev/null)
+            # First tag on this repo: do not dump the entire inherited 1541 history.
+            CHANGELOG="$(git log -30 --pretty=format:'- %h: %s' --no-merges "${RELEASE_TAG}")"
+            NOTE=$'*(First release tag — showing the last 30 non-merge commits only.)*\n\n'
           else
-            # Zeige Commits zwischen vorherigem Tag und diesem Release
-            CHANGELOG=$(git log ${PREVIOUS_TAG}..${RELEASE_TAG} --pretty=format:"- %h: %s" --no-merges 2>/dev/null)
+            CHANGELOG="$(git log "${PREVIOUS_TAG}..${RELEASE_TAG}" --pretty=format:'- %h: %s' --no-merges)"
+            NOTE=""
           fi
-          
-          # Ersetze Newlines in der Ausgabe für GITHUB_OUTPUT
-          echo "changelog<<EOF" >> $GITHUB_OUTPUT
-          echo "$CHANGELOG" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-          
+
+          {
+            echo "changelog<<EOF"
+            printf '%s' "$NOTE"
+            printf '%s\n' "$CHANGELOG"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Update Release Notes
         uses: actions/github-script@v7
         with:
           script: |
-            const fs = require('fs');
             const release = context.payload.release;
-            
             let body = release.body || '';
-            
-            // Changelog hinzufügen wenn nicht bereits vorhanden
             if (!body.includes('## Changelog')) {
               const changelog = `${{ steps.changelog.outputs.changelog }}`;
-              if (changelog) {
+              if (changelog && changelog.trim()) {
                 body = body + '\n\n## Changelog\n\n' + changelog;
               }
             }
-            
-            // Update release
             await github.rest.repos.updateRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
               release_id: release.id,
               body: body
             });
-            
-      - name: Download Build Artifacts
-        id: download
-        continue-on-error: true
-        uses: dawidd6/action-download-artifact@v2
+
+      - name: Upload firmware to Release
+        uses: softprops/action-gh-release@v2
         with:
-          workflow: build.yml
-          workflow_conclusion: success
-          branch: main
-          skip_unpack: false
-          
-      - name: Upload Artifacts to Release
-        if: steps.download.outcome == 'success'
-        uses: softprops/action-gh-release@v1
-        with:
+          tag_name: ${{ github.event.release.tag_name }}
           files: |
-            rePico-binaries/**/*
-          append_body: true
+            build/1551-III-Pico.uf2
+            build/1551-III-Pico.elf
+          fail_on_unmatched_files: true
