@@ -25,3 +25,4 @@ Host connection is a ribbon cable to **[plus4-tcbm2sd](https://github.com/ytmytm
 
 - Internal bring-up / review notes: [`notes.txt`](notes.txt), [`hardware-review.md`](hardware-review.md)
 - ROM bank select on this board is jumper **J2** (two 32 KB halves of the 27C512). Prefer a [1551-RAMBOard](https://github.com/ytmytm/1551-RAMBOard) 64K image so the upper half is the RAM-expansion / fastloader patch.
+- **JP1–JP3** (GPIO26–28 ↔ `74HCT165`): leave as shipped / default **1–2**. They were only a fallback so the Pico could talk to the front-panel encoder directly if the shift register failed; '165 works and current firmware expects that path — do not rewire them.

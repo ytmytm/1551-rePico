@@ -124,7 +124,9 @@ Uwaga produkcyjna: symbol/wartosc mowi `74HCT165`, ale pola JLC/MFR w schemacie 
 
 `+5V` zasila CPU/RAM/ROM/U19 i `VSYS` Pico, `+3V3` zasila CPLD, pullupy 3.3 V i peryferia Pico. Kondensatory 100 nF sa przy glownych ukladach (`C1..C6`, `C10`), a przy SD jest dodatkowy `C11 10u`. Nie robilem analizy impedancji ani rozmieszczenia przy pinach zasilania, tylko sprawdzenie netlisty.
 
-`README.md` w katalogu projektu nadal wyglada jak odziedziczony opis Pi1551-III/Raspberry Pi 3 i ma nieaktualne referencje BOM. Nie wplywa to na schemat, ale nie uzywac tego README jako BOM do zamawiania `hardware-1551-III-Pico` bez aktualizacji.
+`README.md` w katalogu projektu opisuje juz rewizje Pico (KiCad / plots / production / ROM); nie jest juz starym tekstem Pi1551-III Module-rotated.
+
+`JP1..JP3` (solder jumpers GPIO26..28): domyslnie mostkowane **1–2** do `74HCT165` (`/PL`, `CP`, `Q7`). Alternatywna sciezka na schemacie (bezposrednio do enkodera) byla tylko ubezpieczeniem na wypadek problemow z '165; shift register dziala, firmware zaklada tryb 1–2 — **zostawic JP1–JP3 bez zmian**.
 
 ## Otwarte
 
@@ -136,8 +138,8 @@ Uwaga produkcyjna: symbol/wartosc mowi `74HCT165`, ale pola JLC/MFR w schemacie 
 - [x] Przejrzec wygenerowany BOM/position files po ostatnich zmianach, szczegolnie usuniecie `U12/U15` i dodanie netow CPLD `/RAMSEL`, `/RAMOE`, `/ROMSEL`.
 - [x] Dodac i uruchomic test/symulator `hardware-1551-III-Pico/test_hardware_model.py`.
 - [x] Dopisac w firmware obsluge `74HCT165`.
-- [ ] Opisac w montazu ustawienie `JP1..JP3` dla obecnego firmware i dla przyszlego trybu shift-register.
-- [ ] Uaktualnic `hardware-1551-III-Pico/README.md`, jezeli ma byc uzywany jako instrukcja/BOM dla tej rewizji.
+- [x] Opisac `JP1..JP3`: default 1–2 do '165; fallback na enkoder tylko jako ubezpieczenie — nie ruszac (README projektu KiCad).
+- [x] Uaktualnic `hardware-1551-III-Pico/README.md` dla tej rewizji (BOM/plots/production + notka JP1–JP3).
 
 [2026-08-31]
 Too dim ACT LED:

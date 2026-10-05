@@ -181,14 +181,12 @@ Confirmed that it works with MOS CPU Replacer configured for 6510T both electric
 and mechanically.
 https://github.com/monotech/MOS_CPU_Replacer
 
-Need to add SD card switch support as the last main point before the first release.
-Link back to this project from tcbm2sd repo (ecosystem part)
+[2026-10-03]
+Added support for SD card switch and hot swapping SD cards.
+Preparations for publishing, repository cleanup.
 
-Software:
-- handle SD card CS switch bit change - eject/reload SD card
-  DONE (feature/sd-card-switch-hotplug): debounced /SD_CD via 74HCT165 bit 5.
-  Eject while image mounted → unmount_image() (host disk-change) + f_unmount;
-  insert → remount + rebuild Load Selector list. Unwired CD (always pulled up) still mounts.
+TODO:
+- need to link back to this project from tcbm2sd repo (ecosystem part)
 - disk image is not saved automatically
 - when disk is saved it doesn't replace the original one
 - UI is somewhat inconsistent (longpress not needed with front planel)

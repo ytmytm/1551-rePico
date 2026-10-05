@@ -137,8 +137,9 @@ KiCad project: [`hardware-1551-III-Pico/`](hardware-1551-III-Pico/) (see also it
 
 - Schematic PDF: [`plots/1551-III-Pico.pdf`](hardware-1551-III-Pico/plots/1551-III-Pico.pdf)
 - Gerbers / drills: [`plots/`](hardware-1551-III-Pico/plots/)
-- Fab pack for ordering (activity-LED resistor revision): [`production/1551-III_Pico_2b.zip`](hardware-1551-III-Pico/production/1551-III_Pico_2b.zip)
+- Fab pack for ordering: [`production/1551-III_Pico_2b.zip`](hardware-1551-III-Pico/production/1551-III_Pico_2b.zip)
 - BOM / pick-and-place: [`production/bom.csv`](hardware-1551-III-Pico/production/bom.csv), [`positions.csv`](hardware-1551-III-Pico/production/positions.csv), [`designators.csv`](hardware-1551-III-Pico/production/designators.csv)
+- **JP1–JP3**: leave default **1–2** (Pico ↔ `74HCT165`). The alternate wiring was only insurance if the shift register failed; do not change them.
 
 #### CPLD
 
