@@ -22,6 +22,29 @@ In short: same case and front panel as Pi1551-III; swap the Pi 3 mainboard for t
 
 Upstream 1541-rePico is not merged further; useful changes may be cherry-picked into `firmware-1551-III-pico` by hand.
 
+## Architecture vs a stock 1551
+
+Compared to an original Commodore 1551 drive, the roles split like this:
+
+| Stock 1551 | This board |
+|------------|------------|
+| **6510T** CPU | Same **6510T**, or a [MOS CPU Replacer](https://github.com/monotech/MOS_CPU_Replacer) in that socket |
+| ~2 KB SRAM | **32 KB** SRAM (`KM62256`) with a **1551-RAMBoard-style** map: `$0000–$3FFF` + `$8000–$9FFF` (extra RAM window; decode in the CPLD) |
+| ~16 KB ROM | **64 KB** EPROM (`27C512`): two **32 KB** DOS images, selected by jumper **J2** |
+| Device #8 / #9 (hardware strap) | Jumper / strap for **device 8 or 9** (same idea as stock) |
+| **6523** TPI (Tri-Port Interface) + discrete address decode | **XC9572XL CPLD** (`hdl-1551-III/` Fake6523): TPI replacement **and** RAM/ROM chip-select decode |
+| Analog floppy + mech | **Pico2** emulates the analog path and runs the UI |
+
+**Pico2** responsibilities:
+
+- Front-panel **UI**: OLED, rotary encoder, Back/Insert buttons (via 74HCT165 shift register, same panel as Pi1551-III)
+- **SD card**: FatFs images (D64/G64/PRG), directory browser / Load Selector, **card-detect hotplug** (eject/remount + rebuild selector list; sockets without a CD switch still work)
+- Floppy **datastream**: GCR byte stream to/from the “head”, **BYTE_READY** / related timing
+- **Stepper** lines and **density** (DS0/DS1 from the CPU when that option is enabled)
+- **Write-protect / disk-change** sensing toward the 1551 firmware (WPS), activity LED, and the 2 MHz **Phi0** clock for the 6502 side
+
+Host link is unchanged in concept: the assembled drive talks **TCBM** over a ribbon to **[plus4-tcbm2sd](https://github.com/ytmytm/plus4-tcbm2sd)**.
+
 ---
 
 # Upstream 1541-rePico notes (historical)
