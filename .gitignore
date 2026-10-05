@@ -74,3 +74,6 @@ experimental/hdl/Fake6523.vm6
 experimental/hdl/Fake6523.xst
 experimental/hdl/Fake6523_*
 **/fp-info-cache
+
+# Local agent plans/specs (superpowers); not part of the product tree
+docs/
