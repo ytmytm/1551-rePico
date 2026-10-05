@@ -1,8 +1,6 @@
 # 1551-rePico
 
-Commodore **1551** disk-drive replacement for **Plus/4 / C16 / C116**, based on Raspberry Pi Pico(2).
-
-Firmware GCR packing, SD image I/O, and much of the menu/OLED skeleton are derived from [1541-rePico](https://github.com/fook42/1541-rePico) by fook42 (itself from [1541-rebuild](https://github.com/ThKattanek/1541-rebuild) by Thorsten Kattanek). This repo is a separate product: a real **6510T** + CPLD 1551 path in a [Pi1551-III](https://github.com/ytmytm/Pi1551-III) enclosure, not a fork kept in sync with upstream 1541-rePico.
+Commodore **1551** disk-drive replacement for **Plus/4 / C16 / C116**, based on Raspberry Pi Pico(2). Firmware and GCR/SD logic are derived from [1541-rePico](https://github.com/fook42/1541-rePico) / [1541-rebuild](https://github.com/ThKattanek/1541-rebuild).
 
 ## What this is
 
@@ -159,7 +157,7 @@ Program a 64K image from [`roms/`](roms/) into the 27C512 (see [`roms/README.md`
 
 ## History and relation to 1541-rePico
 
-Not a changelog — background for what was inherited and what is new.
+This is a **separate product**, not a fork kept in sync with upstream 1541-rePico: a real **6510T** + CPLD 1551 path in a [Pi1551-III](https://github.com/ytmytm/Pi1551-III) enclosure. Useful upstream changes may still be cherry-picked by hand.
 
 **Starting point.** Take 1541-rePico’s GCR/SD/UI core and aim at a **1551** for Plus/4 that still fits **Pi1551-III** and talks through **tcbm2sd**, so the Pi 3 Module-rotated board becomes a Pico + real 6510T path.
 
