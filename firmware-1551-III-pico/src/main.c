@@ -1365,8 +1365,16 @@ void handle_selector_image(void)
 
     if (SELECTOR_IMAGE != akt_image_type)
     {
-        // insert the virtual menu-image
-        insert_menu_image(current_path);
+        /* No modal wait on mount failure — SD may be inserted later via CD hotplug. */
+        if (!insert_menu_image(current_path))
+        {
+            display_clear();
+            display_home();
+            display_string("No SD card");
+            sleep_ms_service(800);
+            set_gui_mode(GUI_MENU_MODE);
+            return;
+        }
         infomode_update();
     } else {
         // we have the selector inserted.. now handle the selection
@@ -1420,8 +1428,18 @@ void handle_selector_image(void)
                             // no valid image available / or we jumped into a folder
                             is_image_mount=false;
                             //rebuild the data-file
-                            insert_menu_image(current_path);
-                            infomode_update();
+                            if (!insert_menu_image(current_path))
+                            {
+                                display_clear();
+                                display_home();
+                                display_string("No SD card");
+                                sleep_ms_service(800);
+                                set_gui_mode(GUI_MENU_MODE);
+                            }
+                            else
+                            {
+                                infomode_update();
+                            }
                         } else
                         {
                             set_gui_mode(GUI_INFO_MODE);
@@ -1434,21 +1452,30 @@ void handle_selector_image(void)
     }
 }
 
-void insert_menu_image(char* menu_path)
+bool insert_menu_image(char* menu_path)
 {
     service_lock_navigation = true;
     FRESULT fr = mount_sdcard();
-    if (FR_OK == fr)
+    if (FR_OK != fr)
     {
-        f_closedir(&dir_object);
+        service_lock_navigation = false;
+        return false;
+    }
 
-        char pattern[] = {"*"};
+    f_closedir(&dir_object);
 
-        dir_object.pat = pattern;           /* Save pointer to pattern string */
-        fr = f_opendir(&dir_object, menu_path);  /* Open the target directory */
+    char pattern[] = {"*"};
 
-        if(FR_OK == fr)
-        {
+    dir_object.pat = pattern;           /* Save pointer to pattern string */
+    fr = f_opendir(&dir_object, menu_path);  /* Open the target directory */
+
+    if (FR_OK != fr)
+    {
+        service_lock_navigation = false;
+        return false;
+    }
+
+    {
             bool had_disk = is_image_mount;
 
             stop_bytetimer();
@@ -1570,16 +1597,9 @@ void insert_menu_image(char* menu_path)
             start_bytetimer(akt_half_track);    // start the track-spinning
 
             menu_set_entry_var1(&image_menu, M_WP_IMAGE, floppy_wp);
-        }
-        service_lock_navigation = false;
-    } else {
-        service_lock_navigation = false;
-        display_clear();
-        display_home();
-        display_string("f_mount error:");
-        display_data(fr+'A');
-        show_fs_error(fr);
     }
+    service_lock_navigation = false;
+    return true;
 }
 
 /////////////////////////////////////////////////////////////////////
