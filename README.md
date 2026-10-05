@@ -222,10 +222,6 @@ as bonus, **PRG** files can be loaded by an on-the-fly routine that creates a va
 
 additionaly a small tool [conv_x64](/tools) is provided that allows easy conversion from one to the other on you linux-pc.
 
-## Pictures ##
-
-impressions of current setup and PCB can be found [here](/doc/pictures).
-
 ## Links ##
 
 - great collection of basics about disk-image-formats can be found here:  
