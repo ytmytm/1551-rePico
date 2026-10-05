@@ -131,7 +131,7 @@ picotool load -t uf2 1551-III-Pico.uf2 -x -f
 ### Hardware / CPLD / panel (not this firmware tree)
 
 - Main PCB: `hardware-1551-III-Pico/` (KiCad)
-- CPLD bitstream: `hdl-1551-III/` (program Fake6523 into the XC9572XL)
+- CPLD: program [`hdl-1551-III/Fake6523.jed`](hdl-1551-III/Fake6523.jed) into the XC9572XL. The `.jed` was built with [Xilinx ISE 14.7](https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/vivado-design-tools/archive-ise.html) (sources/project live in `hdl-1551-III/`). Rebuild and JTAG flash steps (a Raspberry Pi 3 and jumper wires are enough — no dedicated programmer) are documented in [plus4-tcbm2sd → CPLD firmware](https://github.com/ytmytm/plus4-tcbm2sd/blob/main/HardwareFirmware.md#cpld-firmware); the procedure is the same for this board.
 - Front panel, faceplates, mechanical assembly: follow **[Pi1551-III](https://github.com/ytmytm/Pi1551-III)**
 - Host adapter: **[plus4-tcbm2sd](https://github.com/ytmytm/plus4-tcbm2sd)** + ribbon cable
 
