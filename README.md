@@ -45,6 +45,87 @@ Compared to an original Commodore 1551 drive, the roles split like this:
 
 Host link is unchanged in concept: the assembled drive talks **TCBM** over a ribbon to **[plus4-tcbm2sd](https://github.com/ytmytm/plus4-tcbm2sd)**.
 
+## How to build and flash (1551-III-Pico)
+
+### 1. Clone this repo (with submodules)
+
+The FatFs/SD driver is a **git submodule**. Without it, CMake will fail.
+
+```bash
+git clone --recurse-submodules <URL-of-this-repo>
+cd 1551-rePico   # or whatever the clone directory is named
+```
+
+If you already cloned without submodules:
+
+```bash
+git submodule update --init --recursive
+```
+
+For the supported firmware you need at least `no-OS-FatFS-SD-SDIO-SPI-RPi-Pico/`.  
+(`experimental/firmware/buildtools/bitfire` is only for the archival 1541 tree.)
+
+### 2. Host packages (Linux / Debian-like)
+
+```bash
+sudo apt install cmake ninja-build libusb-1.0-0-dev build-essential \
+  pkg-config python3 xxd gcc-arm-none-eabi \
+  libnewlib-arm-none-eabi libstdc++-arm-none-eabi-newlib
+```
+
+(`xxd` embeds `SoftwareC16/db12b.prg` as the Load Selector. ACME/dali are **not** required for 1551-III.)
+
+### 3. Raspberry Pi Pico SDK
+
+From [pico-sdk](https://github.com/raspberrypi/pico-sdk):
+
+```bash
+git clone https://github.com/raspberrypi/pico-sdk.git
+cd pico-sdk
+git submodule update --init lib/mbedtls
+export PICO_SDK_PATH="$(pwd)"
+echo "export PICO_SDK_PATH=$PICO_SDK_PATH" >> ~/.profile
+```
+
+Open a new shell (or `source ~/.profile`) so `PICO_SDK_PATH` is set.
+
+Alternatively, if you use the Raspberry Pi Pico VS Code extension / `.pico-sdk`, that can provide the SDK without a manual clone.
+
+### 4. picotool (for USB flash)
+
+From [picotool](https://github.com/raspberrypi/picotool): clone and build/install as in its README / BUILDING.md so `picotool` is on your `PATH`.
+
+### 5. Configure and compile firmware
+
+```bash
+cd firmware-1551-III-pico
+mkdir -p build && cd build
+cmake -G Ninja -DCMAKE_BUILD_TYPE=Release ..
+ninja
+```
+
+Output (among others):
+
+- `1551-III-Pico.uf2`
+- `1551-III-Pico.elf`
+
+### 6. Flash the Pico2 over USB
+
+Connect the board’s Pico2 USB, then:
+
+```bash
+picotool load -t uf2 1551-III-Pico.uf2 -x -f
+```
+
+`-f` forces reboot into BOOTSEL when the app is running; `-x` starts the new firmware after load.
+
+### Hardware / CPLD / panel (not this firmware tree)
+
+- Main PCB: `hardware-1551-III-Pico/` (KiCad)
+- CPLD bitstream: `hdl-1551-III/` (program Fake6523 into the XC9572XL)
+- Front panel, faceplates, mechanical assembly: follow **[Pi1551-III](https://github.com/ytmytm/Pi1551-III)**
+- Host adapter: **[plus4-tcbm2sd](https://github.com/ytmytm/plus4-tcbm2sd)** + ribbon cable
+
 ---
 
 # Upstream 1541-rePico notes (historical)
@@ -100,6 +181,9 @@ one size fits for all 1541 models.
 
 ## how to build ##
 
+> For the **current 1551-III product**, use **[How to build and flash (1551-III-Pico)](#how-to-build-and-flash-1551-iii-pico)** above.  
+> The steps below are the old 1541-rePico / archival flow (`experimental/firmware/`).
+
 ### prepare tools (linux) ###
 
 ```
@@ -137,30 +221,20 @@ git clone https://github.com/raspberrypi/picotool.git
 
 ### build steps ###
 
-prepare build-folder / configure Ninja for the 1551-III firmware
+Archival tree only:
 
 ```
-cd firmware-1551-III-pico
+cd experimental/firmware
 mkdir build
 cd build
 cmake -G Ninja ..
-```
-
-(Archival 1541-derived tree is under `experimental/firmware/` — not used for release builds.)
-
-now trigger a build
-
-```
 ninja
 ```
 
-
 ## howto flash ##
 
-connect your pico2 via USB cable and use picotool to flash the firmware
-
 ```
-picotool load -t uf2 1551-III-Pico.uf2 -x -f
+picotool load -t uf2 1541-rePico.uf2 -x -f
 ```
 
 
