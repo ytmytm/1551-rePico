@@ -1,7 +1,7 @@
 # 1551-rePico: zone 0 GCR timing (tracks 1–17)
 
 **Status:** confirmed 2026-07-18 — keep both tweaks for `REPICO1551` builds.  
-**Code:** `firmware/src/globals.c` (`bytetimer_values`, `d64_sector_gap`), gated on `#if REPICO1551`.
+**Code:** `firmware-1551-III-pico/src/globals.c` (`bytetimer_values`, `d64_sector_gap`), gated on `#if REPICO1551` (same values live in the archival `experimental/firmware/` tree).
 
 ## Summary
 

@@ -28,7 +28,7 @@ Pico generates 2MHz on GPIO0 and 100Hz with 10us low on GPIO3, same as onboard c
 - uncomment /* #define REPICO1551_GPIO3_IRQ_PWM */ in include/board1551.h to enble PWM back
 
 Flash firmware (switches ot bootsel on its own):
-picotool load "/Users/apple/Documents/Batibat/Maciejdev/plus4/pico1551/1551-rePico/firmware/build/1541-rePico.uf2" -f
+picotool load "/Users/apple/Documents/Batibat/Maciejdev/plus4/pico1551/1551-rePico/firmware-1551-III-pico/build/1551-III-Pico.uf2" -f
 
 Next steps:
 - if CPU can't write to TPI ports we can check if using phi2+r/w would help here

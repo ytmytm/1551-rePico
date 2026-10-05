@@ -39,7 +39,7 @@ jobs:
           cacheFrom: ghcr.io/${{ github.repository_owner }}/repico_devcontainer
           push: always
 
-      - name: Build rePico
+      - name: Build 1551-III-Pico
         uses: devcontainers/ci@v0.3
         with:
           configFile: .devcontainer/.devcontainer.json
@@ -48,13 +48,13 @@ jobs:
             cd /workspaces/1541-rePico
             mkdir -p build
             cd build
-            cmake -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE --no-warn-unused-cli -S /workspaces/1541-rePico/firmware -B /workspaces/1541-rePico/build -G Ninja
+            cmake -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE --no-warn-unused-cli -S /workspaces/1541-rePico/firmware-1551-III-pico -B /workspaces/1541-rePico/build -G Ninja
             cmake --build . --config Release
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: rePico-binaries 
+          name: 1551-III-Pico-binaries 
           path: |
-            build/1541-rePico.uf2
-            build/1541-rePico.elf
+            build/1551-III-Pico.uf2
+            build/1551-III-Pico.elf

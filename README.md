@@ -1,4 +1,23 @@
-# 1541-rePico
+# 1551-rePico
+
+Commodore **1551** disk-drive replacement based on Raspberry Pi Pico(2), derived from [1541-rePico](https://github.com/fook42/1541-rePico) / [1541-rebuild](https://github.com/ThKattanek/1541-rebuild).
+
+## Repository layout (release)
+
+| Path | Role |
+|------|------|
+| `firmware-1551-III-pico/` | **Supported** firmware |
+| `hardware-1551-III-Pico/` | **Supported** KiCad hardware |
+| `hdl-1551-III/` | **Supported** CPLD (`Fake6523`) for III board |
+| `no-OS-FatFS-SD-SDIO-SPI-RPi-Pico/` | Shared FatFs/SD submodule |
+| `experimental/` | **Archival only** — early plug-over-1551-mainboard daughterboard + old 1541-derived firmware (see `experimental/README.md`) |
+
+Upstream 1541-rePico is not merged further; useful changes may be cherry-picked into `firmware-1551-III-pico` by hand.
+
+---
+
+# Upstream 1541-rePico notes (historical)
+
 replacement of analog-part of Commodore 1541-Floppy devices based on Pi-Pico(2)
 
 ## preface/credits ##
@@ -87,16 +106,16 @@ git clone https://github.com/raspberrypi/picotool.git
 
 ### build steps ###
 
-prepare build-folder / configure Ninja for build the cmake project
+prepare build-folder / configure Ninja for the 1551-III firmware
 
 ```
-cd firmware
+cd firmware-1551-III-pico
 mkdir build
 cd build
-cmake -G Ninja .. -D BUILD_MENUPRG=OFF
+cmake -G Ninja ..
 ```
 
-Hint: you may change the option "BUILD_MENUPRG" to "ON" if you want to let ACME compile the provided menu.asm-code. Otherwise the shipped, precompiled "menu.prg" will be used.
+(Archival 1541-derived tree is under `experimental/firmware/` — not used for release builds.)
 
 now trigger a build
 
@@ -110,7 +129,7 @@ ninja
 connect your pico2 via USB cable and use picotool to flash the firmware
 
 ```
-picotool load -t uf2 1541-rePico.uf2 -x -f
+picotool load -t uf2 1551-III-Pico.uf2 -x -f
 ```
 
 

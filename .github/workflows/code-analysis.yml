@@ -43,8 +43,8 @@ jobs:
                      --output-file=cppcheck-report.xml \
                      --check-level=exhaustive \
                      --xml --xml-version=2 \
-                     -I firmware/include \
-                     firmware/src firmware/include || true
+                     -I firmware-1551-III-pico/include \
+                     firmware-1551-III-pico/src firmware-1551-III-pico/include || true
             
             # Generate detailed HTML report from XML
             python3 tools/generate_report.py cppcheck-report.xml cppcheck-report.html
@@ -55,10 +55,10 @@ jobs:
             cd build-analysis
             cmake -DCMAKE_BUILD_TYPE=Release \
                   -DCMAKE_EXPORT_COMPILE_COMMANDS=TRUE \
-                  -S ../firmware -B . -G Ninja > /dev/null 2>&1 || true
+                  -S ../firmware-1551-III-pico -B . -G Ninja > /dev/null 2>&1 || true
             cd ..
             
-            find firmware/src firmware/include -name "*.c" -type f > /tmp/c_files.txt
+            find firmware-1551-III-pico/src firmware-1551-III-pico/include -name "*.c" -type f > /tmp/c_files.txt
             if [ -f build-analysis/compile_commands.json ]; then
               clang-tidy -p build-analysis $(cat /tmp/c_files.txt) 2>&1 | tee clang-tidy-report.txt || true
             else
@@ -102,8 +102,8 @@ jobs:
               echo " **XML Report**: cppcheck-report.xml"
               echo ""
               echo "### Analysierte Verzeichnisse"
-              echo "- firmware/src"
-              echo "- firmware/include"
+              echo "- firmware-1551-III-pico/src"
+              echo "- firmware-1551-III-pico/include"
               echo ""
               echo "### Tool"
               echo "- Cppcheck (C/C++ Analyse)"

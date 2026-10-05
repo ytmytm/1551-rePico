@@ -26,7 +26,7 @@ This file now lists only the remaining or intentionally deferred items. Confirme
    - `GPIO0`: normally isolated by `JP2`; can be switched in later to test a Pico-generated 2 MHz `PHI0`.
    - `GPIO1`: `/MODE_3V3`
    - `GPIO2`: `/SYNC_3V3`
-   - `GPIO3`: normally `/DEVNUM_3V3` (static **low** = device #8 / Plus/4 `FEE0`–`FEF7`); optional 100 Hz IRQ PWM via `#define REPICO1551_GPIO3_IRQ_PWM` in `firmware/include/board1551.h` **only** after swapping both `JP5` and `JP6`.
+   - `GPIO3`: normally `/DEVNUM_3V3` (static **low** = device #8 / Plus/4 `FEE0`–`FEF7`); optional 100 Hz IRQ PWM via `#define REPICO1551_GPIO3_IRQ_PWM` in `experimental/firmware/include/board1551.h` **only** after swapping both `JP5` and `JP6`.
    - `GPIO4`: `/MTR_3V3`
    - `GPIO5`: `/WPS_3V3`
    - `GPIO6`: `/STP0_3V3`
@@ -54,7 +54,7 @@ This file now lists only the remaining or intentionally deferred items. Confirme
    - The 1541/1571 service manuals are still relevant here: they document the gate-array byte-ready/SOE behavior and the reused ATN-related latch behavior, even though there is no dedicated 1551 service manual in the repo.
    - Re-confirm exact behavior after rebuilding the CPLD.
 
-5. **Zone 0 GCR timing (firmware, confirmed):** stock DOS/GEOS need slower zone-0 byte timer (28 µs) and larger sector gaps (21) on 1551-rePico. Full A/B notes and rationale: [doc/1551-zone0-gcr-timing.md](../doc/1551-zone0-gcr-timing.md). Do not “restore” 26 µs / gap 12 for `REPICO1551` without retesting GEOS, hypaload, and qm_ demos.
+5. **Zone 0 GCR timing (firmware, confirmed):** stock DOS/GEOS need slower zone-0 byte timer (28 µs) and larger sector gaps (21) on 1551-rePico. Full A/B notes and rationale: [doc/1551-zone0-gcr-timing.md](../../doc/1551-zone0-gcr-timing.md). Do not “restore” 26 µs / gap 12 for `REPICO1551` without retesting GEOS, hypaload, and qm_ demos.
 
 6. Decide reset handling.
    - CPLD passes `/~{RESET}` to `/~{RESET_3V3}`.

@@ -71,7 +71,7 @@ target_include_directories(1541-rePico PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}
 )
 
-add_subdirectory(no-OS-FatFS-SD-SDIO-SPI-RPi-Pico/src build)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../../no-OS-FatFS-SD-SDIO-SPI-RPi-Pico/src build)
 
 target_link_libraries(1541-rePico
         pico_stdlib

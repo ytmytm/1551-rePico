@@ -39,7 +39,7 @@ if(REPICO1551)
     # Plus/4 selector PRGs — do not build SoftwareC64 / dali for this target
     add_subdirectory(./SoftwareC16)
 else()
-    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../firmware/buildtools)
+    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../experimental/firmware/buildtools)
     add_subdirectory(./SoftwareC64)
 endif()
 
@@ -71,7 +71,7 @@ target_include_directories(1551-III-Pico PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}
 )
 
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../firmware/no-OS-FatFS-SD-SDIO-SPI-RPi-Pico/src build)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../no-OS-FatFS-SD-SDIO-SPI-RPi-Pico/src build)
 
 target_link_libraries(1551-III-Pico
         pico_stdlib
