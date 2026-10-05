@@ -17,7 +17,7 @@ Host connection is a ribbon cable to **[plus4-tcbm2sd](https://github.com/ytmytm
 ## Related firmware / CPLD / ROMs
 
 - Firmware: [`../firmware-1551-III-pico/`](../firmware-1551-III-pico/)
-- CPLD bitstream: [`../hdl-1551-III/Fake6523.jed`](../hdl-1551-III/Fake6523.jed) — flash notes in the [top-level README](../README.md#cpld)
+- CPLD bitstream: [`../hdl-1551-III/Fake6523.jed`](../hdl-1551-III/Fake6523.jed) — flash notes in the [top-level README](../README.md#8-program-the-cpld)
 - DOS EPROM images (27C512): [`../roms/`](../roms/) — see [1551-RAMBOard](https://github.com/ytmytm/1551-RAMBOard) for provenance and patch details
 - Mechanical / panel BOM: **[Pi1551-III](https://github.com/ytmytm/Pi1551-III)**
 
