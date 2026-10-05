@@ -186,7 +186,6 @@ Added support for SD card switch and hot swapping SD cards.
 Preparations for publishing, repository cleanup.
 
 TODO:
-- need to link back to this project from tcbm2sd repo (ecosystem part)
 - disk image is not saved automatically
 - when disk is saved it doesn't replace the original one
 - UI is somewhat inconsistent (longpress not needed with front planel)

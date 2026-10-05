@@ -2,17 +2,17 @@
 
 [![Build](https://github.com/ytmytm/1551-rePico/actions/workflows/build.yml/badge.svg)](https://github.com/ytmytm/1551-rePico/actions/workflows/build.yml)
 
-Commodore **1551** disk-drive replacement for **Plus/4 / C16 / C116**, based on Raspberry Pi Pico(2). Firmware and GCR/SD logic are derived from [1541-rePico](https://github.com/fook42/1541-rePico) / [1541-rebuild](https://github.com/ThKattanek/1541-rebuild).
+Commodore **1551** disk-drive replacement for **Plus/4 / C16 / C116**, based on a [Raspberry Pi Pico 2](https://www.raspberrypi.com/products/raspberry-pi-pico-2/) (RP2350, **non-wireless** — raspberry logo on the soldermask; not Pico 2 W). Firmware and GCR/SD logic are derived from [1541-rePico](https://github.com/fook42/1541-rePico) / [1541-rebuild](https://github.com/ThKattanek/1541-rebuild).
 
 ## What this is
 
-A self-contained **drive computer** — Pico2 + **6510T** (or [MOS CPU Replacer](https://github.com/monotech/MOS_CPU_Replacer)) + XC9572XL CPLD + RAM + ROM — that replaces the Pi1551-III mainboard (Raspberry Pi 3 + TCBM). It reuses the Pi1551-III **mechanical stack**: front panel, top/bottom faceplates, and overall assembly. BOM, Gerbers, and build notes for those parts stay in the [Pi1551-III](https://github.com/ytmytm/Pi1551-III) repository.
+A self-contained **drive computer** — **Pico 2** + **6510T** (or [MOS CPU Replacer](https://github.com/monotech/MOS_CPU_Replacer)) + XC9572XL CPLD + RAM + ROM — that replaces the Pi1551-III mainboard (Raspberry Pi 3 + TCBM). It reuses the Pi1551-III **mechanical stack**: front panel, top/bottom faceplates, and overall assembly. BOM, Gerbers, and build notes for those parts stay in the [Pi1551-III](https://github.com/ytmytm/Pi1551-III) repository.
 
 
 
 The finished device connects to the computer through a ribbon cable to **[plus4-tcbm2sd](https://github.com/ytmytm/plus4-tcbm2sd)** — same as Pi1551-III.
 
-In short: same case and front panel as Pi1551-III; this repo supplies the Pico/6510T mainboard, CPLD bitstream, DOS ROMs, and firmware.
+In short: same case and front panel as Pi1551-III; this repo supplies the Pico 2 / 6510T mainboard, CPLD bitstream, DOS ROMs, and firmware.
 
 ### Repository layout
 
@@ -35,11 +35,14 @@ In short: same case and front panel as Pi1551-III; this repo supplies the Pico/6
 | ~16 KB ROM | **64 KB** EPROM (`27C512`): two **32 KB** DOS images, selected by jumper **J2** — burn a [1551-RAMBOard](https://github.com/ytmytm/1551-RAMBOard) 64K image from [`roms/`](roms/) |
 | Device #8 / #9 (hardware strap) | Jumper / strap for **device 8 or 9** (same idea as stock) |
 | **6523** TPI + discrete address decode | **XC9572XL CPLD** (`hdl-1551-III/` Fake6523): TPI replacement **and** RAM/ROM chip-select decode |
-| Analog floppy + mech | **Pico2** emulates the analog path and runs the UI |
+| 2 MHz crystal (Phi0) | **Pico 2** generates **2 MHz Phi0** (PWM) |
+| ~100 Hz IRQ oscillator | **Pico 2** generates **100 Hz IRQ** (PWM) |
+| Analog floppy + mech | **Pico 2** emulates the analog path and runs the UI |
 
-### Pico2 on this board
+### Pico 2 on this board
 
-- **2 MHz Phi0** for the 6502 side and **100 Hz IRQ** (PWM) — dedicated GPIOs that a stock gate-array / discrete clock would otherwise free up
+- **Phi0** and **IRQ** as in the table above — those clocks take dedicated GPIOs that a stock gate-array / discrete oscillator would otherwise free up
+- Supplies **3.3 V** for the CPLD (and other 3.3 V rails on this board)
 - Front-panel **UI**: OLED (I2C), plus rotary encoder, Back/Insert, SD card-detect, and DS0/DS1 via a **74HCT165** (same panel as Pi1551-III). The '165 is needed because after clock, IRQ, floppy bus, SPI SD, and I2C there were not enough GPIOs for every panel line directly
 - **SD card**: FatFs images, browser UI, **card-detect hotplug**
 - Floppy **datastream**: GCR to/from the “head”, **BYTE_READY** / related timing
@@ -51,7 +54,7 @@ Bidirectional **ports** (TCBM on A, head data on B, handshake / MODE / DEVNUM / 
 
 - RAMBOard-style **address decode** (`/RAMSEL`, `/RAMOE`, `/ROMSEL`, TPI `/CS`), all **PHI2-qualified**
 - **`XR/~W`** for SRAM `/WE` (qualified with PHI2)
-- **`byte_latched`**: Pico strobes `byte_ready_3v3`; the CPLD latches on the falling edge; any CPU access to the TPI window (`$4000–$7FFF`, e.g. DOS `BIT $4000`) clears the latch — the classic floppy byte-ready behaviour from 1541/1571 service docs, without a dedicated 1551 manual
+- **`byte_latched`**: Pico 2 strobes `byte_ready_3v3`; the CPLD latches on the falling edge; any CPU access to the TPI window (`$4000–$7FFF`, e.g. DOS `BIT $4000`) clears the latch — the classic floppy byte-ready behaviour from 1541/1571 service docs, without a dedicated 1551 manual
 
 ## What you can do with it
 
@@ -128,7 +131,7 @@ ninja
 
 Outputs include `1551-III-Pico.uf2` and `1551-III-Pico.elf`.
 
-### 6. Flash the Pico2
+### 6. Flash the Pico 2
 
 ```bash
 picotool load -t uf2 1551-III-Pico.uf2 -x -f
@@ -144,7 +147,7 @@ KiCad project: [`hardware-1551-III-Pico/`](hardware-1551-III-Pico/) (see its [`R
 - Gerbers / drills: [`plots/`](hardware-1551-III-Pico/plots/)
 - Fab pack: [`production/1551-III_Pico_2b.zip`](hardware-1551-III-Pico/production/1551-III_Pico_2b.zip)
 - BOM / pick-and-place: [`production/bom.csv`](hardware-1551-III-Pico/production/bom.csv), [`positions.csv`](hardware-1551-III-Pico/production/positions.csv), [`designators.csv`](hardware-1551-III-Pico/production/designators.csv)
-- **JP1–JP3**: leave default **1–2** (Pico ↔ `74HCT165`). Alternate wiring was only insurance if the shift register failed — do not change them.
+- **JP1–JP3**: leave default **1–2** (Pico 2 ↔ `74HCT165`). Alternate wiring was only insurance if the shift register failed — do not change them.
 
 ### 8. Program the CPLD
 
@@ -163,16 +166,16 @@ Program a 64K image from [`roms/`](roms/) into the 27C512 (see [`roms/README.md`
 
 This is a **separate product**, not a fork kept in sync with upstream 1541-rePico: a real **6510T** + CPLD 1551 path in a [Pi1551-III](https://github.com/ytmytm/Pi1551-III) enclosure. Useful upstream changes may still be cherry-picked by hand.
 
-**Starting point.** Take 1541-rePico’s GCR/SD/UI core and aim at a **1551** for Plus/4 that still fits **Pi1551-III** and talks through **tcbm2sd**, so the Pi 3 Module-rotated board becomes a Pico + real 6510T path.
+**Starting point.** Take 1541-rePico’s GCR/SD/UI core and aim at a **1551** for Plus/4 that still fits **Pi1551-III** and talks through **tcbm2sd**, so the Pi 3 Module-rotated board becomes a Pico 2 + real 6510T path.
 
-**Daughterboard bring-up** (now `experimental/`). First hardware plugged over a stock 1551 mainboard: reuse CPU/TPI/RAM/ROM, Pico for the analog path, Fake6523 in the CPLD. That proved TCBM/GCR, pin maps, and design rules: Phi0 and 100 Hz IRQ from the Pico (gate array optional), `XR/~W` in the CPLD, PHI2-qualified chip-selects (otherwise RAM bus contention), `byte_latched` as classic byte-ready, and slower zone-0 timing than 1541 defaults. Once the motherboard was only a RAM/ROM carrier, a self-contained board was the next step.
+**Daughterboard bring-up** (now `experimental/`). First hardware plugged over a stock 1551 mainboard: reuse CPU/TPI/RAM/ROM, Pico 2 for the analog path, Fake6523 in the CPLD. That proved TCBM/GCR, pin maps, and design rules: Phi0 and 100 Hz IRQ from the Pico 2 (gate array optional), `XR/~W` in the CPLD, PHI2-qualified chip-selects (otherwise RAM bus contention), `byte_latched` as classic byte-ready, and slower zone-0 timing than 1541 defaults. Once the motherboard was only a RAM/ROM carrier, a self-contained board was the next step.
 
 **1551-III-Pico.** Decode moved into the CPLD (no discrete `'139`/`'00`), RAMBOard map and 64K DOS images, Pi1551-III panel (SH1106 + 74HCT165). Firmware lives in `firmware-1551-III-pico/`. Upstream 1541-rePico is not merged as a whole — only occasional hand cherry-picks.
 
 | Mostly from 1541-rePico | Mostly new for 1551 / this board |
 |-------------------------|----------------------------------|
 | GCR encode/decode, track buffers, D64/G64 path | KiCad III board, CPLD glue + Fake6523 ports, RAMBOard decode |
-| FatFs / SD wiring, much of the menu framework | Pico as Phi0 + 100 Hz IRQ; '165 panel inputs |
+| FatFs / SD wiring, much of the menu framework | Pico 2 as Phi0 + 100 Hz IRQ; '165 panel inputs |
 | Build/flash with pico-sdk / picotool | TCBM via tcbm2sd; Parobek + patched DOS ROMs |
 | | Zone-0 timing, byte-ready latch model, SD hotplug, III pinout |
 
