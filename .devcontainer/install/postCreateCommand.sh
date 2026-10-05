@@ -19,10 +19,11 @@ if [[ ! -d build/pico-sdk ]]; then
     git clone https://github.com/raspberrypi/pico-sdk.git build/pico-sdk
     export PICO_SDK_PATH=$(pwd)/build/pico-sdk
     echo "export PICO_SDK_PATH=$PICO_SDK_PATH" >> ~/.profile
-    cd build/pico-sdk
-    git submodule update --init lib/mbedtls
-    cd ${WS}
-fi   
+fi
+# Always ensure USB + crypto submodules (needed for pico_enable_stdio_usb).
+cd build/pico-sdk
+git submodule update --init lib/mbedtls lib/tinyusb
+cd "${WS}"
 
 echo "checking for openocd for RP2350"
 if [[ ! -f build/openocd_rp2350 ]]  && [[ ${BUILD_OPENOCD} == "ON" ]]; then
