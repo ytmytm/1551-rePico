@@ -30,35 +30,20 @@ include(pico_sdk_import.cmake)
 
 project(1551-III-Pico C CXX ASM)
 
-option(REPICO1551 "Build for 1551-rePico hardware" ON)
-
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
-if(REPICO1551)
-    # Plus/4 selector PRGs — do not build SoftwareC64 / dali for this target
-    add_subdirectory(./SoftwareC16)
-else()
-    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../experimental/firmware/buildtools)
-    add_subdirectory(./SoftwareC64)
-endif()
+# Plus/4 / C16 selector assets (prebuilt db12b.prg today; SoftwareC16 kept for future builds)
+add_subdirectory(./SoftwareC16)
 
 file(GLOB_RECURSE FIRMWARE_SOURCES CONFIGURE_DEPENDS "src/*.c")
 
 add_executable(1551-III-Pico ${FIRMWARE_SOURCES})
 
 add_dependencies(1551-III-Pico GenSelector)
-if(NOT REPICO1551)
-    add_dependencies(1551-III-Pico GenIntro)
-endif()
 
-if(REPICO1551)
-    target_compile_definitions(1551-III-Pico PRIVATE REPICO1551=1)
-    pico_set_program_name(1551-III-Pico "1551-III-Pico")
-else()
-    target_compile_definitions(1551-III-Pico PRIVATE REPICO1541=1 REPICO1551=0)
-    pico_set_program_name(1551-III-Pico "1541-rePico")
-endif()
+target_compile_definitions(1551-III-Pico PRIVATE REPICO1551=1)
+pico_set_program_name(1551-III-Pico "1551-III-Pico")
 
 pico_set_program_version(1551-III-Pico "0.1")
 

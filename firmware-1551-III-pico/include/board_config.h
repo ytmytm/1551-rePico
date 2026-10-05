@@ -1,8 +1,7 @@
 /**********************************
  * header - target hardware selection
  *
- * REPICO1551 is enabled by default (CMake option REPICO1551=ON).
- * Set -DREPICO1551=OFF when configuring to build for 1541-rePico.
+ * 1551-III-Pico is always built with REPICO1551=1 (CMake forces it).
 ***********************************/
 #ifndef BOARD_CONFIG_H
 #define BOARD_CONFIG_H
