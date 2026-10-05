@@ -4,7 +4,9 @@ Commodore **1551** disk-drive replacement for **Plus/4 / C16 / C116**, based on 
 
 ## What this is
 
-A self-contained drive module — Pico2 + **6510T** (or [MOS CPU Replacer](https://github.com/monotech/MOS_CPU_Replacer)) + XC9572XL CPLD + RAM + ROM — that replaces the Pi1551-III **Module-rotated** board (Raspberry Pi 3 + TCBM). It reuses the Pi1551-III **mechanical stack**: front panel, top/bottom faceplates, and overall assembly. BOM, Gerbers, and build notes for those parts stay in the [Pi1551-III](https://github.com/ytmytm/Pi1551-III) repository.
+A self-contained **drive computer** — Pico2 + **6510T** (or [MOS CPU Replacer](https://github.com/monotech/MOS_CPU_Replacer)) + XC9572XL CPLD + RAM + ROM — that replaces the Pi1551-III mainboard (Raspberry Pi 3 + TCBM). It reuses the Pi1551-III **mechanical stack**: front panel, top/bottom faceplates, and overall assembly. BOM, Gerbers, and build notes for those parts stay in the [Pi1551-III](https://github.com/ytmytm/Pi1551-III) repository.
+
+
 
 The finished device connects to the computer through a ribbon cable to **[plus4-tcbm2sd](https://github.com/ytmytm/plus4-tcbm2sd)** — same as Pi1551-III.
 
