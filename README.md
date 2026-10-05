@@ -1,5 +1,7 @@
 # 1551-rePico
 
+[![Build](https://github.com/ytmytm/1551-rePico/actions/workflows/build.yml/badge.svg)](https://github.com/ytmytm/1551-rePico/actions/workflows/build.yml)
+
 Commodore **1551** disk-drive replacement for **Plus/4 / C16 / C116**, based on Raspberry Pi Pico(2). Firmware and GCR/SD logic are derived from [1541-rePico](https://github.com/fook42/1541-rePico) / [1541-rebuild](https://github.com/ThKattanek/1541-rebuild).
 
 ## What this is
