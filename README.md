@@ -6,7 +6,7 @@ Commodore **1551** disk-drive replacement for Plus/4 / C16 / C116, based on Rasp
 
 This project reuses the **mechanical stack** from [Pi1551-III](https://github.com/ytmytm/Pi1551-III): front panel, top/bottom faceplates, and the same overall assembly. For BOM, Gerbers, cabling notes, and build instructions for those parts, follow the Pi1551-III repository.
 
-What this repo replaces is **only the main horizontal module** — the board Pi1551-III calls **Pi1551-III Module-rotated** (Raspberry Pi 3 + TCBM interface). Here that role is filled by `hardware-1551-III-Pico/`: a Pico2 + **6510T** (or [MOS CPU Replacer](https://github.com/monotech/MOS_CPU_Replacer)) + CPLD + RAM + ROM board that still mates with the Pi1551-III panel and covers over **tcbm2sd**.
+What this repo replaces is **only the main horizontal module** — the board Pi1551-III calls **Pi1551-III Module-rotated** (Raspberry Pi 3 + TCBM interface). Here that role is filled by `hardware-1551-III-Pico/`: a Pico2 + **6510T** (or [MOS CPU Replacer](https://github.com/monotech/MOS_CPU_Replacer)) + CPLD + RAM + ROM board that still mates with the Pi1551-III panel and covers. The finished device (Pi1551-III or this rePico1551 stack) connects to the computer through a ribbon cable to **[plus4-tcbm2sd](https://github.com/ytmytm/plus4-tcbm2sd)** — same as Pi1551-III.
 
 In short: same case and front panel as Pi1551-III; swap the Pi 3 mainboard for the Pico/6510T board in this repo.
 
