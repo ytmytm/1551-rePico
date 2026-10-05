@@ -145,6 +145,21 @@ KiCad project: [`hardware-1551-III-Pico/`](hardware-1551-III-Pico/) (see also it
 
 Program [`hdl-1551-III/Fake6523.jed`](hdl-1551-III/Fake6523.jed) into the XC9572XL. The `.jed` was built with [Xilinx ISE 14.7](https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/vivado-design-tools/archive-ise.html) (sources/project live in `hdl-1551-III/`). Rebuild and JTAG flash steps (a Raspberry Pi 3 and jumper wires are enough — no dedicated programmer) are documented in [plus4-tcbm2sd → CPLD firmware](https://github.com/ytmytm/plus4-tcbm2sd/blob/main/HardwareFirmware.md#cpld-firmware); the procedure is the same for this board.
 
+The CPLD is more than a bare 6523 socket clone. The bidirectional **ports** (TCBM on port A, head data on port B, handshake / MODE / DEVNUM / SYNC on port C) are based on [ZXByteman/Fake6523](https://github.com/ZXByteman/Fake6523) — a 1551-proven fork of go4retro’s Fake6523. On top of that the same chip is **logic glue** that replaced discrete decode and part of the old gate-array role:
+
+- **Address decode** for the RAMBOard-style map: TPI at `$4000–$7FFF`, RAM at `$0000–$3FFF` and `$8000–$9FFF`, ROM at `$A000–$FFFF`, driving `/RAMSEL`, `/RAMOE`, and `/ROMSEL`
+- **PHI2 qualification** of those chip-selects (and of TPI `/CS`) — without it the prototype showed data-bus contention with RAM installed; qualifying every select with PHI2 fixed bring-up
+- **`XR/~W`** — a write strobe qualified with PHI2 for SRAM `/WE`, generated in the CPLD instead of taking the gate-array XR/W
+- **`byte_latched` handshake** between Pico GCR and the 6502 side (below)
+
+**How `byte_latched` really works.** There is no dedicated 1551 service manual in the usual places, but the 1541/1571 manuals describe the gate-array **byte-ready / SOE** path and a latch that is cleared by an access that looks a lot like the old ATN-related clear. Stock 1551 DOS does the same thing in software: it waits on the latched flag (CPU port bit), then does `BIT $4000` (any TPI access) to clear byte-ready. On this board that maps cleanly onto the CPLD:
+
+1. Pico asserts **`byte_ready_3v3`** when a GCR byte is on the head bus.
+2. The CPLD sets **`byte_latched`** on the falling edge of that strobe (so the Pico pulse can be short — no `sleep_us(3)` padding).
+3. **`byte_latched` clears whenever TPI `/CS` is active** (CPU touching `$4000–$7FFF`) or on reset — same “any access to the byte-ready / TPI window clears the latch” behaviour the service docs and the ROM disassembly imply.
+
+So the “mystery” latch is not a special sideband to invent: it is the classic floppy byte-ready latch, regenerated in Fake6523 from Pico strobe + TPI chip-select.
+
 #### DOS ROM (27C512)
 
 Program a 64K image from [`roms/`](roms/) (see [`roms/README.md`](roms/README.md)). Images and the RAM-expansion / fastloader patch come from **[1551-RAMBOard](https://github.com/ytmytm/1551-RAMBOard)**; jumper **J2** selects the active 32K half (use the patched upper bank).
