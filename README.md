@@ -76,8 +76,8 @@ Released product paths are `firmware-1551-III-pico/`, `hardware-1551-III-Pico/`,
 The FatFs/SD driver is a **git submodule**. Without it, CMake will fail.
 
 ```bash
-git clone --recurse-submodules <URL-of-this-repo>
-cd 1551-rePico   # or whatever the clone directory is named
+git clone --recurse-submodules https://github.com/ytmytm/1551-rePico.git
+cd 1551-rePico
 ```
 
 If you already cloned without submodules:
@@ -152,7 +152,7 @@ picotool load -t uf2 1551-III-Pico.uf2 -x -f
 
 `-f` forces reboot into BOOTSEL when the app is running; `-x` starts the new firmware after load.
 
-### Hardware / CPLD / panel (not this firmware tree)
+### Hardware, CPLD, and panel
 
 #### Main PCB
 
