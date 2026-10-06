@@ -2,6 +2,18 @@
 
 **Archival only.** Do not treat this tree as the supported product. It is kept for curious readers and for archaeology of the bring-up path that led to the current 1551-III-Pico board.
 
+<img src="01.experimental.jpg" width=640 alt="1551 remains with experimental board">
+
+1551 mainboard remains with the experimental daughterboard plugged into CPU/TPI sockets.
+
+Passthrough CPU socket is empty, the socket for Pico 2 is also not populated anymore.
+
+Gate array was damaged and was replaced by 74'139 to split address space between RAM, TPI and ROM.
+
+All the other I/O modules are connected: SD card, encoder, OLED and a single LED (to mainboard connector).
+
+When running this board was powered by USB from Pico 2.
+
 ## What this was
 
 Before **1551-III-Pico** (a self-contained Pico + CPLD + front-panel board that replaces the 1551 analog/disk electronics in a more finished form), we built a **daughterboard** that plugged over a stock Commodore 1551 mainboard. That let us reuse the real 6502/TPI/SRAM/ROM and experiment with:

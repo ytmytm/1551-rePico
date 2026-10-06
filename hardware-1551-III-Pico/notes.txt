@@ -185,6 +185,9 @@ https://github.com/monotech/MOS_CPU_Replacer
 Added support for SD card switch and hot swapping SD cards.
 Preparations for publishing, repository cleanup.
 
+[2026-10-05]
+Added some photos, also to the experimental folder.
+
 TODO:
 - disk image is not saved automatically
 - when disk is saved it doesn't replace the original one
@@ -193,3 +196,5 @@ TODO:
 - 16x8 is plenty of space, most of it unused outside menu
 - still don't understand why disk switch from GEOS's disks
   1A->1B or 2A->1B are not recognized by 1A->2A is
+- README needs user's manual - encoder actions (longpress too)
+  insert/back buttons as well

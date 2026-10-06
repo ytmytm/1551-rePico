@@ -4,6 +4,11 @@
 
 Commodore **1551** disk-drive replacement for **Plus/4 / C16 / C116**, based on a [Raspberry Pi Pico 2](https://www.raspberrypi.com/products/raspberry-pi-pico-2/) (RP2350, **non-wireless** — raspberry logo on the soldermask; not Pico 2 W). Firmware and GCR/SD logic are derived from [1541-rePico](https://github.com/fook42/1541-rePico) / [1541-rebuild](https://github.com/ThKattanek/1541-rebuild).
 
+<img src="media/01.front.jpg" width=640 alt="1551-rePico front">
+<img src="media/02.top.jpg" width=640 alt="1551-rePico top">
+<img src="media/03.top.jpg" width=640 alt="1551-rePico topside">
+
+
 ## What this is
 
 A self-contained **drive computer** — **Pico 2** + **6510T** (or [MOS CPU Replacer](https://github.com/monotech/MOS_CPU_Replacer)) + XC9572XL CPLD + RAM + ROM — that replaces the Pi1551-III mainboard (Raspberry Pi 3 + TCBM). It reuses the Pi1551-III **mechanical stack**: front panel, top/bottom faceplates, and overall assembly. BOM, Gerbers, and build notes for those parts stay in the [Pi1551-III](https://github.com/ytmytm/Pi1551-III) repository.
