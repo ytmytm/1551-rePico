@@ -7,6 +7,7 @@ Commodore **1551** disk-drive replacement for **Plus/4 / C16 / C116**, based on 
 <img src="media/01.front.jpg" width=640 alt="1551-rePico front">
 <img src="media/02.top.jpg" width=640 alt="1551-rePico top">
 <img src="media/03.top.jpg" width=640 alt="1551-rePico topside">
+<img src="media/04.top-mos.jpg" width=640 alt="1551-rePico topside with MOS CPU Replacer">
 
 
 ## What this is
